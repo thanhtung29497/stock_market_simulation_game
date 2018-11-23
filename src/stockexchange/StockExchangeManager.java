@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import common.Convention;
 import common.IAccount;
 import common.IBankController;
-import common.IBid;
 import common.ICompany;
 import common.IPlayer;
 import common.IStock;
@@ -20,13 +19,11 @@ public class StockExchangeManager {
 	private IBankController bankController;
 	private ArrayList<ICompany> companies;
 	private ArrayList<IPlayer> players;
-	private ArrayList<IBid> bids;
 	
 	public StockExchangeManager(IBankController bankController) {
 		this.bankController = bankController;
 		this.companies = new ArrayList<ICompany>();
 		this.players = new ArrayList<IPlayer>();
-		this.bids = new ArrayList<IBid>();
 	}
 	
 	public Boolean findStockCode(String stockCode) {

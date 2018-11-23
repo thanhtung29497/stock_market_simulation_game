@@ -4,6 +4,7 @@ import common.IStock;
 
 public class Stock implements IStock {
 	
+	private static final long serialVersionUID = 1L;
 	private String code;
 	private int quantity;
 	private double price;

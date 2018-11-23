@@ -13,12 +13,12 @@ public class BankServer {
 			BankManager bankManager = new BankManager();
 			AccountController accountController = new AccountController(bankManager);
 			BankController bankController = new BankController(bankManager);
-			
+		
 			registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
 			registry.rebind(Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME, accountController);
 			registry.rebind(Convention.BANK_SERVER_NAME + "/" + Convention.BANK_CONTROLLER_NAME, bankController);
 			
-			System.out.println("Bank Server is ready\n");
+			System.out.println("Bank Server is ready");
 		} catch (Exception e) {
 			System.out.println("Bank Server is failed due to:");
 			e.printStackTrace();

@@ -4,9 +4,6 @@ import common.*;
 
 public class Account implements IAccount {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private String password;
@@ -39,11 +36,6 @@ public class Account implements IAccount {
 	}
 
 	@Override
-	public void addBalance(double balance) {
-		this.balance += balance;
-	}
-
-	@Override
 	public double getBalance() {
 		return balance;
 	}
@@ -51,6 +43,12 @@ public class Account implements IAccount {
 	@Override
 	public String getPassword() {
 		return this.password;
+	}
+
+	@Override
+	public void updateBalance(double balance) {
+		this.balance = balance;
+		
 	}
 	
 }

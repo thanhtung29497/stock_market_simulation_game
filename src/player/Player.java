@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import common.IAccount;
 import common.IAccountController;
+import common.IBankMessage;
 import common.IBid;
 import common.IPlayer;
 import common.IPlayerStockController;
@@ -56,7 +57,8 @@ public abstract class Player implements IPlayer{
 	
 	@Override
 	public void registerBank(String name, String password) throws ExceedMaximumAccountException, DuplicateLoginNameException, RemoteException  {
-		this.accountController.register(name, password);
+		IAccount account = this.accountController.register(name, password);
+		this.setAccount(account);
 	}
 	
 	@Override
@@ -65,14 +67,22 @@ public abstract class Player implements IPlayer{
 	}
 	
 	@Override
-	public void loginBank(String name, String password) throws InvalidLoginException, NotFoundAccountException, RemoteException {
-		this.accountController.login(name, password);
-		this.account = this.accountController.getAccount();
+	public void loginBank() throws InvalidLoginException, NotFoundAccountException, RemoteException {
+		this.accountController.login(this.account.getName(), this.account.getPassword());
 	}
 	
 	@Override 
 	public void setAccount(IAccount account) {
 		this.account = account;
+	}
+	
+	@Override
+	public ArrayList<IBankMessage> retrieveBankMessages() throws RemoteException{
+		ArrayList<IBankMessage> messages = this.accountController.retrieveMessages();
+		if (!messages.isEmpty()) {
+			this.account.updateBalance(messages.get(messages.size() - 1).getBalance());
+		}
+		return messages;
 	}
 	
 }

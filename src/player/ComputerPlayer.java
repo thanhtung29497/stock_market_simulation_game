@@ -23,7 +23,7 @@ public class ComputerPlayer extends Player {
 		String password = Convention.COMPUTER_PLAYER_PASSWORD;
 		
 		this.registerBank(name, password);
-		this.loginBank(name, password);
+		this.loginBank();
 		this.registerStockExchange();
 	}
 	
