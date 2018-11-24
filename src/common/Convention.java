@@ -6,6 +6,7 @@ public class Convention {
 	public static final int INITIAL_SHARE_NUMBER = 1000;
 	public static final double INITIAL_SHARE_PRICE = 30;
 	public static final int MAXIMUM_ACCOUNT_NUMBER = 10;
+	public static final double STOCK_PERCENT_RANGE = 0.1;
 	public static final int ACCOUNT_ACCUMULATION_PERIOD = 10000;
 	public static final int STOCK_PRICE_ADJUSTMENT_PERIOD = 10000;
 	public static final String COMPUTER_PLAYER_NAME = "Computer";

@@ -24,11 +24,6 @@ public class Company implements ICompany {
 	}
 	
 	@Override
-	public ArrayList<IStock> getStocks() {
-		return new ArrayList<IStock>(Arrays.asList(this.stock));
-	}
-	
-	@Override
 	public void registerStockExchange(String stockCode) throws RemoteException, DuplicateCompanyNameException, DuplicateStockCodeException {
 		IStock stock = this.stockController.register(this.name, stockCode);
 		this.setStock(stock);

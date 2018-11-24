@@ -2,7 +2,6 @@ package stockexchange;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Timer;
 
@@ -10,6 +9,7 @@ import common.Convention;
 import common.IAccount;
 import common.IBankController;
 import common.IStock;
+import common.IStockCollection;
 import common.Message;
 import common.MessageType;
 import exception.DuplicateCompanyNameException;
@@ -20,7 +20,7 @@ import exception.NotFoundAccountException;
 public class StockExchangeManager {
 	
 	private IBankController bankController;
-	private ArrayList<IStock> stocks;
+	private IStockCollection stocks;
 	private ArrayList<IAccount> accounts;
 	private HashMap<String, ArrayList<Message>> messages;
 	private static final String PLAYER_PREFIX = "Player";
@@ -28,7 +28,7 @@ public class StockExchangeManager {
 
 	public StockExchangeManager(IBankController bankController) {
 		this.bankController = bankController;
-		this.stocks = new ArrayList<IStock>();
+		this.stocks = new StockCollection();
 		this.accounts = new ArrayList<IAccount>();
 		this.messages = new HashMap<>();
 		
@@ -37,16 +37,11 @@ public class StockExchangeManager {
 	}
 	
 	public Boolean findStockCode(String stockCode) {
-		for (IStock stock: this.stocks) {
-			if (stock.getCode().equals(stockCode)) {
-				return true;
-			}
-		}
-		return false;
+		return this.stocks.hasStockCode(stockCode);
 	}
 	
 	public Boolean findCompanyName(String companyName) {
-		for (IStock stock: this.stocks) {
+		for (IStock stock: this.stocks.toArray()) {
 			if (stock.getCompanyName().equals(companyName)) {
 				return true;
 			}
@@ -67,14 +62,14 @@ public class StockExchangeManager {
 		if (this.findCompanyName(companyName)) {
 			throw new DuplicateCompanyNameException(companyName);
 		}
-		Stock stock = new Stock(stockCode, Convention.INITIAL_SHARE_NUMBER, Convention.INITIAL_SHARE_PRICE, companyName);
-		this.stocks.add(stock);
+		Stock stock = new Stock(stockCode, Convention.INITIAL_SHARE_PRICE, companyName);
+		this.stocks.addStock(stock, Convention.INITIAL_SHARE_NUMBER);
 		
 		for (String key: this.messages.keySet()) {
 			if (key.startsWith(StockExchangeManager.PLAYER_PREFIX)) {
 				this.addMessageByKey(key, new StockMessage(MessageType.IssueStock,
 						"New stock was issued: " + stock.getCode(), 
-						new ArrayList<>(Arrays.asList(stock))));
+						new StockCollection(stock, Convention.INITIAL_SHARE_NUMBER)));
 			}
 		}
 		
@@ -102,14 +97,12 @@ public class StockExchangeManager {
 		return messages;
 	}
 	
-	public ArrayList<IStock> getStocks() {
+	public IStockCollection getStocks() {
 		return this.stocks;
 	}
 	
 	public void adjustStockPrice(HashMap<String, Double> stockPrices) {
-		for (IStock stock: this.stocks) {
-			stock.setPrice(stockPrices.get(stock.getCode()));
-		}
+		this.stocks.updateStockPrice(stockPrices);
 		for (String key: this.messages.keySet()) {
 			this.addMessageByKey(key, new StockMessage(MessageType.AdjustStockPrice, 
 					"All stock prices were adjusted periodically!", this.getStocks()));
