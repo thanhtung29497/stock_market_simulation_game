@@ -8,4 +8,5 @@ public interface IStock extends Serializable {
 	public double getPrice();
 	public void setQuantity(int quantity);
 	public void setPrice(double price);
+	public String getCompanyName();
 }

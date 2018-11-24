@@ -14,9 +14,8 @@ public class CompanyClient {
 			ICompanyStockController stockController = (ICompanyStockController)registry.lookup(
 					Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.COMPANY_STOCK_CONTROLLER_NAME);
 			
-			Company company1 = new Company("TTTA", stockController);
-			company1.registerStockExchange();
-			company1.issueStock("TNAT");
+			Company company1 = new Company("Vingroup", stockController);
+			company1.registerStockExchange("JSC");
 			System.in.read();
 		} catch (Exception e) {
 			System.out.println("Exception:");

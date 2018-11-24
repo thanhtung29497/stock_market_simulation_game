@@ -11,6 +11,7 @@ import common.IPlayer;
 import common.IPlayerStockController;
 import common.IStock;
 import common.IStockOwner;
+import common.Message;
 import exception.*;
 
 public abstract class Player implements IPlayer{
@@ -63,7 +64,7 @@ public abstract class Player implements IPlayer{
 	
 	@Override
 	public void registerStockExchange() throws InvalidLoginException, RemoteException, NotFoundAccountException  {
-		this.stockController.register(this);
+		this.stockController.register(account.getName(), account.getPassword());
 	}
 	
 	@Override
@@ -81,6 +82,15 @@ public abstract class Player implements IPlayer{
 		ArrayList<IBankMessage> messages = this.accountController.retrieveMessages();
 		if (!messages.isEmpty()) {
 			this.account.updateBalance(messages.get(messages.size() - 1).getBalance());
+		}
+		return messages;
+	}
+	
+	@Override 
+	public ArrayList<Message> retrieveStockExchangeMessages() throws RemoteException {
+		ArrayList<Message> messages = this.stockController.retrieveMessages();
+		if (!messages.isEmpty()) {
+			
 		}
 		return messages;
 	}

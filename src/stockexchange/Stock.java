@@ -8,11 +8,13 @@ public class Stock implements IStock {
 	private String code;
 	private int quantity;
 	private double price;
+	private String companyName;
 
-	public Stock(String code, int quantity, double price) {
+	public Stock(String code, int quantity, double price, String companyName) {
 		this.code = code;
 		this.quantity = quantity;
 		this.price = price;
+		this.companyName = companyName;
 	}
 	
 	@Override
@@ -38,6 +40,11 @@ public class Stock implements IStock {
 	@Override
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	@Override
+	public String getCompanyName() {
+		return this.companyName;
 	}
 
 }

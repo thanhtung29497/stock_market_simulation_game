@@ -29,12 +29,9 @@ public class Company implements ICompany {
 	}
 	
 	@Override
-	public void registerStockExchange() throws RemoteException, DuplicateCompanyNameException {
-		this.stockController.register(this);		
-	}
-	
-	public void issueStock(String stockCode) throws RemoteException, DuplicateStockCodeException {
-		this.stockController.issueStock(stockCode);
+	public void registerStockExchange(String stockCode) throws RemoteException, DuplicateCompanyNameException, DuplicateStockCodeException {
+		IStock stock = this.stockController.register(this.name, stockCode);
+		this.setStock(stock);
 	}
 	
 	public String getStockCode() {

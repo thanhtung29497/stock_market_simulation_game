@@ -3,6 +3,7 @@ package ui.player;
 import java.util.ArrayList;
 
 import common.IBankMessage;
+import common.Message;
 import player.HumanPlayer;
 
 public class PlayerFrameController {
@@ -12,6 +13,12 @@ public class PlayerFrameController {
 	public void addBankMessages(ArrayList<IBankMessage> messages) {
 		messages.forEach(message -> {
 			System.out.println(message.getMessage() + ": " + message.getBalance());
+		});
+	}
+	
+	public void addStockExchangeMessages(ArrayList<Message> messages) {
+		messages.forEach(message -> {
+			System.out.println(message.getMessage());
 		});
 	}
 	

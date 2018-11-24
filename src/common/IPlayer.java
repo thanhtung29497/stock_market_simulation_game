@@ -18,4 +18,5 @@ public interface IPlayer extends IStockOwner {
 	public void setAccount(IAccount account);
 	public void registerStockExchange() throws InvalidLoginException, RemoteException, NotFoundAccountException;
 	public ArrayList<IBankMessage> retrieveBankMessages() throws RemoteException;
+	public ArrayList<Message> retrieveStockExchangeMessages() throws RemoteException;
 }

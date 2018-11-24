@@ -2,11 +2,12 @@ package stockexchange;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 import common.IBid;
-import common.ICompany;
 import common.ICompanyStockController;
 import common.IStock;
+import common.Message;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
 
@@ -14,7 +15,7 @@ public class CompanyStockController extends UnicastRemoteObject implements IComp
 
 	private static final long serialVersionUID = 1L;
 	private StockExchangeManager stockExchangeManager;
-	private ICompany company;
+	private IStock stock;
 	
 	protected CompanyStockController(StockExchangeManager stockExchangeManager) throws RemoteException {
 		super();
@@ -22,23 +23,22 @@ public class CompanyStockController extends UnicastRemoteObject implements IComp
 	}
 
 	@Override
-	public void register(ICompany company) throws RemoteException, DuplicateCompanyNameException {
-		this.stockExchangeManager.registerCompany(company);
-		this.company = company;
-		System.out.println("Register successfully: Company " + company.getName());
-	}
-
-	@Override
-	public IStock issueStock(String stockCode) throws RemoteException, DuplicateStockCodeException {
-		IStock issuedStock = this.stockExchangeManager.issueStock(this.company.getName(), stockCode);
-		System.out.println("Issue stock successfully: " + issuedStock.getCode());
-		return issuedStock;
+	public IStock register(String companyName, String stockCode) throws RemoteException, DuplicateCompanyNameException, DuplicateStockCodeException {
+		IStock stock = this.stockExchangeManager.issueStock(companyName, stockCode);
+		this.stock = stock;
+		System.out.println("Register successfully: Company " + companyName);
+		return stock;
 	}
 
 	@Override
 	public void responseBid(IBid bid) throws RemoteException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ArrayList<Message> retrieveMessage() throws RemoteException {
+		return this.stockExchangeManager.retrieveMessages(stock.getCompanyName(), false);
 	}
 	
 }

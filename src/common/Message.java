@@ -1,6 +1,6 @@
 package common;
 
-public class Message implements IMessage {
+public abstract class Message implements IMessage {
 	
 	private static final long serialVersionUID = 1L;
 	private String message;
