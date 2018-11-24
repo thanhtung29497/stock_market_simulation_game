@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Timer;
 
 import common.Convention;
 import common.IAccount;
@@ -30,6 +31,9 @@ public class StockExchangeManager {
 		this.stocks = new ArrayList<IStock>();
 		this.accounts = new ArrayList<IAccount>();
 		this.messages = new HashMap<>();
+		
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new StockPriceAdjustmentTask(this), 0, Convention.STOCK_PRICE_ADJUSTMENT_PERIOD);
 	}
 	
 	public Boolean findStockCode(String stockCode) {
@@ -96,6 +100,20 @@ public class StockExchangeManager {
 		ArrayList<Message> messages = this.messages.get(key);
 		this.messages.put(key, new ArrayList<>());
 		return messages;
+	}
+	
+	public ArrayList<IStock> getStocks() {
+		return this.stocks;
+	}
+	
+	public void adjustStockPrice(HashMap<String, Double> stockPrices) {
+		for (IStock stock: this.stocks) {
+			stock.setPrice(stockPrices.get(stock.getCode()));
+		}
+		for (String key: this.messages.keySet()) {
+			this.addMessageByKey(key, new StockMessage(MessageType.AdjustStockPrice, 
+					"All stock prices were adjusted periodically!", this.getStocks()));
+		}
 	}
 	
 }

@@ -4,5 +4,5 @@ public enum MessageType {
 	SubtractBalance,
 	AddBalance,
 	IssueStock,
-	ChangeStockPrice,
+	AdjustStockPrice,
 }
