@@ -26,8 +26,18 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.List;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Vector;
+
+import javax.swing.JList;
+import javax.swing.AbstractListModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
 
 public class PlayerFrame extends JFrame {
 
@@ -38,11 +48,25 @@ public class PlayerFrame extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
 	private JTable table_1;
-
+	Vector<String> BankMsgData ;
+	Vector<String> StockMsgData ;
+	JList list_BankMs;
+	JList list_StockMessage;
+	JLabel labelTime;
+	JLabel labelMoney;
+	JLabel lblRank;
+	private JTable table_rank;
+	private JTextField textField;
 	/**
 	 * Create the frame.
 	 */
+	
+	void dataInit() {
+		BankMsgData = new Vector<String>();
+		StockMsgData = new Vector<String>();
+	}
 	public PlayerFrame() {
+		dataInit();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
 		contentPane = new JPanel();
@@ -96,8 +120,14 @@ public class PlayerFrame extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.WEST, pl_PlayerInfo, 10, SpringLayout.WEST, contentPane);
 		contentPane.add(pl_PlayerInfo);
 		
-		JPanel pl_BankMessage = new JPanel();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_BankMessage, 10, SpringLayout.SOUTH, pl_PlayerInfo);
+		JLabel lblBankMessage = new JLabel("Bank Message");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblBankMessage, 10, SpringLayout.SOUTH, pl_PlayerInfo);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblBankMessage, 0, SpringLayout.WEST, pl_PlayerInfo);
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblBankMessage, 0, SpringLayout.EAST, pl_PlayerInfo);
+		contentPane.add(lblBankMessage);
+		
+		JScrollPane pl_BankMessage = new JScrollPane();
+		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_BankMessage, 0, SpringLayout.SOUTH, lblBankMessage);
 		sl_contentPane.putConstraint(SpringLayout.WEST, pl_BankMessage, 0, SpringLayout.WEST, pl_PlayerInfo);
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, pl_BankMessage, 200, SpringLayout.SOUTH, pl_PlayerInfo);
 		sl_contentPane.putConstraint(SpringLayout.EAST, pl_BankMessage, 0, SpringLayout.EAST, pl_PlayerInfo);
@@ -105,8 +135,12 @@ public class PlayerFrame extends JFrame {
 		pl_BankMessage.setBackground(Color.WHITE);
 		contentPane.add(pl_BankMessage);
 		
-		JPanel pl_StockMessage = new JPanel();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_StockMessage, 10, SpringLayout.SOUTH, pl_BankMessage);
+		JScrollPane pl_StockMessage = new JScrollPane();
+		
+		list_BankMs = new JList();
+		list_BankMs.setVisibleRowCount(2);
+		pl_BankMessage.setViewportView(list_BankMs);
+		
 		sl_contentPane.putConstraint(SpringLayout.WEST, pl_StockMessage, 0, SpringLayout.WEST, pl_PlayerInfo);
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, pl_StockMessage, 0, SpringLayout.SOUTH, Pl_BidBroad);
 		Pl_BidBroad.setLayout(new BorderLayout(0, 0));
@@ -131,7 +165,6 @@ public class PlayerFrame extends JFrame {
 		contentPane.add(pl_StockMessage);
 		
 		JPanel pl_Rank = new JPanel();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_Rank, 0, SpringLayout.NORTH, lblTockboard);
 		sl_contentPane.putConstraint(SpringLayout.WEST, pl_Rank, 10, SpringLayout.EAST, pl_StockBoard);
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, pl_Rank, 210, SpringLayout.NORTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.EAST, pl_Rank, -10, SpringLayout.EAST, contentPane);
@@ -140,7 +173,6 @@ public class PlayerFrame extends JFrame {
 		contentPane.add(pl_Rank);
 		
 		JPanel pl_Transaction = new JPanel();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_Transaction, 10, SpringLayout.SOUTH, pl_Rank);
 		sl_contentPane.putConstraint(SpringLayout.WEST, pl_Transaction, 10, SpringLayout.EAST, pl_StockBoard);
 		pl_StockBoard.setLayout(new BorderLayout(0, 0));
 		
@@ -173,10 +205,163 @@ public class PlayerFrame extends JFrame {
 		pl_Transaction.setBorder(new LineBorder(new Color(0, 0, 0)));
 		pl_Transaction.setBackground(Color.WHITE);
 		contentPane.add(pl_Transaction);
+		SpringLayout sl_pl_Transaction = new SpringLayout();
+		pl_Transaction.setLayout(sl_pl_Transaction);
 		
+		JLabel lblType = new JLabel("Type");
+		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, lblType, 20, SpringLayout.NORTH, pl_Transaction);
+		sl_pl_Transaction.putConstraint(SpringLayout.WEST, lblType, 0, SpringLayout.WEST, pl_Transaction);
+		pl_Transaction.add(lblType);
+		
+		JComboBox cbbType = new JComboBox();
+		sl_pl_Transaction.putConstraint(SpringLayout.EAST, cbbType, -10, SpringLayout.EAST, pl_Transaction);
+		cbbType.setModel(new DefaultComboBoxModel(new String[] {"Sell", "Buy"}));
+		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, cbbType, 0, SpringLayout.NORTH, lblType);
+		sl_pl_Transaction.putConstraint(SpringLayout.WEST, cbbType, 42, SpringLayout.EAST, lblType);
+		pl_Transaction.add(cbbType);
+		
+		JComboBox cbbCode = new JComboBox();
+		sl_pl_Transaction.putConstraint(SpringLayout.WEST, cbbCode, 0, SpringLayout.WEST, cbbType);
+		sl_pl_Transaction.putConstraint(SpringLayout.EAST, cbbCode, 0, SpringLayout.EAST, cbbType);
+		pl_Transaction.add(cbbCode);
+		
+		JLabel lblCode = new JLabel("Code");
+		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, lblCode, 50, SpringLayout.SOUTH, lblType);
+		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, cbbCode, 0, SpringLayout.NORTH, lblCode);
+		sl_pl_Transaction.putConstraint(SpringLayout.WEST, lblCode, 0, SpringLayout.WEST, lblType);
+		pl_Transaction.add(lblCode);
+		
+		JLabel lblPrice = new JLabel("Price");
+		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, lblPrice, 50, SpringLayout.SOUTH, lblCode);
+		sl_pl_Transaction.putConstraint(SpringLayout.WEST, lblPrice, 0, SpringLayout.WEST, lblType);
+		pl_Transaction.add(lblPrice);
+		
+		JLabel lblQuanitity = new JLabel("Quanitity");
+		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, lblQuanitity, 50, SpringLayout.SOUTH, lblPrice);
+		sl_pl_Transaction.putConstraint(SpringLayout.WEST, lblQuanitity, 0, SpringLayout.WEST, lblType);
+		pl_Transaction.add(lblQuanitity);
+		
+		JSpinner spinner = new JSpinner();
+		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, spinner, 0, SpringLayout.NORTH, lblQuanitity);
+		sl_pl_Transaction.putConstraint(SpringLayout.WEST, spinner, 0, SpringLayout.WEST, cbbType);
+		sl_pl_Transaction.putConstraint(SpringLayout.EAST, spinner, 0, SpringLayout.EAST, cbbCode);
+		pl_Transaction.add(spinner);
+		
+		textField = new JTextField();
+		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, textField, 0, SpringLayout.NORTH, lblPrice);
+		sl_pl_Transaction.putConstraint(SpringLayout.WEST, textField, 0, SpringLayout.WEST, cbbType);
+		sl_pl_Transaction.putConstraint(SpringLayout.EAST, textField, 0, SpringLayout.EAST, cbbType);
+		pl_Transaction.add(textField);
+		textField.setColumns(10);
+		
+		JButton btnSend = new JButton("Send");
+		sl_pl_Transaction.putConstraint(SpringLayout.WEST, btnSend, 0, SpringLayout.WEST, textField);
+		sl_pl_Transaction.putConstraint(SpringLayout.SOUTH, btnSend, -10, SpringLayout.SOUTH, pl_Transaction);
+		pl_Transaction.add(btnSend);
+		
+		JLabel lblTrans = new JLabel("Transaction");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_Transaction, 0, SpringLayout.SOUTH, lblTrans);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblTrans, 10, SpringLayout.SOUTH, pl_Rank);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblTrans, 0, SpringLayout.WEST, pl_Rank);
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblTrans, 0, SpringLayout.EAST, pl_Rank);
+		contentPane.add(lblTrans);
+		
+		
+		
+		JLabel lblSockEnc = new JLabel("Stock Enchange Message");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_StockMessage, 10, SpringLayout.SOUTH, lblSockEnc);
+		
+		list_StockMessage = new JList();
+		pl_StockMessage.setViewportView(list_StockMessage);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblSockEnc, 10, SpringLayout.SOUTH, pl_BankMessage);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblSockEnc, 0, SpringLayout.WEST, pl_PlayerInfo);
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblSockEnc, 0, SpringLayout.EAST, pl_PlayerInfo);
+		SpringLayout sl_pl_PlayerInfo = new SpringLayout();
+		pl_PlayerInfo.setLayout(sl_pl_PlayerInfo);
+		
+		JLabel lblMoney = new JLabel("Money:");
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, lblMoney, 20, SpringLayout.NORTH, pl_PlayerInfo);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblMoney, 10, SpringLayout.WEST, pl_PlayerInfo);
+		pl_PlayerInfo.add(lblMoney);
+		
+		JLabel lblTime = new JLabel("Time");
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, lblTime, 20, SpringLayout.SOUTH, lblMoney);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblTime, 0, SpringLayout.WEST, lblMoney);
+		pl_PlayerInfo.add(lblTime);
+		
+		JLabel lblrank = new JLabel("[Rank]:");
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, lblrank, 20, SpringLayout.SOUTH, lblTime);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblrank, 0, SpringLayout.WEST, lblMoney);
+		pl_PlayerInfo.add(lblrank);
+		
+		labelMoney = new JLabel("100.0");
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, labelMoney, 0, SpringLayout.NORTH, lblMoney);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.EAST, labelMoney, -40, SpringLayout.EAST, pl_PlayerInfo);
+		pl_PlayerInfo.add(labelMoney);
+		
+		labelTime = new JLabel("0:00");
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, labelTime, 0, SpringLayout.NORTH, lblTime);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.EAST, labelTime, 0, SpringLayout.EAST, labelMoney);
+		pl_PlayerInfo.add(labelTime);
+		
+		lblRank = new JLabel("1");
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, lblRank, 0, SpringLayout.NORTH, lblrank);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.EAST, lblRank, 0, SpringLayout.EAST, labelMoney);
+		pl_PlayerInfo.add(lblRank);
+		contentPane.add(lblSockEnc);
+		
+		JLabel lblRankTable = new JLabel("Rank");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRankTable, 0, SpringLayout.NORTH, lblTockboard);
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblRankTable, 0, SpringLayout.EAST, pl_Rank);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_Rank, 0, SpringLayout.SOUTH, lblRankTable);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblRankTable, 0, SpringLayout.WEST, pl_Rank);
+		pl_Rank.setLayout(new BorderLayout(0, 0));
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		pl_Rank.add(scrollPane_2, BorderLayout.CENTER);
+		
+		table_rank = new JTable();
+		table_rank.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Rank","Player","Momney"
+			}
+		) {
+			boolean[] columnEditables = new boolean[] {
+				false, false, false
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		table_rank.getColumnModel().getColumn(0).setResizable(false);
+		table_rank.getColumnModel().getColumn(1).setResizable(false);
+		table_rank.getColumnModel().getColumn(2).setResizable(false);
+		scrollPane_2.setViewportView(table_rank);
+		contentPane.add(lblRankTable);
 		setVisible(true);
 	}
+	public void addBankMessage(String msg) {
+		BankMsgData.addElement(msg);
 
+		list_BankMs.ensureIndexIsVisible(BankMsgData.size()-1);
+	}
+	public void addStockMessage(String msg) {
+		StockMsgData.addElement(msg);
+
+		list_StockMessage.ensureIndexIsVisible(StockMsgData.size()-1);
+	}
+	public void showRank(Integer rank) {
+		lblRank.setText(rank.toString());
+	};
+	public void showMoney(Float money) {
+		labelMoney.setText(money.toString());
+	};
+	public void showTime(Integer min,Integer sec) {
+		labelTime.setText(min.toString()+":"+sec.toString());
+	};
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
