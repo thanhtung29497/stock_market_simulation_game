@@ -8,8 +8,6 @@ import java.util.Timer;
 
 import bank.MessageRetrievingTask;
 import common.Convention;
-import common.ErrorType;
-import common.IAccount;
 import common.IAccountRemote;
 import common.IPlayerStockRemote;
 import exception.DuplicateLoginNameException;
@@ -28,16 +26,10 @@ public class PlayerClient {
 	
 	private PlayerClient() {
 		this.viewController = new PlayerFrameController(this);
-		try {
-			this.connectToRegistry();
-			this.modelController = new HumanPlayer(this.accountController, this.stockController);
-		} catch (RemoteException | NotBoundException e) {
-			this.viewController.showError(ErrorType.FailedToConnectRegistry);
-		}
 	}
 	
 	public void run() {
-		this.viewController.showLogin();
+		this.viewController.start();
 	}
 	
 	private void connectToRegistry() throws RemoteException, NotBoundException {
@@ -46,26 +38,33 @@ public class PlayerClient {
 				Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
 		this.stockController = (IPlayerStockRemote)registry.lookup(
 				Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME);
+		this.modelController = new HumanPlayer(this.accountController, this.stockController);
 	}
 	
 	public void register(String name, String password) {
 		try {
+			this.connectToRegistry();
 			this.modelController.registerBank(name, password);
-		} catch (RemoteException e) {
-			this.viewController.showError(ErrorType.FailedToConnectServer);
+			this.modelController.loginBank();
+			this.modelController.registerStockExchange();
+			
+			Timer messageTimer = new Timer();
+			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), 0, Convention.RETRIEVE_MESSAGE_PERIOD);
+			
+			// Display
+			this.viewController.startTrans(this.modelController.getAllStocks(),
+					this.modelController.getAllBids(),
+					this.modelController.getAccount());
+			
+		} catch (RemoteException | NotBoundException e) {
+			this.viewController.signUpFalse("Failed to connect to server");
 		} catch (ExceedMaximumAccountException e) {
-			this.viewController.showError(ErrorType.ExceedMaximumAccount);
+			this.viewController.signUpFalse("Exceed of maximum account");
 		} catch (DuplicateLoginNameException e) {
-			this.viewController.showError(ErrorType.DuplicateLoginName);
+			this.viewController.signUpFalse("Duplicate login name");
+		} catch (InvalidLoginException | NotFoundAccountException e) {
+			this.viewController.signUpFalse("Invalid register");
 		}
-	}
-	
-	public void loginWithRegisteredName() {
-		IAccount account = this.modelController.getAccount();
-		if (account == null) {
-			this.viewController.showError(ErrorType.NotRegisteredYet);
-		}
-		this.login(account.getName(), account.getPassword());
 	}
 	
 	public void login(String name, String password) {
@@ -73,20 +72,17 @@ public class PlayerClient {
 			this.modelController.loginBank(name, password);
 			this.modelController.registerStockExchange();
 			
-			// Login successfully
-			// Add periodical retrieving
 			Timer messageTimer = new Timer();
 			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), 0, Convention.RETRIEVE_MESSAGE_PERIOD);
 			
-			// Display
-			this.viewController.showMainView(this.modelController.getAllStocks(), 
+			this.viewController.startTrans(this.modelController.getAllStocks(),
 					this.modelController.getAllBids(),
 					this.modelController.getAccount());
 			
 		} catch (RemoteException e) {
-			this.viewController.showError(ErrorType.FailedToConnectServer);
+			this.viewController.loginFalse("Failed to connect to server");
 		} catch (InvalidLoginException | NotFoundAccountException e) {
-			this.viewController.showError(ErrorType.InvalidLogin);
+			this.viewController.loginFalse("Wrong account name or password");
 		}
 	}
 		

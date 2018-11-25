@@ -1,25 +1,21 @@
 package ui.player;
 
+import java.awt.EventQueue;
+import javax.swing.JOptionPane;
 import java.util.ArrayList;
 
-import common.ErrorType;
 import common.IAccount;
 import common.IBankMessage;
 import common.IBidCollection;
-import common.IStock;
 import common.IStockCollection;
 import common.Message;
-import common.MessageType;
 import player.PlayerClient;
-import common.IStockMessage;
 
 public class PlayerFrameController {
 	
-	private PlayerClient playerClient;
-	
-	public PlayerFrameController(PlayerClient playerClient) {
-		this.playerClient = playerClient;
-	}
+	private PlayerClient _client;
+	private LoginFrame _loginFrame;
+	private PlayerFrame _playerFrame;
 	
 	public void addBankMessages(ArrayList<IBankMessage> messages) {
 		messages.forEach(message -> {
@@ -30,32 +26,47 @@ public class PlayerFrameController {
 	public void addStockExchangeMessages(ArrayList<Message> messages) {
 		messages.forEach(message -> {
 			System.out.println(message.getMessage());
-			if (message.getType().equals(MessageType.AdjustStockPrice)) {
-				for (IStock stock: ((IStockMessage) message).getStocks().toArray()) {
-					System.out.println(stock.getCode() + ": " + stock.getPrice());
-				}
-			}
 		});
 	}
 	
-	public void updateStocks(IStockCollection stocks) {
-		
+	public PlayerFrameController(PlayerClient client) {
+		_client = client;
 	}
 	
-	public void updateBids(IBidCollection bids) {
-		
+	public void start() {
+		_loginFrame = new LoginFrame(this);
 	}
 	
-	public void showLogin() {
-		this.playerClient.register("test", "test");
-		this.playerClient.loginWithRegisteredName();
+	public void startTrans(IStockCollection stocks, IBidCollection bids, IAccount account) {
+		_loginFrame.dispose();
+		_playerFrame = new PlayerFrame();
 	}
 	
-	public void showError(ErrorType errorType) {
-		
+	public void loginFalse(String Msg) {
+		JOptionPane.showMessageDialog(_loginFrame, Msg, "Login false",JOptionPane.OK_OPTION );
 	}
 	
-	public void showMainView(IStockCollection stocks, IBidCollection bids, IAccount account) {
-		
+	public void signUpFalse(String Msg) {
+		JOptionPane.showMessageDialog(_loginFrame, Msg, "SignUp false",JOptionPane.OK_OPTION );
+	}
+	
+	public void login(String acc,String pass) {
+		_client.login(acc, pass);
+	}
+	
+	public void SignUp(String acc,String pass) {
+		_client.register(acc, pass);
+	}
+	
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					PlayerFrameController frame = new PlayerFrameController(null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }
