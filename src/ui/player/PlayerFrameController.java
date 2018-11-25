@@ -19,13 +19,13 @@ public class PlayerFrameController {
 	
 	public void addBankMessages(ArrayList<IBankMessage> messages) {
 		messages.forEach(message -> {
-			System.out.println(message.getMessage() + ": " + message.getBalance());
+			_playerFrame.addBankMessage(message.getMessage() + ": " + message.getBalance());
 		});
 	}
 	
 	public void addStockExchangeMessages(ArrayList<Message> messages) {
 		messages.forEach(message -> {
-			System.out.println(message.getMessage());
+			_playerFrame.addStockMessage(message.getMessage());
 		});
 	}
 	
@@ -58,6 +58,15 @@ public class PlayerFrameController {
 		_client.register(acc, pass);
 	}
 	
+	public void setRank(int rank) {
+		_playerFrame.showRank(rank);
+	}
+	public void setTime(int min,int sec) {
+		_playerFrame.showTime(min, sec);
+	}
+	public void setMoney(float money) {
+		_playerFrame.showMoney(money);
+	}
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

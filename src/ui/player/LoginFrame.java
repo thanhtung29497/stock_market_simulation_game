@@ -38,6 +38,15 @@ public class LoginFrame extends JFrame {
 		contentPane.add(lblAcc);
 		
 		JButton btnSignUp = new JButton("Sign up");
+		btnSignUp.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String acc = txtAcount.getText();
+				String pass = new String(pwdPass.getPassword());
+
+				_controller.SignUp(acc, pass);
+			}
+		});
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnSignUp, -10, SpringLayout.SOUTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.EAST, btnSignUp, -10, SpringLayout.EAST, contentPane);
 		contentPane.add(btnSignUp);
