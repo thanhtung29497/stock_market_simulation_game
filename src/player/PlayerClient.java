@@ -11,7 +11,9 @@ import common.IPlayerStockController;
 import ui.player.PlayerFrameController;
 
 public class PlayerClient {
-		
+	
+	private PlayerFrameController _FrameController = null;
+	private PlayerFrameController _FrameControler;
 	public static void main (String[] args) {
 		try {
 			Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
@@ -28,7 +30,7 @@ public class PlayerClient {
 			
 //			ComputerPlayer computer1 = new ComputerPlayer(accountController, stockController);
 			
-			PlayerFrameController playerFrameController = new PlayerFrameController(player1);
+			PlayerFrameController playerFrameController = new PlayerFrameController(null);
 			
 			Timer messageTimer = new Timer();
 			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(playerFrameController), 0, Convention.RETRIEVE_MESSAGE_PERIOD);
@@ -37,5 +39,21 @@ public class PlayerClient {
 			System.out.println("Exception:");
 			e.printStackTrace();	
 		}
+	}
+	
+	public void login(String Acc,String pass) {
+		//Goij 1 trong 3
+		_FrameController.startTrans();
+		_FrameController.loginFalse("Tai khoan hoac mk khong dung");
+		_FrameController.loginFalse("Khong ket noi dc voi may chu");
+		
+	}
+	
+	public void signUp(String Acc,String pass) {
+		//Goij 1 trong 3
+		_FrameController.startTrans();
+		_FrameController.signUpFalse("Tai khoan hoac mk khong dung");
+		_FrameController.signUpFalse("Khong ket noi dc voi may chu");
+		
 	}
 }
