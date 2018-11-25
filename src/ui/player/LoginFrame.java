@@ -79,6 +79,17 @@ public class LoginFrame extends JFrame {
 			}
 		});
 		
+		btnSignUp.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String acc = txtAcount.getText();
+				String pass = new String(pwdPass.getPassword());
+
+				_controller.SignUp(acc, pass);
+
+			}
+		});
+		
 		setVisible(true);
 		_controller = controller;
 	}

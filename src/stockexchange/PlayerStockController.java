@@ -5,7 +5,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import common.IBid;
+import common.IBidCollection;
 import common.IPlayerStockRemote;
+import common.IStockCollection;
 import common.Message;
 import exception.InvalidLoginException;
 import exception.NotEnoughMoneyException;
@@ -38,6 +40,17 @@ public class PlayerStockController extends UnicastRemoteObject implements IPlaye
 	@Override
 	public ArrayList<Message> retrieveMessages() throws RemoteException {
 		return this.stockExchangeManager.retrieveMessages(this.accountName, true);
+	}
+
+	@Override
+	public IBidCollection getBids() throws RemoteException {
+		return this.stockExchangeManager.getBids();
+	}
+
+	@Override
+	public IStockCollection getStocks() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

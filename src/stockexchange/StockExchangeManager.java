@@ -8,6 +8,7 @@ import java.util.Timer;
 import common.Convention;
 import common.IAccount;
 import common.IBankController;
+import common.IBidCollection;
 import common.IStock;
 import common.IStockCollection;
 import common.Message;
@@ -21,6 +22,7 @@ public class StockExchangeManager {
 	
 	private IBankController bankController;
 	private IStockCollection stocks;
+	private IBidCollection bids;
 	private ArrayList<IAccount> accounts;
 	private HashMap<String, ArrayList<Message>> messages;
 	private static final String PLAYER_PREFIX = "Player";
@@ -107,6 +109,10 @@ public class StockExchangeManager {
 			this.addMessageByKey(key, new StockMessage(MessageType.AdjustStockPrice, 
 					"All stock prices were adjusted periodically!", this.getStocks()));
 		}
+	}
+	
+	public IBidCollection getBids() {
+		return this.bids;
 	}
 	
 }

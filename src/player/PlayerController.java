@@ -87,14 +87,13 @@ public abstract class PlayerController implements IPlayerController{
 	}
 
 	@Override
-	public IStockCollection getAllStocks() {
-		return this.stockList;
+	public IStockCollection getAllStocks() throws RemoteException{
+		return this.stockRemote.getStocks();
 	}
 
 	@Override
-	public IBidCollection getAllBids() {
-		// TODO Auto-generated method stub
-		return null;
+	public IBidCollection getAllBids() throws RemoteException {
+		return this.stockRemote.getBids();
 	}
 
 	@Override

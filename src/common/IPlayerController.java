@@ -10,8 +10,8 @@ import exception.NotFoundAccountException;
 
 public interface IPlayerController extends IStockOwner {
 	public IAccount getAccount();
-	public IStockCollection getAllStocks();
-	public IBidCollection getAllBids();
+	public IStockCollection getAllStocks() throws RemoteException;
+	public IBidCollection getAllBids() throws RemoteException;
 	public IStockCollection getOwnStocks();
 	public void updateBids(IBidCollection collection);
 	public void updateStocks(IStockCollection collection);
