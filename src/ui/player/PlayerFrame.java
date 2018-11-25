@@ -8,6 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+
+import ui.table.StockBoard;
+
 import javax.swing.JLabel;
 import javax.swing.SpringLayout;
 import java.awt.Color;
@@ -48,7 +51,7 @@ public class PlayerFrame extends JFrame {
 		SpringLayout sl_contentPane = new SpringLayout();
 		contentPane.setLayout(sl_contentPane);
 		
-		JLabel lblTockboard = new JLabel("Tock Board");
+		JLabel lblTockboard = new JLabel("Stock Board");
 		lblTockboard.setFont(lblTockboard.getFont().deriveFont(lblTockboard.getFont().getStyle() | Font.BOLD));
 		lblTockboard.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTockboard.setBorder(LineBorder.createBlackLineBorder());
@@ -144,31 +147,26 @@ public class PlayerFrame extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		pl_StockBoard.add(scrollPane, BorderLayout.CENTER);
 		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null, null, null, null},
-			},
-			new String[] {
-				"Code", "Company name", "Price", "Quaniti", "??"
-			}
-		) {
-			boolean[] columnEditables = new boolean[] {
-				false, false, false, false, false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-		});
-		table.getColumnModel().getColumn(0).setResizable(false);
-		table.getColumnModel().getColumn(0).setPreferredWidth(74);
-		table.getColumnModel().getColumn(1).setResizable(false);
-		table.getColumnModel().getColumn(1).setPreferredWidth(159);
-		table.getColumnModel().getColumn(2).setResizable(false);
-		table.getColumnModel().getColumn(2).setPreferredWidth(85);
-		table.getColumnModel().getColumn(3).setResizable(false);
-		table.getColumnModel().getColumn(4).setResizable(false);
-		table.getColumnModel().getColumn(4).setPreferredWidth(49);
+		table = new StockBoard(
+					new DefaultTableModel(
+						new Object[][] {
+							{},
+						},
+						new String[] {
+								"CK","Trần","Sàn","TC","KL2","Giá 2","KL1","Giá 1","Giá","KL","+/-","KL1","Giá 1","KL2","Giá 2"
+						}
+					) {
+						boolean[] columnEditables = new boolean[] {
+								false, false, false, false, false
+						};
+						public boolean isCellEditable(int row, int column) {
+							return columnEditables[column];
+						}
+					});
+		for(int i=0;i<12;i++)
+			table.getColumnModel().getColumn(i).setResizable(false);
+		
+		table.setBackground(Color.black);
 		scrollPane.setViewportView(table);
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, pl_Transaction, -10, SpringLayout.SOUTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.EAST, pl_Transaction, -10, SpringLayout.EAST, contentPane);
