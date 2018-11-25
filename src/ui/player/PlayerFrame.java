@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import common.IPlayer;
+
 import ui.table.StockBoard;
 
 import javax.swing.JLabel;

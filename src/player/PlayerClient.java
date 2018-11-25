@@ -1,59 +1,93 @@
 package player;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Timer;
 
 import bank.MessageRetrievingTask;
 import common.Convention;
-import common.IAccountController;
-import common.IPlayerStockController;
+import common.IAccountRemote;
+import common.IPlayerStockRemote;
+import exception.DuplicateLoginNameException;
+import exception.ExceedMaximumAccountException;
+import exception.InvalidLoginException;
+import exception.NotFoundAccountException;
 import ui.player.PlayerFrameController;
 
 public class PlayerClient {
 	
-	private PlayerFrameController _FrameController = null;
-	private PlayerFrameController _FrameControler;
-	public static void main (String[] args) {
+	private PlayerFrameController viewController;
+	private	PlayerController modelController;
+	private Registry registry;
+	private IAccountRemote accountController;
+	private	IPlayerStockRemote stockController;
+	
+	private PlayerClient() {
+		this.viewController = new PlayerFrameController(this);
+	}
+	
+	public void run() {
+		this.viewController.start();
+	}
+	
+	private void connectToRegistry() throws RemoteException, NotBoundException {
+		this.registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
+		this.accountController = (IAccountRemote)registry.lookup(
+				Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
+		this.stockController = (IPlayerStockRemote)registry.lookup(
+				Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME);
+		this.modelController = new HumanPlayer(this.accountController, this.stockController);
+	}
+	
+	public void register(String name, String password) {
 		try {
-			Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
-			IAccountController accountController = (IAccountController)registry.lookup(
-					Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
-			IPlayerStockController stockController = (IPlayerStockController)registry.lookup(
-					Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME);
-			
-			HumanPlayer player1 = new HumanPlayer(accountController, stockController);
-			player1.registerBank("tung2", "tung");
-			player1.loginBank();
-			
-			player1.registerStockExchange();
-			
-//			ComputerPlayer computer1 = new ComputerPlayer(accountController, stockController);
-			
-			PlayerFrameController playerFrameController = new PlayerFrameController(null);
+			this.connectToRegistry();
+			this.modelController.registerBank(name, password);
+			this.modelController.loginBank();
+			this.modelController.registerStockExchange();
 			
 			Timer messageTimer = new Timer();
-			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(playerFrameController), 0, Convention.RETRIEVE_MESSAGE_PERIOD);
-
-		} catch (Exception e) {
-			System.out.println("Exception:");
-			e.printStackTrace();	
+			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), 0, Convention.RETRIEVE_MESSAGE_PERIOD);
+			
+			// Display
+			this.viewController.startTrans(this.modelController.getAllStocks(),
+					this.modelController.getAllBids(),
+					this.modelController.getAccount());
+			
+		} catch (RemoteException | NotBoundException e) {
+			this.viewController.signUpFalse("Failed to connect to server");
+		} catch (ExceedMaximumAccountException e) {
+			this.viewController.signUpFalse("Exceed of maximum account");
+		} catch (DuplicateLoginNameException e) {
+			this.viewController.signUpFalse("Duplicate login name");
+		} catch (InvalidLoginException | NotFoundAccountException e) {
+			this.viewController.signUpFalse("Invalid register");
 		}
 	}
 	
-	public void login(String Acc,String pass) {
-		//Goij 1 trong 3
-		_FrameController.startTrans();
-		_FrameController.loginFalse("Tai khoan hoac mk khong dung");
-		_FrameController.loginFalse("Khong ket noi dc voi may chu");
-		
+	public void login(String name, String password) {
+		try {
+			this.modelController.loginBank(name, password);
+			this.modelController.registerStockExchange();
+			
+			Timer messageTimer = new Timer();
+			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), 0, Convention.RETRIEVE_MESSAGE_PERIOD);
+			
+			this.viewController.startTrans(this.modelController.getAllStocks(),
+					this.modelController.getAllBids(),
+					this.modelController.getAccount());
+			
+		} catch (RemoteException e) {
+			this.viewController.loginFalse("Failed to connect to server");
+		} catch (InvalidLoginException | NotFoundAccountException e) {
+			this.viewController.loginFalse("Wrong account name or password");
+		}
 	}
-	
-	public void signUp(String Acc,String pass) {
-		//Goij 1 trong 3
-		_FrameController.startTrans();
-		_FrameController.signUpFalse("Tai khoan hoac mk khong dung");
-		_FrameController.signUpFalse("Khong ket noi dc voi may chu");
 		
+	public static void main (String[] args) {
+		PlayerClient playerClient = new PlayerClient();
+		playerClient.run();
 	}
 }

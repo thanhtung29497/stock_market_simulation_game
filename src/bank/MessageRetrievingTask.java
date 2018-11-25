@@ -5,27 +5,27 @@ import java.util.TimerTask;
 
 import common.IBankMessage;
 import common.Message;
-import player.HumanPlayer;
+import player.PlayerController;
 import ui.player.PlayerFrameController;
 
 public class MessageRetrievingTask extends TimerTask {
-	private PlayerFrameController controller;
+	private PlayerFrameController viewController;
+	private PlayerController modelController;
 
 	@Override
 	public void run() {
 		try {
-			HumanPlayer player = this.controller.getPlayer();
 			
 			//	Retrieve and display messages from Bank server
-			ArrayList<IBankMessage> bankMessages = player.retrieveBankMessages();
+			ArrayList<IBankMessage> bankMessages = this.modelController.retrieveBankMessages();
 			if (!bankMessages.isEmpty()) {
-				this.controller.addBankMessages(bankMessages);
+				this.viewController.addBankMessages(bankMessages);
 			}
 			
 			//	Retrieve and display messages from Stock Exchange server
-			ArrayList<Message> stockExchangeMessages = player.retrieveStockExchangeMessages();
+			ArrayList<Message> stockExchangeMessages = this.modelController.retrieveStockExchangeMessages();
 			if (!stockExchangeMessages.isEmpty()) {
-				this.controller.addStockExchangeMessages(stockExchangeMessages);
+				this.viewController.addStockExchangeMessages(stockExchangeMessages);
 			}
 			
 		} catch(Exception e) {
@@ -33,7 +33,8 @@ public class MessageRetrievingTask extends TimerTask {
 		}
 	}
 	
-	public MessageRetrievingTask(PlayerFrameController controller) {
-		this.controller = controller;
+	public MessageRetrievingTask(PlayerFrameController viewController, PlayerController modelController) {
+		this.viewController = viewController;
+		this.modelController = modelController;
 	}	
 }

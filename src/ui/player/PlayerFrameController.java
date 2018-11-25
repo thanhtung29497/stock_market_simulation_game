@@ -4,9 +4,11 @@ import java.awt.EventQueue;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 
+import common.IAccount;
 import common.IBankMessage;
+import common.IBidCollection;
+import common.IStockCollection;
 import common.Message;
-import player.HumanPlayer;
 import player.PlayerClient;
 
 public class PlayerFrameController {
@@ -29,10 +31,13 @@ public class PlayerFrameController {
 	
 	public PlayerFrameController(PlayerClient client) {
 		_client = client;
+	}
+	
+	public void start() {
 		_loginFrame = new LoginFrame(this);
 	}
 	
-	public void startTrans() {
+	public void startTrans(IStockCollection stocks, IBidCollection bids, IAccount account) {
 		_loginFrame.dispose();
 		_playerFrame = new PlayerFrame();
 	}
@@ -50,7 +55,7 @@ public class PlayerFrameController {
 	}
 	
 	public void SignUp(String acc,String pass) {
-		_client.signUp(acc, pass);
+		_client.register(acc, pass);
 	}
 	
 	public static void main(String[] args) {

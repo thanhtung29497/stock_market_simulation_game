@@ -4,24 +4,24 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import common.IAccount;
-import common.IAccountController;
+import common.IAccountRemote;
 import common.IBankMessage;
 import common.IBid;
 import common.IBidCollection;
-import common.IPlayer;
-import common.IPlayerStockController;
+import common.IPlayerController;
+import common.IPlayerStockRemote;
 import common.IStockCollection;
 import common.IStockOwner;
 import common.Message;
 import exception.*;
 
-public abstract class Player implements IPlayer{
+public abstract class PlayerController implements IPlayerController{
 
 	private static final long serialVersionUID = 1L;
 	protected IStockCollection stockList;
 	protected IAccount account;
-	protected IAccountController accountController;
-	protected IPlayerStockController stockController;
+	protected IAccountRemote accountRemote;
+	protected IPlayerStockRemote stockRemote;
 
 	@Override
 	public abstract void processBid(IBid bid);
@@ -49,18 +49,18 @@ public abstract class Player implements IPlayer{
 	
 	@Override
 	public void registerBank(String name, String password) throws ExceedMaximumAccountException, DuplicateLoginNameException, RemoteException  {
-		IAccount account = this.accountController.register(name, password);
+		IAccount account = this.accountRemote.register(name, password);
 		this.setAccount(account);
 	}
 	
 	@Override
 	public void registerStockExchange() throws InvalidLoginException, RemoteException, NotFoundAccountException  {
-		this.stockController.register(account.getName(), account.getPassword());
+		this.stockRemote.register(account.getName(), account.getPassword());
 	}
 	
 	@Override
 	public void loginBank() throws InvalidLoginException, NotFoundAccountException, RemoteException {
-		this.accountController.login(this.account.getName(), this.account.getPassword());
+		this.accountRemote.login(this.account.getName(), this.account.getPassword());
 	}
 	
 	@Override 
@@ -70,7 +70,7 @@ public abstract class Player implements IPlayer{
 	
 	@Override
 	public ArrayList<IBankMessage> retrieveBankMessages() throws RemoteException{
-		ArrayList<IBankMessage> messages = this.accountController.retrieveMessages();
+		ArrayList<IBankMessage> messages = this.accountRemote.retrieveMessages();
 		if (!messages.isEmpty()) {
 			this.account.updateBalance(messages.get(messages.size() - 1).getBalance());
 		}
@@ -79,7 +79,7 @@ public abstract class Player implements IPlayer{
 	
 	@Override 
 	public ArrayList<Message> retrieveStockExchangeMessages() throws RemoteException {
-		ArrayList<Message> messages = this.stockController.retrieveMessages();
+		ArrayList<Message> messages = this.stockRemote.retrieveMessages();
 		if (!messages.isEmpty()) {
 			
 		}
@@ -112,6 +112,13 @@ public abstract class Player implements IPlayer{
 	@Override
 	public void updateStocks(IStockCollection collection) {
 		this.stockList = collection;
+	}
+
+	@Override
+	public void loginBank(String name, String password)
+			throws InvalidLoginException, NotFoundAccountException, RemoteException {
+		IAccount account = this.accountRemote.login(name, password);
+		this.setAccount(account);
 	}
 	
 }

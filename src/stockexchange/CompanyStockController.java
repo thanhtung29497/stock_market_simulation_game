@@ -5,13 +5,13 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import common.IBid;
-import common.ICompanyStockController;
+import common.ICompanyStockRemote;
 import common.IStock;
 import common.Message;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
 
-public class CompanyStockController extends UnicastRemoteObject implements ICompanyStockController {
+public class CompanyStockController extends UnicastRemoteObject implements ICompanyStockRemote {
 
 	private static final long serialVersionUID = 1L;
 	private StockExchangeManager stockExchangeManager;

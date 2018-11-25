@@ -3,22 +3,22 @@ package player;
 import java.rmi.RemoteException;
 
 import common.Convention;
-import common.IAccountController;
+import common.IAccountRemote;
 import common.IBid;
-import common.IPlayerStockController;
+import common.IPlayerStockRemote;
 import common.Utility;
 import exception.DuplicateLoginNameException;
 import exception.ExceedMaximumAccountException;
 import exception.InvalidLoginException;
 import exception.NotFoundAccountException;
 
-public class ComputerPlayer extends Player {
+public class ComputerPlayer extends PlayerController {
 	
 	private static final long serialVersionUID = 1L;
 
-	public ComputerPlayer(IAccountController accountController, IPlayerStockController stockController) throws ExceedMaximumAccountException, DuplicateLoginNameException, InvalidLoginException, NotFoundAccountException, RemoteException {
-		this.accountController = accountController;
-		this.stockController = stockController;
+	public ComputerPlayer(IAccountRemote accountController, IPlayerStockRemote stockController) throws ExceedMaximumAccountException, DuplicateLoginNameException, InvalidLoginException, NotFoundAccountException, RemoteException {
+		this.accountRemote = accountController;
+		this.stockRemote = stockController;
 		String name = Utility.generateComputerName();
 		String password = Convention.COMPUTER_PLAYER_PASSWORD;
 		

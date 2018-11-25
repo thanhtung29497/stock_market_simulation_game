@@ -5,13 +5,13 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import common.IBid;
-import common.IPlayerStockController;
+import common.IPlayerStockRemote;
 import common.Message;
 import exception.InvalidLoginException;
 import exception.NotEnoughMoneyException;
 import exception.NotFoundAccountException;
 
-public class PlayerStockController extends UnicastRemoteObject implements IPlayerStockController{
+public class PlayerStockController extends UnicastRemoteObject implements IPlayerStockRemote{
 
 	private StockExchangeManager stockExchangeManager;
 	private static final long serialVersionUID = 1L;

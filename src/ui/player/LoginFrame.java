@@ -4,8 +4,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import common.IPlayer;
-
 import javax.swing.JLabel;
 import javax.swing.SpringLayout;
 import javax.swing.JTextField;
@@ -21,7 +19,6 @@ public class LoginFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	IPlayer player=null;
 	private JTextField txtAcount;
 	private JPasswordField pwdPass;
 	private PlayerFrameController _controller;
@@ -76,7 +73,9 @@ public class LoginFrame extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				String acc = txtAcount.getText();
 				String pass = new String(pwdPass.getPassword());
+
 				_controller.login(acc,pass);
+
 			}
 		});
 		
