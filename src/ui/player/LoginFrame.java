@@ -76,7 +76,6 @@ public class LoginFrame extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				String acc = txtAcount.getText();
 				String pass = new String(pwdPass.getPassword());
-				System.out.print(acc+pass);
 				_controller.login(acc,pass);
 			}
 		});
