@@ -1,18 +1,17 @@
 package stockexchange;
 
+import common.Convention;
 import common.IStock;
 
 public class Stock implements IStock {
 	
 	private static final long serialVersionUID = 1L;
 	private String code;
-	private int quantity;
 	private double price;
 	private String companyName;
 
-	public Stock(String code, int quantity, double price, String companyName) {
+	public Stock(String code, double price, String companyName) {
 		this.code = code;
-		this.quantity = quantity;
 		this.price = price;
 		this.companyName = companyName;
 	}
@@ -23,18 +22,8 @@ public class Stock implements IStock {
 	}
 
 	@Override
-	public int getQuantity() {
-		return quantity;
-	}
-
-	@Override
 	public double getPrice() {
 		return price;
-	}
-
-	@Override
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
 	}
 
 	@Override
@@ -45,6 +34,16 @@ public class Stock implements IStock {
 	@Override
 	public String getCompanyName() {
 		return this.companyName;
+	}
+
+	@Override
+	public double getCapPrice() {
+		return this.price * (1 + Convention.STOCK_PERCENT_RANGE);
+	}
+
+	@Override
+	public double getFloorPrice() {
+		return this.price * (1 - Convention.STOCK_PERCENT_RANGE);
 	}
 
 }

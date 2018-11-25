@@ -7,9 +7,10 @@ import common.IAccount;
 import common.IAccountController;
 import common.IBankMessage;
 import common.IBid;
+import common.IBidCollection;
 import common.IPlayer;
 import common.IPlayerStockController;
-import common.IStock;
+import common.IStockCollection;
 import common.IStockOwner;
 import common.Message;
 import exception.*;
@@ -17,15 +18,10 @@ import exception.*;
 public abstract class Player implements IPlayer{
 
 	private static final long serialVersionUID = 1L;
-	protected ArrayList<IStock> stocks = new ArrayList<>();
+	protected IStockCollection stockList;
 	protected IAccount account;
 	protected IAccountController accountController;
 	protected IPlayerStockController stockController;
-	
-	@Override
-	public ArrayList<IStock> getStocks() {
-		return this.stocks;
-	}
 
 	@Override
 	public abstract void processBid(IBid bid);
@@ -48,12 +44,7 @@ public abstract class Player implements IPlayer{
 	
 	@Override
 	public double getTotalValue() {
-		double cashValue = this.account.getBalance();
-		double stockValue = 0.0;
-		for (IStock stock: this.stocks) {
-			stockValue += stock.getPrice() * stock.getQuantity();
-		}
-		return cashValue + stockValue;
+		return this.account.getBalance();
 	}
 	
 	@Override
@@ -93,6 +84,34 @@ public abstract class Player implements IPlayer{
 			
 		}
 		return messages;
+	}
+
+	@Override
+	public IStockCollection getAllStocks() {
+		return this.stockList;
+	}
+
+	@Override
+	public IBidCollection getAllBids() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStockCollection getOwnStocks() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateBids(IBidCollection collection) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateStocks(IStockCollection collection) {
+		this.stockList = collection;
 	}
 	
 }

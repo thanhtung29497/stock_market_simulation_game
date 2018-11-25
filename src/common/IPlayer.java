@@ -10,6 +10,11 @@ import exception.NotFoundAccountException;
 
 public interface IPlayer extends IStockOwner {
 	public IAccount getAccount();
+	public IStockCollection getAllStocks();
+	public IBidCollection getAllBids();
+	public IStockCollection getOwnStocks();
+	public void updateBids(IBidCollection collection);
+	public void updateStocks(IStockCollection collection);
 	public void buy(String stockCode, int quantity);
 	public void sell(String stockCode, int quantity, IStockOwner stockOwner);
 	public double getTotalValue();
