@@ -4,14 +4,14 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 import common.Convention;
-import common.ICompanyStockController;
+import common.ICompanyStockRemote;
 
 public class CompanyClient {
 	
 	public static void main (String[] args) {
 		try {
 			Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
-			ICompanyStockController stockController = (ICompanyStockController)registry.lookup(
+			ICompanyStockRemote stockController = (ICompanyStockRemote)registry.lookup(
 					Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.COMPANY_STOCK_CONTROLLER_NAME);
 			
 			Company company1 = new Company("Cengroup", stockController);

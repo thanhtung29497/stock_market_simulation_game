@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import common.IPlayer;
+import common.IPlayerController;
 
 import javax.swing.JLabel;
 
@@ -12,9 +12,9 @@ public class LoginFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	IPlayer player=null;
+	IPlayerController player=null;
 	
-	public LoginFrame(IPlayer player) {
+	public LoginFrame(IPlayerController player) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();

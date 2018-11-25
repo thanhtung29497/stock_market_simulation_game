@@ -1,24 +1,22 @@
 package company;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import common.IBid;
-import common.ICompany;
-import common.ICompanyStockController;
+import common.ICompanyController;
+import common.ICompanyStockRemote;
 import common.IStock;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
 
-public class Company implements ICompany {
+public class Company implements ICompanyController {
 
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private IStock stock;
-	private ICompanyStockController stockController;
+	private ICompanyStockRemote stockController;
 	
-	public Company(String name, ICompanyStockController stockController) {
+	public Company(String name, ICompanyStockRemote stockController) {
 		this.name = name;
 		this.stockController = stockController;
 	}

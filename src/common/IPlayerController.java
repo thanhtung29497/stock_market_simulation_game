@@ -8,7 +8,7 @@ import exception.ExceedMaximumAccountException;
 import exception.InvalidLoginException;
 import exception.NotFoundAccountException;
 
-public interface IPlayer extends IStockOwner {
+public interface IPlayerController extends IStockOwner {
 	public IAccount getAccount();
 	public IStockCollection getAllStocks();
 	public IBidCollection getAllBids();
@@ -20,6 +20,7 @@ public interface IPlayer extends IStockOwner {
 	public double getTotalValue();
 	public void registerBank(String name, String password) throws ExceedMaximumAccountException, DuplicateLoginNameException, RemoteException;
 	public void loginBank() throws InvalidLoginException, NotFoundAccountException, RemoteException;
+	public void loginBank(String name, String password) throws InvalidLoginException, NotFoundAccountException, RemoteException;
 	public void setAccount(IAccount account);
 	public void registerStockExchange() throws InvalidLoginException, RemoteException, NotFoundAccountException;
 	public ArrayList<IBankMessage> retrieveBankMessages() throws RemoteException;

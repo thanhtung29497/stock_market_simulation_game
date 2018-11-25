@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import common.*;
 import exception.*;
 
-public class AccountController extends UnicastRemoteObject implements IAccountController {
+public class AccountController extends UnicastRemoteObject implements IAccountRemote {
 
 	private static final long serialVersionUID = 1L;
 	public static final String DOMAIN = "account";
@@ -31,13 +31,14 @@ public class AccountController extends UnicastRemoteObject implements IAccountCo
 	}
 
 	@Override
-	public void login(String name, String password) throws RemoteException, NotFoundAccountException, InvalidLoginException {
+	public IAccount login(String name, String password) throws RemoteException, NotFoundAccountException, InvalidLoginException {
 		Account account = this.bankManager.getAccountByName(name);
 		if (!account.checkPassword(password)) {
 			throw new InvalidLoginException();
 		}
 		this.account = account;
 		System.out.println("Login successfully: " + account.getName());
+		return account;
 	}
 
 	@Override

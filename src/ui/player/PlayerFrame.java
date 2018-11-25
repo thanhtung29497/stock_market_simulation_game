@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import common.IPlayer;
+import common.IPlayerController;
 
 import javax.swing.JLabel;
 
@@ -20,7 +20,7 @@ public class PlayerFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public PlayerFrame(IPlayer player) {
+	public PlayerFrame(IPlayerController player) {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);

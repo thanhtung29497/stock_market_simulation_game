@@ -2,16 +2,24 @@ package ui.player;
 
 import java.util.ArrayList;
 
+import common.ErrorType;
+import common.IAccount;
 import common.IBankMessage;
+import common.IBidCollection;
 import common.IStock;
+import common.IStockCollection;
 import common.Message;
 import common.MessageType;
-import player.HumanPlayer;
+import player.PlayerClient;
 import common.IStockMessage;
 
 public class PlayerFrameController {
 	
-	private HumanPlayer player;
+	private PlayerClient playerClient;
+	
+	public PlayerFrameController(PlayerClient playerClient) {
+		this.playerClient = playerClient;
+	}
 	
 	public void addBankMessages(ArrayList<IBankMessage> messages) {
 		messages.forEach(message -> {
@@ -30,11 +38,24 @@ public class PlayerFrameController {
 		});
 	}
 	
-	public PlayerFrameController(HumanPlayer player) {
-		this.player = player;
+	public void updateStocks(IStockCollection stocks) {
+		
 	}
 	
-	public HumanPlayer getPlayer() {
-		return this.player;
+	public void updateBids(IBidCollection bids) {
+		
+	}
+	
+	public void showLogin() {
+		this.playerClient.register("test", "test");
+		this.playerClient.loginWithRegisteredName();
+	}
+	
+	public void showError(ErrorType errorType) {
+		
+	}
+	
+	public void showMainView(IStockCollection stocks, IBidCollection bids, IAccount account) {
+		
 	}
 }
