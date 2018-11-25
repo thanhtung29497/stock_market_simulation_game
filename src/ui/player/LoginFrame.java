@@ -74,7 +74,7 @@ public class LoginFrame extends JFrame {
 				String acc = txtAcount.getText();
 				String pass = new String(pwdPass.getPassword());
 				System.out.print(acc+pass);
-				_controller.SignUp(acc,pass);
+				_controller.login(acc,pass);
 			}
 		});
 		

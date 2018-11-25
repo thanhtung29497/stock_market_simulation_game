@@ -69,6 +69,7 @@ public class PlayerClient {
 	
 	public void login(String name, String password) {
 		try {
+			this.connectToRegistry();
 			this.modelController.loginBank(name, password);
 			this.modelController.registerStockExchange();
 			
@@ -79,7 +80,7 @@ public class PlayerClient {
 					this.modelController.getAllBids(),
 					this.modelController.getAccount());
 			
-		} catch (RemoteException e) {
+		} catch (RemoteException | NotBoundException e) {
 			this.viewController.loginFalse("Failed to connect to server");
 		} catch (InvalidLoginException | NotFoundAccountException e) {
 			this.viewController.loginFalse("Wrong account name or password");
