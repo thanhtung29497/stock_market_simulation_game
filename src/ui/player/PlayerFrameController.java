@@ -13,17 +13,19 @@ import player.PlayerClient;
 
 public class PlayerFrameController {
 	
-	private PlayerClient _client;
-	private LoginFrame _loginFrame;
-	private PlayerFrame _playerFrame;
+	private PlayerClient _client=null;
+	private LoginFrame _loginFrame=null;
+	private PlayerFrame _playerFrame=null;
 	
 	public void addBankMessages(ArrayList<IBankMessage> messages) {
+		if(_playerFrame==null) return;
 		messages.forEach(message -> {
 			_playerFrame.addBankMessage(message.getMessage() + ": " + message.getBalance());
 		});
 	}
 	
 	public void addStockExchangeMessages(ArrayList<Message> messages) {
+		if(_playerFrame==null)return;
 		messages.forEach(message -> {
 			_playerFrame.addStockMessage(message.getMessage());
 		});
@@ -40,8 +42,16 @@ public class PlayerFrameController {
 	public void startTrans(IStockCollection stocks, IBidCollection bids, IAccount account) {
 		_loginFrame.dispose();
 		_playerFrame = new PlayerFrame();
+		UpdateStocks(stocks);
+		UpdateIBidCollection(bids);
+		setMoney((float)account.getBalance());
 	}
-	
+	public void UpdateStocks(IStockCollection stocks) {
+		_playerFrame.showStocks(stocks);
+	}
+	public void UpdateIBidCollection(IBidCollection bids) {
+		_playerFrame.showBid(bids);
+	}
 	public void loginFalse(String Msg) {
 		JOptionPane.showMessageDialog(_loginFrame, Msg, "Login false",JOptionPane.OK_OPTION );
 	}

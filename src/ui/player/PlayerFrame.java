@@ -22,6 +22,11 @@ import java.awt.BorderLayout;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+
+import common.IBidCollection;
+import common.IStockCollection;
+
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.SwingConstants;
 import java.awt.Font;
@@ -36,6 +41,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 
@@ -46,8 +52,8 @@ public class PlayerFrame extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTable table;
-	private JTable table_1;
+	private JTable tablStock;
+	private JTable tablBid;
 	Vector<String> BankMsgData ;
 	Vector<String> StockMsgData ;
 	JList list_BankMs;
@@ -138,7 +144,7 @@ public class PlayerFrame extends JFrame {
 		JScrollPane pl_StockMessage = new JScrollPane();
 		
 		list_BankMs = new JList();
-		list_BankMs.setVisibleRowCount(2);
+		list_BankMs.setCellRenderer(new ListCellRenderer());
 		pl_BankMessage.setViewportView(list_BankMs);
 		
 		sl_contentPane.putConstraint(SpringLayout.WEST, pl_StockMessage, 0, SpringLayout.WEST, pl_PlayerInfo);
@@ -148,8 +154,8 @@ public class PlayerFrame extends JFrame {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		Pl_BidBroad.add(scrollPane_1, BorderLayout.CENTER);
 		
-		table_1 = new JTable() ;
-		table_1.setModel(new DefaultTableModel(
+		tablBid = new JTable() ;
+		tablBid.setModel(new DefaultTableModel(
 			new Object[][] {
 				{"12.2"}
 			},
@@ -157,8 +163,8 @@ public class PlayerFrame extends JFrame {
 				"New column", "New column", "New column", "New column", "New column", "New column"
 			}
 		) );
-		table_1.getTableHeader().setReorderingAllowed(false);
-		scrollPane_1.setViewportView(table_1);
+		tablBid.getTableHeader().setReorderingAllowed(false);
+		scrollPane_1.setViewportView(tablBid);
 		sl_contentPane.putConstraint(SpringLayout.EAST, pl_StockMessage, 0, SpringLayout.EAST, pl_PlayerInfo);
 		pl_StockMessage.setBorder(new LineBorder(new Color(0, 0, 0)));
 		pl_StockMessage.setBackground(Color.WHITE);
@@ -179,7 +185,7 @@ public class PlayerFrame extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		pl_StockBoard.add(scrollPane, BorderLayout.CENTER);
 		
-		table = new StockBoard(
+		tablStock = new StockBoard(
 					new DefaultTableModel(
 						new Object[][] {
 							{},
@@ -196,10 +202,10 @@ public class PlayerFrame extends JFrame {
 						}
 					});
 		for(int i=0;i<12;i++)
-			table.getColumnModel().getColumn(i).setResizable(false);
+			tablStock.getColumnModel().getColumn(i).setResizable(false);
 		
-		table.setBackground(Color.black);
-		scrollPane.setViewportView(table);
+		tablStock.setBackground(Color.black);
+		scrollPane.setViewportView(tablStock);
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, pl_Transaction, -10, SpringLayout.SOUTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.EAST, pl_Transaction, -10, SpringLayout.EAST, contentPane);
 		pl_Transaction.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -272,6 +278,7 @@ public class PlayerFrame extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_StockMessage, 10, SpringLayout.SOUTH, lblSockEnc);
 		
 		list_StockMessage = new JList();
+		list_StockMessage.setCellRenderer(new ListCellRenderer());
 		pl_StockMessage.setViewportView(list_StockMessage);
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblSockEnc, 10, SpringLayout.SOUTH, pl_BankMessage);
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblSockEnc, 0, SpringLayout.WEST, pl_PlayerInfo);
@@ -344,12 +351,12 @@ public class PlayerFrame extends JFrame {
 	}
 	public void addBankMessage(String msg) {
 		BankMsgData.addElement(msg);
-
+		list_BankMs.setListData(BankMsgData);
 		list_BankMs.ensureIndexIsVisible(BankMsgData.size()-1);
 	}
 	public void addStockMessage(String msg) {
 		StockMsgData.addElement(msg);
-
+		list_StockMessage.setListData(StockMsgData);
 		list_StockMessage.ensureIndexIsVisible(StockMsgData.size()-1);
 	}
 	public void showRank(Integer rank) {
@@ -373,5 +380,28 @@ public class PlayerFrame extends JFrame {
 				}
 			}
 		});
+	}
+	public void showStocks(IStockCollection stocks) {
+		DefaultTableModel model = (DefaultTableModel) tablStock.getModel();
+		model.setRowCount(0);
+		stocks.toArray().forEach(stock -> {
+			model.addRow(new String[] {stock.getCode(),
+										String.valueOf(stock.getCapPrice()),
+										String.valueOf(stock.getFloorPrice()),
+										String.valueOf(stock.getPrice()),
+										});
+		});
+		model.fireTableDataChanged();
+	}
+	public void showBid(IBidCollection bids) {
+		// TODO Auto-generated method stub
+		
+	}
+}
+class ListCellRenderer extends DefaultListCellRenderer{
+	@Override
+	public Component getListCellRendererComponent(JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
+		String str= "<html><body style='width: 140px;border-top:1px solid'>"+value.toString()+"<br></body></html>";
+		return super.getListCellRendererComponent(list, str, index, isSelected, cellHasFocus);
 	}
 }
