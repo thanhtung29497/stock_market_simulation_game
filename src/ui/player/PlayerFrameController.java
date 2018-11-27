@@ -4,11 +4,12 @@ import java.awt.EventQueue;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 
+import common.BidType;
 import common.IAccount;
 import common.IBankMessage;
 import common.IBidCollection;
+import common.IMessage;
 import common.IStockCollection;
-import common.Message;
 import player.PlayerClient;
 
 public class PlayerFrameController {
@@ -23,10 +24,18 @@ public class PlayerFrameController {
 		});
 	}
 	
-	public void addStockExchangeMessages(ArrayList<Message> messages) {
+	public void addStockExchangeMessages(ArrayList<IMessage> messages) {
 		messages.forEach(message -> {
 			_playerFrame.addStockMessage(message.getMessage());
 		});
+	}
+	
+	public void updateStocks(IStockCollection stocks) {
+		
+	}
+	
+	public void updateBids(IBidCollection bids) {
+		
 	}
 	
 	public PlayerFrameController(PlayerClient client) {
@@ -64,7 +73,7 @@ public class PlayerFrameController {
 	public void setTime(int min,int sec) {
 		_playerFrame.showTime(min, sec);
 	}
-	public void setMoney(float money) {
+	public void setMoney(double money) {
 		_playerFrame.showMoney(money);
 	}
 	public static void main(String[] args) {

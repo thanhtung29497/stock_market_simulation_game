@@ -355,7 +355,7 @@ public class PlayerFrame extends JFrame {
 	public void showRank(Integer rank) {
 		lblRank.setText(rank.toString());
 	};
-	public void showMoney(Float money) {
+	public void showMoney(Double money) {
 		labelMoney.setText(money.toString());
 	};
 	public void showTime(Integer min,Integer sec) {

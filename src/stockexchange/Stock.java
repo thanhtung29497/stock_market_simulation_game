@@ -46,4 +46,9 @@ public class Stock implements IStock {
 		return this.price * (1 - Convention.STOCK_PERCENT_RANGE);
 	}
 
+	@Override
+	public Boolean isOutOfPriceRange(double price) {
+		return price > this.getCapPrice() || price < this.getFloorPrice();
+	}
+
 }

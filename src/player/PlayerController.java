@@ -3,16 +3,15 @@ package player;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import common.BidType;
 import common.IAccount;
 import common.IAccountRemote;
 import common.IBankMessage;
-import common.IBid;
 import common.IBidCollection;
+import common.IMessage;
 import common.IPlayerController;
 import common.IPlayerStockRemote;
 import common.IStockCollection;
-import common.IStockOwner;
-import common.Message;
 import exception.*;
 
 public abstract class PlayerController implements IPlayerController{
@@ -22,29 +21,19 @@ public abstract class PlayerController implements IPlayerController{
 	protected IAccount account;
 	protected IAccountRemote accountRemote;
 	protected IPlayerStockRemote stockRemote;
-
-	@Override
-	public abstract void processBid(IBid bid);
+	
+	public void updateBalance(double balance) {
+		this.account.updateBalance(balance);
+	}
 
 	@Override
 	public IAccount getAccount() {
 		return this.account;
 	}
-
-	@Override
-	public void buy(String stockCode, int quantity) {
-		
-	}
-
-	@Override
-	public void sell(String stockCode, int quantity, IStockOwner stockOwner) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
-	public double getTotalValue() {
-		return this.account.getBalance();
+	public double getTotalAmount() throws RemoteException, NotFoundAccountException {
+		return this.stockRemote.getTotalAmount();
 	}
 	
 	@Override
@@ -70,20 +59,12 @@ public abstract class PlayerController implements IPlayerController{
 	
 	@Override
 	public ArrayList<IBankMessage> retrieveBankMessages() throws RemoteException{
-		ArrayList<IBankMessage> messages = this.accountRemote.retrieveMessages();
-		if (!messages.isEmpty()) {
-			this.account.updateBalance(messages.get(messages.size() - 1).getBalance());
-		}
-		return messages;
+		return this.accountRemote.retrieveMessages();
 	}
 	
 	@Override 
-	public ArrayList<Message> retrieveStockExchangeMessages() throws RemoteException {
-		ArrayList<Message> messages = this.stockRemote.retrieveMessages();
-		if (!messages.isEmpty()) {
-			
-		}
-		return messages;
+	public ArrayList<IMessage> retrieveStockExchangeMessages() throws RemoteException {
+		return this.stockRemote.retrieveMessages();
 	}
 
 	@Override
@@ -97,20 +78,8 @@ public abstract class PlayerController implements IPlayerController{
 	}
 
 	@Override
-	public IStockCollection getOwnStocks() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void updateBids(IBidCollection collection) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateStocks(IStockCollection collection) {
-		this.stockList = collection;
+	public IStockCollection getOwnStocks() throws RemoteException {
+		return this.stockRemote.getOwnStocks();
 	}
 
 	@Override
@@ -118,6 +87,16 @@ public abstract class PlayerController implements IPlayerController{
 			throws InvalidLoginException, NotFoundAccountException, RemoteException {
 		IAccount account = this.accountRemote.login(name, password);
 		this.setAccount(account);
+	}
+
+	@Override
+	public void postBid(BidType type, String stockCode, double offerPrice, int quantity) throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException {
+		this.stockRemote.postBid(type, stockCode, quantity, offerPrice);
+	}
+
+	@Override
+	public void acceptBid(int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException {
+		this.stockRemote.acceptBid(bidId);
 	}
 	
 }

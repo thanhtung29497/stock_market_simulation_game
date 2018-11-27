@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 import common.IBid;
 import common.ICompanyStockRemote;
+import common.IMessage;
 import common.IStock;
-import common.Message;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
 
@@ -37,7 +37,7 @@ public class CompanyStockController extends UnicastRemoteObject implements IComp
 	}
 
 	@Override
-	public ArrayList<Message> retrieveMessage() throws RemoteException {
+	public ArrayList<IMessage> retrieveMessage() throws RemoteException {
 		return this.stockExchangeManager.retrieveMessages(stock.getCompanyName(), false);
 	}
 	

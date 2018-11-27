@@ -1,10 +1,12 @@
 package stockexchange;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.TimerTask;
 
 import common.IStock;
+import exception.NotFoundAccountException;
 
 public class StockPriceAdjustmentTask extends TimerTask {
 
@@ -22,7 +24,13 @@ public class StockPriceAdjustmentTask extends TimerTask {
 			stockPrices.put(stock.getCode(), floorPrice + rand.nextInt(priceRange.intValue() + 1));
 		}
 		
-		this.stockExchangeManager.adjustStockPrice(stockPrices);
+		try {
+			this.stockExchangeManager.adjustStockPrice(stockPrices);
+		} catch (RemoteException e) {
+			System.out.println("Failed to connect to bank server");
+		} catch (NotFoundAccountException e) {
+			System.out.println("Something wrong with accounts");
+		}
 		
 	}
 	

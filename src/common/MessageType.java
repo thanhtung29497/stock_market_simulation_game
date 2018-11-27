@@ -5,4 +5,8 @@ public enum MessageType {
 	AddBalance,
 	IssueStock,
 	AdjustStockPrice,
+	UpdateBid,
+	PostBid,
+	MatchBid,
+	UpdateRank,
 }

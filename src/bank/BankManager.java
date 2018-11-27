@@ -42,14 +42,19 @@ public class BankManager {
 		return this.messageMap.get(name);
 	}
 	
+	private void addMessage(String name, IBankMessage message) {
+		ArrayList<IBankMessage> messages = this.getMessagesByName(name);
+		messages.add(message);
+		this.messageMap.put(name, messages);
+	}
+	
 	public void accumulateAccounts() {
 		this.accounts.forEach(account -> {
 			double balance = account.getBalance();
 			double interest = balance * Convention.BANK_INTEREST_RATE;
 			account.updateBalance(balance + interest);
-			ArrayList<IBankMessage> messages = this.getMessagesByName(account.getName());
-			messages.add(new BankMessage(MessageType.AddBalance, "Your account was increased periodically by 1% interest!", account.getBalance()));
-			this.messageMap.put(account.getName(), messages);
+			this.addMessage(account.getName(), new BankMessage(MessageType.AddBalance, 
+					"Increased periodically by " + Convention.BANK_INTEREST_RATE * 100 + "% interest", account.getBalance()));
 		});
 	}
 	
@@ -66,5 +71,19 @@ public class BankManager {
 			}
 		}
 		throw new NotFoundAccountException(name);
+	}
+	
+	public void addBalance(String name, double amount, int bidId) throws NotFoundAccountException {
+		IAccount account = this.getAccountByName(name);
+		account.updateBalance(account.getBalance() + amount);
+		this.addMessage(name, new BankMessage(MessageType.AddBalance, 
+				"Increased by " + amount + " due to bid " + bidId, account.getBalance()));
+	}
+	
+	public void subtractBalance(String name, double amount, int bidId) throws NotFoundAccountException {
+		IAccount account = this.getAccountByName(name);
+		account.updateBalance(account.getBalance() - amount);
+		this.addMessage(name, new BankMessage(MessageType.AddBalance, 
+				"Decreased by " + amount + " due to bid " + bidId, account.getBalance()));
 	}
 }

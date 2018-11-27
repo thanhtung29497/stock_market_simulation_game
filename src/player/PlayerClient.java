@@ -6,14 +6,22 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Timer;
 
-import bank.MessageRetrievingTask;
+import common.BidType;
 import common.Convention;
 import common.IAccountRemote;
 import common.IPlayerStockRemote;
+import common.IStock;
+import exception.BidNotAvailableException;
 import exception.DuplicateLoginNameException;
 import exception.ExceedMaximumAccountException;
 import exception.InvalidLoginException;
+import exception.NotEnoughMoneyException;
+import exception.NotEnoughStockQuantityException;
 import exception.NotFoundAccountException;
+import exception.NotFoundBidException;
+import exception.NotFoundStockCodeException;
+import exception.OfferorNotEnoughMoneyException;
+import exception.OutOfStockPriceRangeException;
 import ui.player.PlayerFrameController;
 
 public class PlayerClient {
@@ -55,8 +63,11 @@ public class PlayerClient {
 			this.viewController.startTrans(this.modelController.getAllStocks(),
 					this.modelController.getAllBids(),
 					this.modelController.getAccount());
+			IStock stock = this.modelController.getAllStocks().toArray().get(0);
+			this.postBid(BidType.Buy, stock.getCode(), stock.getCapPrice(), 5);
 			
 		} catch (RemoteException | NotBoundException e) {
+			e.printStackTrace();
 			this.viewController.signUpFalse("Failed to connect to server");
 		} catch (ExceedMaximumAccountException e) {
 			this.viewController.signUpFalse("Exceed of maximum account");
@@ -74,7 +85,7 @@ public class PlayerClient {
 			this.modelController.registerStockExchange();
 			
 			Timer messageTimer = new Timer();
-			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), 0, Convention.RETRIEVE_MESSAGE_PERIOD);
+			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), Convention.RETRIEVE_MESSAGE_PERIOD, Convention.RETRIEVE_MESSAGE_PERIOD);
 			
 			this.viewController.startTrans(this.modelController.getAllStocks(),
 					this.modelController.getAllBids(),
@@ -84,6 +95,40 @@ public class PlayerClient {
 			this.viewController.loginFalse("Failed to connect to server");
 		} catch (InvalidLoginException | NotFoundAccountException e) {
 			this.viewController.loginFalse("Wrong account name or password");
+		}
+	}
+	
+	public void postBid(BidType type, String stockCode, double offerPrice, int quantity) {
+		try {
+			this.modelController.postBid(type, stockCode, offerPrice, quantity);
+		} catch (RemoteException e) {
+			this.viewController.loginFalse("Failed to connect to server");
+		} catch (NotEnoughMoneyException e) {
+			this.viewController.loginFalse("Not enough money to make transaction");
+		} catch (NotFoundStockCodeException e) {
+			this.viewController.loginFalse("Invalid stock code " + stockCode);
+		} catch (OutOfStockPriceRangeException e) {
+			this.viewController.loginFalse("The price you offer is out of range");
+		} catch (NotEnoughStockQuantityException e) {
+			this.viewController.loginFalse("Not enough stock to make transaction");
+		}
+	}
+	
+	public void acceptBid(int bidId) {
+		try {
+			this.modelController.acceptBid(bidId);
+		} catch (RemoteException e) {
+			this.viewController.loginFalse("Failed to connect to server");
+		} catch (NotFoundBidException e) {
+			this.viewController.loginFalse("Not found bid id " + bidId);
+		} catch (BidNotAvailableException e) {
+			this.viewController.loginFalse("Bid might be matched");
+		} catch (NotEnoughStockQuantityException e) {
+			this.viewController.loginFalse("Not enough stock to make transaction");
+		} catch (NotEnoughMoneyException e) {
+			this.viewController.loginFalse("Not enough money to make transaction");
+		} catch (OfferorNotEnoughMoneyException e) {
+			this.viewController.loginFalse("Offeror " + e.getOfferorName() + " not enough money to make transaction");
 		}
 	}
 		

@@ -9,4 +9,5 @@ public interface IStock extends Serializable {
 	public String getCompanyName();
 	public double getCapPrice();
 	public double getFloorPrice();
+	public Boolean isOutOfPriceRange(double price);
 }

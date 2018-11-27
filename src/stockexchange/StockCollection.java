@@ -22,9 +22,6 @@ public class StockCollection implements IStockCollection {
 	}
 
 	private HashMap<String, StockInfo> stockMap;
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	public StockCollection() {
@@ -78,10 +75,10 @@ public class StockCollection implements IStockCollection {
 	}
 
 	@Override
-	public void updateQuantity(String stockCode, Integer quantity) {
+	public void addQuantity(String stockCode, Integer quantity) {
 		if (this.hasStockCode(stockCode)) {
 			StockInfo stockInfo = this.stockMap.get(stockCode);
-			stockInfo.quantity = quantity;
+			stockInfo.quantity += quantity;
 			this.stockMap.put(stockCode, stockInfo);
 		}
 	}
@@ -107,6 +104,15 @@ public class StockCollection implements IStockCollection {
 				this.stockMap.put(stockCode, stockInfo);
 			}
 		}
+	}
+
+	@Override
+	public double getTotalStockValue() {
+		double totalValue = 0.0;
+		for (StockInfo stockInfo: this.stockMap.values()) {
+			totalValue += stockInfo.stock.getPrice() * stockInfo.quantity;
+		}
+		return totalValue;
 	}
 
 }
