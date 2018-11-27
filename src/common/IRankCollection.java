@@ -7,7 +7,7 @@ import java.util.HashMap;
 public interface IRankCollection extends Serializable{
 	public int getRankByName(String name);
 	public ArrayList<IRank> getRankBoard();
-	public void addPlayer(String playerName, double amount);
+	public void addPlayerIfAbsent(String playerName, double amount);
 	public void updateAmount(String playerName, double amount);
 	public void updateAllAmounts(HashMap<String, Double> amounts);
 }

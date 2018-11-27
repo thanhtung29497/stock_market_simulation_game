@@ -49,9 +49,21 @@ public class RankCollection implements IRankCollection {
 			rank.setRank(++currentRank);
 		}
 	}
+	
+	private Boolean hasPlayer(String playerName) {
+		for (IRank rank: this.ranks) {
+			if (rank.getPlayerName().equals(playerName)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
-	public void addPlayer(String playerName, double amount) {
+	public void addPlayerIfAbsent(String playerName, double amount) {
+		if (this.hasPlayer(playerName)) {
+			return;
+		}
 		this.ranks.add(new Rank(playerName, 0, amount));
 		this.sort();
 	}

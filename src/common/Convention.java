@@ -8,7 +8,8 @@ public class Convention {
 	public static final int MAXIMUM_ACCOUNT_NUMBER = 10;
 	public static final double STOCK_PERCENT_RANGE = 0.1;
 	public static final int ACCOUNT_ACCUMULATION_PERIOD = 10000;
-	public static final int STOCK_PRICE_ADJUSTMENT_PERIOD = 10000;
+	public static final int STOCK_EXCHANGE_SESSION = 10000;
+	public static final int GAME_DURATION = 30 * 60000;
 	public static final String COMPUTER_PLAYER_NAME = "Computer";
 	public static final String COMPUTER_PLAYER_PASSWORD = "123";
 	public static final String BANK_SERVER_NAME = "bank";
@@ -18,4 +19,5 @@ public class Convention {
 	public static final String PLAYER_STOCK_CONTROLLER_NAME = "player";
 	public static final String COMPANY_STOCK_CONTROLLER_NAME = "company";
 	public static final int RETRIEVE_MESSAGE_PERIOD = 1000;
+	public static final int RETRIEVE_TIME_NUMBER_PERIOD = 60;
 }

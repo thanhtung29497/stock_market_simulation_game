@@ -59,9 +59,11 @@ public class BankManager {
 	}
 	
 	public ArrayList<IBankMessage> retrieveMessages(String name) {
-		ArrayList<IBankMessage> messages = this.getMessagesByName(name);
-		this.messageMap.put(name, new ArrayList<>());
-		return messages;
+		synchronized (this) {
+			ArrayList<IBankMessage> messages = this.getMessagesByName(name);
+			this.messageMap.put(name, new ArrayList<>());
+			return messages;
+		}
 	}
 	
 	public Account getAccountByName(String name) throws NotFoundAccountException {

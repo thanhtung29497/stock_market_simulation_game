@@ -8,11 +8,13 @@ public class Account implements IAccount {
 	private String name;
 	private String password;
 	private double balance;
+	private final int id;
 	
 	public Account(String name, String password) {
 		this.name = name;
 		this.password = password;
 		this.balance = Convention.INITIAL_BALANCE;
+		this.id = Utility.generateAccountId();
 	}
 
 	@Override
@@ -49,6 +51,11 @@ public class Account implements IAccount {
 	public void updateBalance(double balance) {
 		this.balance = balance;
 		
+	}
+
+	@Override
+	public int getId() {
+		return this.id;
 	}
 	
 }

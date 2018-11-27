@@ -115,4 +115,14 @@ public class StockCollection implements IStockCollection {
 		return totalValue;
 	}
 
+	@Override
+	public Boolean hasCompanyName(String companyName) {
+		for (StockInfo stockInfo: this.stockMap.values()) {
+			if (stockInfo.stock.getCompanyName().equals(companyName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

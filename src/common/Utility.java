@@ -12,4 +12,10 @@ public class Utility {
 		Utility.BID_INDEX++;
 		return Utility.BID_INDEX;
 	}
+	
+	public static int ACCOUNT_INDEX = 0;
+	public static int generateAccountId() {
+		Utility.ACCOUNT_INDEX++;
+		return Utility.ACCOUNT_INDEX;
+	}
 }

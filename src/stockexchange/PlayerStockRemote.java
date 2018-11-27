@@ -2,6 +2,7 @@ package stockexchange;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.time.Duration;
 import java.util.ArrayList;
 
 import common.BidType;
@@ -40,7 +41,9 @@ public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerSto
 
 	@Override
 	public ArrayList<IMessage> retrieveMessages() throws RemoteException {
-		return this.stockExchangeManager.retrieveMessages(this.accountName, true);
+		synchronized (this) {
+			return this.stockExchangeManager.retrieveMessages(this.accountName, true);
+		}
 	}
 
 	@Override
@@ -85,6 +88,11 @@ public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerSto
 	@Override
 	public IRankCollection getRankBoard() throws RemoteException {
 		return this.stockExchangeManager.getRankBoard();
+	}
+
+	@Override
+	public Duration getCurrentTime() throws RemoteException {
+		return this.stockExchangeManager.getCurrentTime();
 	}
 	
 }

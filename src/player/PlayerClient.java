@@ -10,7 +10,7 @@ import common.BidType;
 import common.Convention;
 import common.IAccountRemote;
 import common.IPlayerStockRemote;
-import common.IStock;
+
 import exception.BidNotAvailableException;
 import exception.DuplicateLoginNameException;
 import exception.ExceedMaximumAccountException;
@@ -49,24 +49,30 @@ public class PlayerClient {
 		this.modelController = new HumanPlayer(this.accountController, this.stockController);
 	}
 	
+	private void registerStockExchangeAndInit() throws RemoteException, InvalidLoginException, NotFoundAccountException {
+		this.modelController.registerStockExchange();
+		
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), Convention.RETRIEVE_MESSAGE_PERIOD, Convention.RETRIEVE_MESSAGE_PERIOD);
+		
+		this.viewController.startTrans(this.modelController.getAllStocks(),
+				this.modelController.getAllBids(),
+				this.modelController.getInfo(),
+				this.modelController.getRankBoard(),
+				this.modelController.getOwnStocks());
+		
+		timer.scheduleAtFixedRate(new TimeUpdatingTask(viewController, modelController), 1000, 1000);
+		
+//		IStock stock = this.modelController.getAllStocks().toArray().get(0);
+//		this.postBid(BidType.Buy, stock.getCode(), stock.getCapPrice(), 5);
+	}
+	
 	public void register(String name, String password) {
 		try {
 			this.connectToRegistry();
 			this.modelController.registerBank(name, password);
 			this.modelController.loginBank();
-			this.modelController.registerStockExchange();
-			
-			Timer messageTimer = new Timer();
-			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), Convention.RETRIEVE_MESSAGE_PERIOD, Convention.RETRIEVE_MESSAGE_PERIOD);
-			
-			// Display
-			this.viewController.startTrans(this.modelController.getAllStocks(),
-					this.modelController.getAllBids(),
-					this.modelController.getInfo(),
-					this.modelController.getRankBoard(),
-					this.modelController.getOwnStocks());
-			IStock stock = this.modelController.getAllStocks().toArray().get(0);
-			this.postBid(BidType.Buy, stock.getCode(), stock.getCapPrice(), 5);
+			this.registerStockExchangeAndInit();
 			
 		} catch (RemoteException | NotBoundException e) {
 			e.printStackTrace();
@@ -84,16 +90,7 @@ public class PlayerClient {
 		try {
 			this.connectToRegistry();
 			this.modelController.loginBank(name, password);
-			this.modelController.registerStockExchange();
-			
-			Timer messageTimer = new Timer();
-			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), Convention.RETRIEVE_MESSAGE_PERIOD, Convention.RETRIEVE_MESSAGE_PERIOD);
-			
-			this.viewController.startTrans(this.modelController.getAllStocks(),
-					this.modelController.getAllBids(),
-					this.modelController.getInfo(),
-					this.modelController.getRankBoard(),
-					this.modelController.getOwnStocks());
+			this.registerStockExchangeAndInit();
 			
 		} catch (RemoteException | NotBoundException e) {
 			this.viewController.loginFalse("Failed to connect to server");

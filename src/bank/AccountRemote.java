@@ -7,14 +7,14 @@ import java.util.ArrayList;
 import common.*;
 import exception.*;
 
-public class AccountController extends UnicastRemoteObject implements IAccountRemote {
+public class AccountRemote extends UnicastRemoteObject implements IAccountRemote {
 
 	private static final long serialVersionUID = 1L;
 	public static final String DOMAIN = "account";
 	private BankManager bankManager;
 	private Account account;
 
-	protected AccountController(BankManager bankManager) throws RemoteException {
+	protected AccountRemote(BankManager bankManager) throws RemoteException {
 		super();
 		this.bankManager = bankManager;
 	}
@@ -59,9 +59,8 @@ public class AccountController extends UnicastRemoteObject implements IAccountRe
 	}
 
 	@Override
-	public ArrayList<IBankMessage> retrieveMessages() throws RemoteException {
-		String name = this.account.getName();
-		return this.bankManager.retrieveMessages(name);
-	}
-	
+	public ArrayList<IBankMessage> retrieveMessages(String accountName) throws RemoteException {
+//		String name = this.account.getName();
+		return this.bankManager.retrieveMessages(accountName);
+	}	
 }

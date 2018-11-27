@@ -11,7 +11,7 @@ public class BankServer {
 	public static void main (String[] argv) {
 		try {
 			BankManager bankManager = new BankManager();
-			AccountController accountController = new AccountController(bankManager);
+			AccountRemote accountController = new AccountRemote(bankManager);
 			BankController bankController = new BankController(bankManager);
 		
 			registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);

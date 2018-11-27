@@ -11,4 +11,5 @@ public interface IAccount extends Remote, Serializable{
 	public double getBalance();
 	public String getPassword();
 	public void updateBalance(double balance);
+	public int getId();
 }

@@ -2,7 +2,6 @@ package company;
 
 import java.rmi.RemoteException;
 
-import common.IBid;
 import common.ICompanyController;
 import common.ICompanyStockRemote;
 import common.IStock;

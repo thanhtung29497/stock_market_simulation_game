@@ -1,7 +1,6 @@
 package player;
 
 import common.IAccountRemote;
-import common.IBid;
 import common.IPlayerStockRemote;
 
 public class HumanPlayer extends PlayerController {

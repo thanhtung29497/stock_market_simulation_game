@@ -1,6 +1,8 @@
 package stockexchange;
 
 import java.rmi.RemoteException;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -39,6 +41,7 @@ public class StockExchangeManager {
 	private HashMap<String, IStockCollection> playerStocks;
 	private static final String PLAYER_PREFIX = "Player";
 	private static final String COMPANY_PREFIX = "Company";
+	private final LocalTime startMilestone;
 
 	public StockExchangeManager(IBankController bankController) {
 		this.bankController = bankController;
@@ -47,22 +50,21 @@ public class StockExchangeManager {
 		this.playerStocks = new HashMap<>();
 		this.bids = new BidCollection();
 		this.rankBoard = new RankCollection();
+		this.startMilestone = LocalTime.now();
 		
 		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new StockPriceAdjustmentTask(this), Convention.STOCK_PRICE_ADJUSTMENT_PERIOD, Convention.STOCK_PRICE_ADJUSTMENT_PERIOD);
+		timer.scheduleAtFixedRate(new StockPriceAdjustmentTask(this), Convention.STOCK_EXCHANGE_SESSION, Convention.STOCK_EXCHANGE_SESSION);
+
 	}
 	
-	public Boolean findStockCode(String stockCode) {
-		return this.stocks.hasStockCode(stockCode);
+	public Duration getCurrentTime() {
+		long duration = Duration.between(this.startMilestone, LocalTime.now()).toMillis();
+		long currentTime = Convention.GAME_DURATION - duration; 
+		return Duration.ofMillis(currentTime);
 	}
 	
-	public Boolean findCompanyName(String companyName) {
-		for (IStock stock: this.stocks.toArray()) {
-			if (stock.getCompanyName().equals(companyName)) {
-				return true;
-			}
-		}
-		return false;
+	public void closeSession() {
+		this.bids.clear();
 	}
 	
 	public void addMessageByKey(String key, String prefix, IMessage message) {
@@ -73,10 +75,10 @@ public class StockExchangeManager {
 	}
 	
 	public IStock issueStock(String companyName, String stockCode) throws DuplicateStockCodeException, DuplicateCompanyNameException {
-		if (this.findStockCode(stockCode)) {
+		if (this.stocks.hasStockCode(stockCode)) {
 			throw new DuplicateStockCodeException(stockCode);
 		}
-		if (this.findCompanyName(companyName)) {
+		if (this.stocks.hasCompanyName(companyName)) {
 			throw new DuplicateCompanyNameException(companyName);
 		}
 		Stock stock = new Stock(stockCode, Convention.INITIAL_SHARE_PRICE, companyName);
@@ -98,7 +100,7 @@ public class StockExchangeManager {
 	
 	public void registerPlayer(String playerName, String password) throws RemoteException, InvalidLoginException, NotFoundAccountException {
 		IAccount account = this.bankController.login(playerName, password);
-		this.rankBoard.addPlayer(playerName, account.getBalance());
+		this.rankBoard.addPlayerIfAbsent(playerName, account.getBalance());
 		this.playerStocks.putIfAbsent(playerName, new StockCollection());
 		this.messages.putIfAbsent(StockExchangeManager.PLAYER_PREFIX + account.getName(), new ArrayList<>());
 		for (String key: this.messages.keySet()) {
@@ -181,7 +183,7 @@ public class StockExchangeManager {
 		// check if bid is valid
 		
 		// valid stock code ?
-		if (!this.findStockCode(stockCode)) {
+		if (!this.stocks.hasStockCode(stockCode)) {
 			throw new NotFoundStockCodeException(stockCode);
 		}
 		

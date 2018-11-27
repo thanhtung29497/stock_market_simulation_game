@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 
 import common.Convention;
 import common.IAccountRemote;
-import common.IBid;
 import common.IPlayerStockRemote;
 import common.Utility;
 import exception.DuplicateLoginNameException;

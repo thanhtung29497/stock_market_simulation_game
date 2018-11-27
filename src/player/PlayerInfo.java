@@ -10,6 +10,7 @@ public class PlayerInfo implements IPlayerInfo {
 	private double money;
 	private double balance;
 	private int rank;
+	private int id;
 	
 	public PlayerInfo() {
 		
@@ -70,5 +71,15 @@ public class PlayerInfo implements IPlayerInfo {
 	@Override
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	@Override
+	public int getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
 	}
 }

@@ -11,13 +11,13 @@ import common.IStock;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
 
-public class CompanyStockController extends UnicastRemoteObject implements ICompanyStockRemote {
+public class CompanyStockRemote extends UnicastRemoteObject implements ICompanyStockRemote {
 
 	private static final long serialVersionUID = 1L;
 	private StockExchangeManager stockExchangeManager;
 	private IStock stock;
 	
-	protected CompanyStockController(StockExchangeManager stockExchangeManager) throws RemoteException {
+	protected CompanyStockRemote(StockExchangeManager stockExchangeManager) throws RemoteException {
 		super();
 		this.stockExchangeManager = stockExchangeManager;
 	}

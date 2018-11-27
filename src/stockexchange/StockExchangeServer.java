@@ -18,7 +18,7 @@ public class StockExchangeServer {
 			StockExchangeManager stockExchangeManager = new StockExchangeManager(bankController);
 			PlayerStockRemote playerStockController = new PlayerStockRemote(stockExchangeManager);
 			registry.rebind(Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME, playerStockController);
-			CompanyStockController companyStockController = new CompanyStockController(stockExchangeManager);
+			CompanyStockRemote companyStockController = new CompanyStockRemote(stockExchangeManager);
 			registry.rebind(Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.COMPANY_STOCK_CONTROLLER_NAME, companyStockController);
 			
 			System.out.println("Stock Exchange Server is ready\n");

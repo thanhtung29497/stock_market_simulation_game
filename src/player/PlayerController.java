@@ -1,13 +1,13 @@
 package player;
 
 import java.rmi.RemoteException;
+import java.time.Duration;
 import java.util.ArrayList;
 
 import common.BidType;
 import common.IAccount;
 import common.IAccountRemote;
 import common.IBankMessage;
-import common.IBid;
 import common.IBidCollection;
 import common.IMessage;
 import common.IPlayerController;
@@ -42,6 +42,7 @@ public abstract class PlayerController implements IPlayerController{
 	@Override
 	public void registerBank(String name, String password) throws ExceedMaximumAccountException, DuplicateLoginNameException, RemoteException  {
 		IAccount account = this.accountRemote.register(name, password);
+		this.info.setId(account.getId());
 		this.info.setName(account.getName());
 		this.info.setPassword(account.getPassword());
 		this.info.setBalance(account.getBalance());
@@ -60,7 +61,7 @@ public abstract class PlayerController implements IPlayerController{
 	
 	@Override
 	public ArrayList<IBankMessage> retrieveBankMessages() throws RemoteException{
-		return this.accountRemote.retrieveMessages();
+		return this.accountRemote.retrieveMessages(this.info.getName());
 	}
 	
 	@Override 
@@ -87,6 +88,7 @@ public abstract class PlayerController implements IPlayerController{
 	public void loginBank(String name, String password)
 			throws InvalidLoginException, NotFoundAccountException, RemoteException {
 		IAccount account = this.accountRemote.login(name, password);
+		this.info.setId(account.getId());
 		this.info.setName(account.getName());
 		this.info.setPassword(account.getPassword());
 		this.info.setBalance(account.getBalance());
@@ -107,6 +109,11 @@ public abstract class PlayerController implements IPlayerController{
 		IRankCollection rankCollection = this.stockRemote.getRankBoard();
 		this.info.setRank(rankCollection.getRankByName(this.info.getName()));
 		return rankCollection;
+	}
+	
+	@Override
+	public Duration getCurrentTime() throws RemoteException {
+		return this.stockRemote.getCurrentTime();
 	}
 	
 }

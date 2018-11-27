@@ -1,6 +1,7 @@
 package common;
 
 import java.rmi.RemoteException;
+import java.time.Duration;
 import java.util.ArrayList;
 
 import exception.BidNotAvailableException;
@@ -30,4 +31,5 @@ public interface IPlayerController extends IStockOwner {
 	public ArrayList<IBankMessage> retrieveBankMessages() throws RemoteException;
 	public ArrayList<IMessage> retrieveStockExchangeMessages() throws RemoteException;
 	public IRankCollection getRankBoard() throws RemoteException;
+	public Duration getCurrentTime() throws RemoteException;
 }
