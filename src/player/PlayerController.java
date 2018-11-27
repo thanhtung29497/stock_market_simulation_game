@@ -7,10 +7,13 @@ import common.BidType;
 import common.IAccount;
 import common.IAccountRemote;
 import common.IBankMessage;
+import common.IBid;
 import common.IBidCollection;
 import common.IMessage;
 import common.IPlayerController;
+import common.IPlayerInfo;
 import common.IPlayerStockRemote;
+import common.IRankCollection;
 import common.IStockCollection;
 import exception.*;
 
@@ -18,17 +21,17 @@ public abstract class PlayerController implements IPlayerController{
 
 	private static final long serialVersionUID = 1L;
 	protected IStockCollection stockList;
-	protected IAccount account;
+	protected IPlayerInfo info = new PlayerInfo();
 	protected IAccountRemote accountRemote;
 	protected IPlayerStockRemote stockRemote;
 	
 	public void updateBalance(double balance) {
-		this.account.updateBalance(balance);
+		this.info.setBalance(balance);
 	}
 
 	@Override
-	public IAccount getAccount() {
-		return this.account;
+	public IPlayerInfo getInfo() {
+		return this.info;
 	}
 	
 	@Override
@@ -39,22 +42,20 @@ public abstract class PlayerController implements IPlayerController{
 	@Override
 	public void registerBank(String name, String password) throws ExceedMaximumAccountException, DuplicateLoginNameException, RemoteException  {
 		IAccount account = this.accountRemote.register(name, password);
-		this.setAccount(account);
+		this.info.setName(account.getName());
+		this.info.setPassword(account.getPassword());
+		this.info.setBalance(account.getBalance());
 	}
 	
 	@Override
 	public void registerStockExchange() throws InvalidLoginException, RemoteException, NotFoundAccountException  {
-		this.stockRemote.register(account.getName(), account.getPassword());
+		this.stockRemote.register(this.info.getName(), this.info.getPassword());
+		this.info.setMoney(this.stockRemote.getTotalAmount());
 	}
 	
 	@Override
 	public void loginBank() throws InvalidLoginException, NotFoundAccountException, RemoteException {
-		this.accountRemote.login(this.account.getName(), this.account.getPassword());
-	}
-	
-	@Override 
-	public void setAccount(IAccount account) {
-		this.account = account;
+		this.accountRemote.login(this.info.getName(), this.info.getPassword());
 	}
 	
 	@Override
@@ -86,7 +87,9 @@ public abstract class PlayerController implements IPlayerController{
 	public void loginBank(String name, String password)
 			throws InvalidLoginException, NotFoundAccountException, RemoteException {
 		IAccount account = this.accountRemote.login(name, password);
-		this.setAccount(account);
+		this.info.setName(account.getName());
+		this.info.setPassword(account.getPassword());
+		this.info.setBalance(account.getBalance());
 	}
 
 	@Override
@@ -97,6 +100,13 @@ public abstract class PlayerController implements IPlayerController{
 	@Override
 	public void acceptBid(int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException {
 		this.stockRemote.acceptBid(bidId);
+	}
+
+	@Override
+	public IRankCollection getRankBoard() throws RemoteException {
+		IRankCollection rankCollection = this.stockRemote.getRankBoard();
+		this.info.setRank(rankCollection.getRankByName(this.info.getName()));
+		return rankCollection;
 	}
 	
 }

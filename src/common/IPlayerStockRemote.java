@@ -15,4 +15,5 @@ public interface IPlayerStockRemote extends Remote {
 	public void acceptBid(int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException;
 	public IStockCollection getOwnStocks() throws RemoteException;
 	public double getTotalAmount() throws RemoteException, NotFoundAccountException;
+	public IRankCollection getRankBoard() throws RemoteException;
 }

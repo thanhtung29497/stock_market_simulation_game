@@ -8,6 +8,7 @@ import common.BidType;
 import common.IBidCollection;
 import common.IMessage;
 import common.IPlayerStockRemote;
+import common.IRankCollection;
 import common.IStockCollection;
 import exception.BidNotAvailableException;
 import exception.InvalidLoginException;
@@ -79,6 +80,11 @@ public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerSto
 	@Override
 	public double getTotalAmount() throws RemoteException, NotFoundAccountException {
 		return this.stockExchangeManager.getTotalAmount(this.accountName);
+	}
+
+	@Override
+	public IRankCollection getRankBoard() throws RemoteException {
+		return this.stockExchangeManager.getRankBoard();
 	}
 	
 }

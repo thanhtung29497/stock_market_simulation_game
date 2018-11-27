@@ -41,16 +41,16 @@ public class StockBoard extends JTable{
 //	 
 //	}
 	
-//	public Component prepareRenderer (TableCellRenderer renderer, int index_row, int index_col){
-//	    Component comp = super.prepareRenderer(renderer, index_row, index_col);
-//	    switch (index_col){
-//	    case 0:
-//	    	comp.setForeground(Color.red);break;
-//	    case 1:
-//	    	comp.setForeground(Color.yellow);break;
-//	    }
-//	    return comp;
-//	}
+	public Component prepareRenderer (TableCellRenderer renderer, int index_row, int index_col){
+	    Component comp = super.prepareRenderer(renderer, index_row, index_col);
+	    switch (index_col){
+	    case 0:
+	    	comp.setForeground(Color.red);break;
+	    case 1:
+	    	comp.setForeground(Color.yellow);break;
+	    }
+	    return comp;
+	}
 	
 	protected JTableHeader createDefaultTableHeader() {
         return new GroupableTableHeader(columnModel);

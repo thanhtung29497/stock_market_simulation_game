@@ -36,12 +36,6 @@ public class Company implements ICompanyController {
 	}
 
 	@Override
-	public void processBid(IBid bid) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public Boolean hasStock() {
 		return this.stock != null;
 	}

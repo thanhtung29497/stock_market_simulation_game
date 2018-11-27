@@ -15,12 +15,4 @@ public class HumanPlayer extends PlayerController {
 		this.stockRemote = stockController;
 	}
 	
-	
-	
-	@Override
-	public void processBid(IBid bid) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

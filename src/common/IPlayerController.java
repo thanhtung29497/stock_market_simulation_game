@@ -16,7 +16,7 @@ import exception.OfferorNotEnoughMoneyException;
 import exception.OutOfStockPriceRangeException;
 
 public interface IPlayerController extends IStockOwner {
-	public IAccount getAccount();
+	public IPlayerInfo getInfo();
 	public IStockCollection getAllStocks() throws RemoteException;
 	public IBidCollection getAllBids() throws RemoteException;
 	public IStockCollection getOwnStocks() throws RemoteException;
@@ -26,8 +26,8 @@ public interface IPlayerController extends IStockOwner {
 	public void registerBank(String name, String password) throws ExceedMaximumAccountException, DuplicateLoginNameException, RemoteException;
 	public void loginBank() throws InvalidLoginException, NotFoundAccountException, RemoteException;
 	public void loginBank(String name, String password) throws InvalidLoginException, NotFoundAccountException, RemoteException;
-	public void setAccount(IAccount account);
 	public void registerStockExchange() throws InvalidLoginException, RemoteException, NotFoundAccountException;
 	public ArrayList<IBankMessage> retrieveBankMessages() throws RemoteException;
 	public ArrayList<IMessage> retrieveStockExchangeMessages() throws RemoteException;
+	public IRankCollection getRankBoard() throws RemoteException;
 }

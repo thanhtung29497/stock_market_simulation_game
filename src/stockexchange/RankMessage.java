@@ -1,8 +1,5 @@
 package stockexchange;
 
-import java.util.ArrayList;
-
-import common.IRank;
 import common.IRankCollection;
 import common.IRankMessage;
 import common.Message;
@@ -19,8 +16,8 @@ public class RankMessage extends Message implements IRankMessage  {
 	}
 
 	@Override
-	public ArrayList<IRank> getRankBoard() {
-		return this.ranks.getRankBoard();
+	public IRankCollection getRankBoard() {
+		return this.ranks;
 	}
 
 }

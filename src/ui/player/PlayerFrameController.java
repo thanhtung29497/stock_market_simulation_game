@@ -4,38 +4,33 @@ import java.awt.EventQueue;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 
-import common.BidType;
-import common.IAccount;
 import common.IBankMessage;
 import common.IBidCollection;
-import common.IMessage;
 import common.IStockCollection;
+import common.IMessage;
+import common.IPlayerInfo;
+import common.IRank;
+import common.IRankCollection;
 import player.PlayerClient;
 
 public class PlayerFrameController {
 	
-	private PlayerClient _client;
-	private LoginFrame _loginFrame;
-	private PlayerFrame _playerFrame;
+	private PlayerClient _client=null;
+	private LoginFrame _loginFrame=null;
+	private PlayerFrame _playerFrame=null;
 	
 	public void addBankMessages(ArrayList<IBankMessage> messages) {
+		if(_playerFrame==null) return;
 		messages.forEach(message -> {
 			_playerFrame.addBankMessage(message.getMessage() + ": " + message.getBalance());
 		});
 	}
 	
 	public void addStockExchangeMessages(ArrayList<IMessage> messages) {
+		if(_playerFrame==null)return;
 		messages.forEach(message -> {
 			_playerFrame.addStockMessage(message.getMessage());
 		});
-	}
-	
-	public void updateStocks(IStockCollection stocks) {
-		
-	}
-	
-	public void updateBids(IBidCollection bids) {
-		
 	}
 	
 	public PlayerFrameController(PlayerClient client) {
@@ -46,11 +41,24 @@ public class PlayerFrameController {
 		_loginFrame = new LoginFrame(this);
 	}
 	
-	public void startTrans(IStockCollection stocks, IBidCollection bids, IAccount account) {
+	public void startTrans(IStockCollection stocks, IBidCollection bids, IPlayerInfo playerInfo, IRankCollection ranks, IStockCollection ownStock) {
 		_loginFrame.dispose();
 		_playerFrame = new PlayerFrame();
+		UpdateStocks(stocks);
+		UpdateIBidCollection(bids);
+		setMoney((float)playerInfo.getMoney());
 	}
-	
+	public void UpdateStocks(IStockCollection stocks) {
+		_playerFrame.showStocks(stocks);
+	}
+	public void UpdateIBidCollection(IBidCollection bids) {
+		_playerFrame.showBid(bids);
+	}
+	public void updateRank(IRankCollection ranks) {
+		for (IRank rank: ranks.getRankBoard()) {
+			System.out.println(rank.getRank() + ". " + rank.getPlayerName() + " " + rank.getAmount());
+		}
+	}
 	public void loginFalse(String Msg) {
 		JOptionPane.showMessageDialog(_loginFrame, Msg, "Login false",JOptionPane.OK_OPTION );
 	}

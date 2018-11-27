@@ -125,6 +125,10 @@ public class StockExchangeManager {
 	
 	public IStockCollection getPlayerStock(String playerName) {
 		return this.playerStocks.get(playerName);
+	}	
+	
+	public IRankCollection getRankBoard() {
+		return this.rankBoard;
 	}
 	
 	public void adjustStockPrice(HashMap<String, Double> stockPrices) throws RemoteException, NotFoundAccountException {

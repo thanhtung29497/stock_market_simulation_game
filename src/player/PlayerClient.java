@@ -57,12 +57,14 @@ public class PlayerClient {
 			this.modelController.registerStockExchange();
 			
 			Timer messageTimer = new Timer();
-			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), 0, Convention.RETRIEVE_MESSAGE_PERIOD);
+			messageTimer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), Convention.RETRIEVE_MESSAGE_PERIOD, Convention.RETRIEVE_MESSAGE_PERIOD);
 			
 			// Display
 			this.viewController.startTrans(this.modelController.getAllStocks(),
 					this.modelController.getAllBids(),
-					this.modelController.getAccount());
+					this.modelController.getInfo(),
+					this.modelController.getRankBoard(),
+					this.modelController.getOwnStocks());
 			IStock stock = this.modelController.getAllStocks().toArray().get(0);
 			this.postBid(BidType.Buy, stock.getCode(), stock.getCapPrice(), 5);
 			
@@ -89,7 +91,9 @@ public class PlayerClient {
 			
 			this.viewController.startTrans(this.modelController.getAllStocks(),
 					this.modelController.getAllBids(),
-					this.modelController.getAccount());
+					this.modelController.getInfo(),
+					this.modelController.getRankBoard(),
+					this.modelController.getOwnStocks());
 			
 		} catch (RemoteException | NotBoundException e) {
 			this.viewController.loginFalse("Failed to connect to server");

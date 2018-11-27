@@ -26,11 +26,5 @@ public class ComputerPlayer extends PlayerController {
 		this.loginBank();
 		this.registerStockExchange();
 	}
-	
-	@Override
-	public void processBid(IBid bid) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

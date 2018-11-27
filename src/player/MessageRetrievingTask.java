@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import common.IBankMessage;
 import common.IBidMessage;
 import common.IMessage;
+import common.IRankMessage;
 import common.IStockMessage;
 import common.MessageType;
 import exception.NotFoundAccountException;
@@ -51,16 +52,22 @@ public class MessageRetrievingTask extends TimerTask {
 				for (IMessage message: stockExchangeMessages) {
 					if (message.getType() == MessageType.IssueStock 
 							|| message.getType() == MessageType.AdjustStockPrice) {
-						this.viewController.updateStocks(((IStockMessage)message).getStocks());
+						this.viewController.UpdateStocks(((IStockMessage)message).getStocks());
 					} else if (message.getType() == MessageType.UpdateBid) {
-						this.viewController.updateBids(((IBidMessage)message).getBids());
+						this.viewController.UpdateIBidCollection(((IBidMessage)message).getBids());
+					} else if (message.getType() == MessageType.UpdateRank) {
+						this.viewController.updateRank(((IRankMessage)message).getRankBoard());
 					}
+					
+					this.viewController.setMoney(this.modelController.getTotalAmount());
 				}
 				this.testPrintStockMessage(stockExchangeMessages);
 				this.viewController.addStockExchangeMessages(stockExchangeMessages);
 			}
 		} catch(RemoteException e) {
 			this.viewController.loginFalse("Failed to connect to server");
+		} catch (NotFoundAccountException e) {
+			this.viewController.loginFalse("Something went wrong with your account");
 		}
 	}
 	
