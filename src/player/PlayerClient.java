@@ -112,6 +112,8 @@ public class PlayerClient {
 			this.viewController.loginFalse("The price you offer is out of range");
 		} catch (NotEnoughStockQuantityException e) {
 			this.viewController.loginFalse("Not enough stock to make transaction");
+		} catch (NotFoundAccountException e) {
+			this.viewController.loginFalse("Something went wrong with your account");
 		}
 	}
 	
@@ -130,6 +132,8 @@ public class PlayerClient {
 			this.viewController.loginFalse("Not enough money to make transaction");
 		} catch (OfferorNotEnoughMoneyException e) {
 			this.viewController.loginFalse("Offeror " + e.getOfferorName() + " not enough money to make transaction");
+		} catch (NotFoundAccountException e) {
+			this.viewController.loginFalse("Something went wrong with your account");
 		}
 	}
 		

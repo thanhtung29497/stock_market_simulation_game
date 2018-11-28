@@ -21,8 +21,8 @@ public interface IPlayerController extends IStockOwner {
 	public IStockCollection getAllStocks() throws RemoteException;
 	public IBidCollection getAllBids() throws RemoteException;
 	public IStockCollection getOwnStocks() throws RemoteException;
-	public void postBid(BidType type, String stockCode, double offerPrice, int quantity) throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException;
-	public void acceptBid(int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException;
+	public void postBid(BidType type, String stockCode, double offerPrice, int quantity) throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException, NotFoundAccountException;
+	public void acceptBid(int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, NotFoundAccountException;
 	public double getTotalAmount() throws RemoteException, NotFoundAccountException;
 	public void registerBank(String name, String password) throws ExceedMaximumAccountException, DuplicateLoginNameException, RemoteException;
 	public void loginBank() throws InvalidLoginException, NotFoundAccountException, RemoteException;

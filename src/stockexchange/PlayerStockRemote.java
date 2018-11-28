@@ -25,7 +25,6 @@ public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerSto
 
 	private StockExchangeManager stockExchangeManager;
 	private static final long serialVersionUID = 1L;
-	private String accountName;
 
 	protected PlayerStockRemote(StockExchangeManager stockExchangeManager) throws RemoteException {
 		super();
@@ -33,16 +32,15 @@ public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerSto
 	}
 
 	@Override
-	public void register(String accountName, String password) throws RemoteException, NotFoundAccountException, InvalidLoginException {
-		this.stockExchangeManager.registerPlayer(accountName, password);
-		this.accountName = accountName;
-		System.out.println("Register Successfully: " + accountName);
+	public void register(String accountId) throws RemoteException, NotFoundAccountException, InvalidLoginException {
+		this.stockExchangeManager.registerPlayer(accountId);
+		System.out.println("Register Successfully: " + accountId);
 	}
 
 	@Override
-	public ArrayList<IMessage> retrieveMessages() throws RemoteException {
+	public ArrayList<IMessage> retrieveMessages(String accountId) throws RemoteException {
 		synchronized (this) {
-			return this.stockExchangeManager.retrieveMessages(this.accountName, true);
+			return this.stockExchangeManager.retrieveMessages(accountId);
 		}
 	}
 
@@ -57,32 +55,24 @@ public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerSto
 	}
 
 	@Override
-	public void postBid(BidType type, String stockCode, int quantity, double offerPrice)
-			throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException {
-		try {
-			this.stockExchangeManager.postBid(type, stockCode, quantity, offerPrice, this.accountName);
-		} catch (NotFoundAccountException e) {
-			// can't happen
-		}
+	public void postBid(String accountId, BidType type, String stockCode, int quantity, double offerPrice)
+			throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException, NotFoundAccountException {
+		this.stockExchangeManager.postBid(type, stockCode, quantity, offerPrice, accountId);
 	}
 
 	@Override
-	public void acceptBid(int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException {
-		try {
-			this.stockExchangeManager.acceptBid(bidId, this.accountName);
-		} catch (NotFoundAccountException e) {
-			// can't happen
-		}
+	public void acceptBid(String accountId, int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, NotFoundAccountException {
+		this.stockExchangeManager.acceptBid(bidId, accountId);
 	}
 
 	@Override
-	public IStockCollection getOwnStocks() throws RemoteException {
-		return this.stockExchangeManager.getPlayerStock(this.accountName);
+	public IStockCollection getOwnStocks(String accountId) throws RemoteException {
+		return this.stockExchangeManager.getPlayerStock(accountId);
 	}
 
 	@Override
-	public double getTotalAmount() throws RemoteException, NotFoundAccountException {
-		return this.stockExchangeManager.getTotalAmount(this.accountName);
+	public double getTotalAmount(String accountId) throws RemoteException, NotFoundAccountException {
+		return this.stockExchangeManager.getTotalAmount(accountId);
 	}
 
 	@Override

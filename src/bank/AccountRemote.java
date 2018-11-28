@@ -26,18 +26,18 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 		}
 		Account account = new Account(name, password);
 		this.bankManager.addAccount(account);
-		System.out.println("Register successfully: " + account.getName());
+		System.out.println("Register successfully: " + account.getId());
 		return account;
 	}
 
 	@Override
 	public IAccount login(String name, String password) throws RemoteException, NotFoundAccountException, InvalidLoginException {
-		Account account = this.bankManager.getAccountByName(name);
+		Account account = this.bankManager.getAccountById(name);
 		if (!account.checkPassword(password)) {
 			throw new InvalidLoginException();
 		}
 		this.account = account;
-		System.out.println("Login successfully: " + account.getName());
+		System.out.println("Login successfully: " + account.getId());
 		return account;
 	}
 
@@ -59,8 +59,8 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 	}
 
 	@Override
-	public ArrayList<IBankMessage> retrieveMessages(String accountName) throws RemoteException {
+	public ArrayList<IBankMessage> retrieveMessages(String accountId) throws RemoteException {
 //		String name = this.account.getName();
-		return this.bankManager.retrieveMessages(accountName);
+		return this.bankManager.retrieveMessages(accountId);
 	}	
 }

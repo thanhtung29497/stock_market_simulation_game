@@ -11,5 +11,5 @@ public interface IAccountRemote extends Remote {
 	public void deposit(Double amount) throws RemoteException;
 	public void withdraw(Double amount) throws RemoteException;
 	public IAccount getAccount() throws RemoteException;
-	public ArrayList<IBankMessage> retrieveMessages(String accountName) throws RemoteException;
+	public ArrayList<IBankMessage> retrieveMessages(String accountId) throws RemoteException;
 }

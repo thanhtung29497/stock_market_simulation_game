@@ -1,5 +1,6 @@
 package player;
 
+import common.IAccount;
 import common.IPlayerInfo;
 
 public class PlayerInfo implements IPlayerInfo {
@@ -10,7 +11,7 @@ public class PlayerInfo implements IPlayerInfo {
 	private double money;
 	private double balance;
 	private int rank;
-	private int id;
+	private String id;
 	
 	public PlayerInfo() {
 		
@@ -74,12 +75,20 @@ public class PlayerInfo implements IPlayerInfo {
 	}
 
 	@Override
-	public int getId() {
+	public String getId() {
 		return this.id;
 	}
 
 	@Override
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
+	}
+
+	@Override
+	public void init(IAccount account) {
+		this.setId(account.getId());
+		this.setName(account.getId());
+		this.setBalance(account.getBalance());
+		this.setPassword(account.getPassword());
 	}
 }

@@ -8,6 +8,7 @@ import common.IBid;
 import common.ICompanyStockRemote;
 import common.IMessage;
 import common.IStock;
+import common.Utility;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
 
@@ -38,7 +39,7 @@ public class CompanyStockRemote extends UnicastRemoteObject implements ICompanyS
 
 	@Override
 	public ArrayList<IMessage> retrieveMessage() throws RemoteException {
-		return this.stockExchangeManager.retrieveMessages(stock.getCompanyName(), false);
+		return this.stockExchangeManager.retrieveMessages(Utility.COMPANY_ID_PREFIX + this.stock.getCode());
 	}
 	
 }

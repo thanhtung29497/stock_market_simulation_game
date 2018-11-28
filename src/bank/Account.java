@@ -8,7 +8,7 @@ public class Account implements IAccount {
 	private String name;
 	private String password;
 	private double balance;
-	private final int id;
+	private final String id;
 	
 	public Account(String name, String password) {
 		this.name = name;
@@ -54,7 +54,7 @@ public class Account implements IAccount {
 	}
 
 	@Override
-	public int getId() {
+	public String getId() {
 		return this.id;
 	}
 	

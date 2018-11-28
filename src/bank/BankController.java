@@ -18,33 +18,35 @@ public class BankController extends UnicastRemoteObject implements IBankControll
 		super();
 		this.bankManager = bankManager;
 	}
+	
+	@Override
+	public void start() throws RemoteException {
+		this.bankManager.start();
+	}
 
 	@Override
-	public IAccount login(String name, String password) throws RemoteException, InvalidLoginException, NotFoundAccountException {
-		IAccount account = this.bankManager.getAccountByName(name);
-		if (!account.checkPassword(password)) {
-			throw new InvalidLoginException();
-		}
+	public IAccount login(String id) throws RemoteException, NotFoundAccountException {
+		IAccount account = this.bankManager.getAccountById(id);
 		return account;
 	}
 
 	@Override
-	public double getBalanceByName(String name) throws RemoteException, NotFoundAccountException {
-		IAccount account = this.bankManager.getAccountByName(name);
+	public double getBalanceById(String id) throws RemoteException, NotFoundAccountException {
+		IAccount account = this.bankManager.getAccountById(id);
 		return account.getBalance();
 	}
 
 	@Override
-	public void makeTransaction(String payerName, String payeeName, int bidId, double money)
+	public void makeTransaction(String payerId, String payeeId, int bidId, double money)
 			throws RemoteException, NotEnoughMoneyException, NotFoundAccountException {
-		IAccount payer = this.bankManager.getAccountByName(payerName);
+		IAccount payer = this.bankManager.getAccountById(payerId);
 		
 		if (payer.getBalance() < money) {
 			throw new NotEnoughMoneyException();
 		}
 		
-		this.bankManager.addBalance(payeeName, money, bidId);
-		this.bankManager.subtractBalance(payerName, money, bidId);
+		this.bankManager.addBalance(payeeId, money, bidId);
+		this.bankManager.subtractBalance(payerId, money, bidId);
 		
 	}
 
