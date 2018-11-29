@@ -16,6 +16,13 @@ public class Account implements IAccount {
 		this.balance = Convention.INITIAL_BALANCE;
 		this.id = Utility.generateAccountId();
 	}
+	
+	public Account(String name) {
+		this.name = name;
+		this.password = "";
+		this.balance = 0;
+		this.id = Utility.generateCompanyId();
+	}
 
 	@Override
 	public void changeName(String name) {

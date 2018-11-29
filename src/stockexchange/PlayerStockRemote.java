@@ -20,6 +20,7 @@ import exception.NotFoundBidException;
 import exception.NotFoundStockCodeException;
 import exception.OfferorNotEnoughMoneyException;
 import exception.OutOfStockPriceRangeException;
+import exception.TimeOutException;
 
 public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerStockRemote{
 
@@ -56,12 +57,12 @@ public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerSto
 
 	@Override
 	public void postBid(String accountId, BidType type, String stockCode, int quantity, double offerPrice)
-			throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException, NotFoundAccountException {
+			throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException, NotFoundAccountException, TimeOutException {
 		this.stockExchangeManager.postBid(type, stockCode, quantity, offerPrice, accountId);
 	}
 
 	@Override
-	public void acceptBid(String accountId, int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, NotFoundAccountException {
+	public void acceptBid(String accountId, int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, NotFoundAccountException, TimeOutException {
 		this.stockExchangeManager.acceptBid(bidId, accountId);
 	}
 

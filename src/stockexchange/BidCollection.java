@@ -54,6 +54,9 @@ public class BidCollection implements IBidCollection {
 			bids.sort(this.sellBidComparator);
 		}
 		
+		if (bids.size() < number) {
+			return bids;
+		}
 		return new ArrayList<>(bids.subList(0, number - 1));
 	}
 
@@ -92,6 +95,17 @@ public class BidCollection implements IBidCollection {
 	@Override
 	public void clear() {
 		this.bids.clear();
+	}
+
+	@Override
+	public ArrayList<IBid> getBidsByStockCode(String stockCode) {
+		ArrayList<IBid> result = new ArrayList<>();
+		for (IBid bid: this.bids.values()) {
+			if (bid.getStock().getCode().equals(stockCode)) {
+				result.add(bid);
+			}
+		}
+		return result;
 	}
 
 }

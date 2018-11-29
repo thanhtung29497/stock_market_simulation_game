@@ -1,12 +1,12 @@
 package common;
 
-public abstract class Message implements IMessage {
+public class Message implements IMessage {
 	
 	private static final long serialVersionUID = 1L;
 	private String message;
 	private MessageType type;
 	
-	public Message(String message, MessageType type) {
+	public Message(MessageType type, String message) {
 		this.message = message;
 		this.type = type;
 	}

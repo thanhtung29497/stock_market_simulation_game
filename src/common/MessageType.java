@@ -1,12 +1,13 @@
 package common;
 
 public enum MessageType {
-	SubtractBalance,
-	AddBalance,
+	Start,
+	End,
 	IssueStock,
 	AdjustStockPrice,
-	UpdateBid,
 	PostBid,
 	MatchBid,
 	UpdateRank,
+	UpdateBalance,
+	UpdateBid,
 }

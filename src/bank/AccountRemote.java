@@ -26,13 +26,13 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 		}
 		Account account = new Account(name, password);
 		this.bankManager.addAccount(account);
-		System.out.println("Register successfully: " + account.getId());
+		System.out.println("Register successfully: " + account.getName());
 		return account;
 	}
 
 	@Override
 	public IAccount login(String name, String password) throws RemoteException, NotFoundAccountException, InvalidLoginException {
-		Account account = this.bankManager.getAccountById(name);
+		Account account = this.bankManager.getAccountByName(name);
 		if (!account.checkPassword(password)) {
 			throw new InvalidLoginException();
 		}
@@ -60,7 +60,17 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 
 	@Override
 	public ArrayList<IBankMessage> retrieveMessages(String accountId) throws RemoteException {
-//		String name = this.account.getName();
 		return this.bankManager.retrieveMessages(accountId);
+	}
+
+	@Override
+	public String registerCompany(String companyName) throws DuplicateLoginNameException, RemoteException, ExceedMaximumAccountException {
+		if (this.bankManager.checkLoginName(companyName)) {
+			throw new DuplicateLoginNameException(companyName);
+		}
+		Account account = new Account(companyName);
+		this.bankManager.addAccount(account);
+		System.out.println("Register successfully: Company " + account.getName());
+		return account.getId();
 	}	
 }

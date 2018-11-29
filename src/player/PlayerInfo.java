@@ -87,7 +87,7 @@ public class PlayerInfo implements IPlayerInfo {
 	@Override
 	public void init(IAccount account) {
 		this.setId(account.getId());
-		this.setName(account.getId());
+		this.setName(account.getName());
 		this.setBalance(account.getBalance());
 		this.setPassword(account.getPassword());
 	}

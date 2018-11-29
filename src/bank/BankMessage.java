@@ -10,7 +10,7 @@ public class BankMessage extends Message implements IBankMessage {
 	private double balance;
 
 	public BankMessage(MessageType type, String message, double balance) {
-		super(message, type);
+		super(type, message);
 		this.balance = balance;
 	}
 	

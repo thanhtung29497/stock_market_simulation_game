@@ -4,19 +4,23 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-import common.IBid;
 import common.ICompanyStockRemote;
 import common.IMessage;
 import common.IStock;
-import common.Utility;
+import exception.BidNotAvailableException;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
+import exception.NotEnoughMoneyException;
+import exception.NotEnoughStockQuantityException;
+import exception.NotFoundAccountException;
+import exception.NotFoundBidException;
+import exception.OfferorNotEnoughMoneyException;
+import exception.TimeOutException;
 
 public class CompanyStockRemote extends UnicastRemoteObject implements ICompanyStockRemote {
 
 	private static final long serialVersionUID = 1L;
 	private StockExchangeManager stockExchangeManager;
-	private IStock stock;
 	
 	protected CompanyStockRemote(StockExchangeManager stockExchangeManager) throws RemoteException {
 		super();
@@ -24,22 +28,20 @@ public class CompanyStockRemote extends UnicastRemoteObject implements ICompanyS
 	}
 
 	@Override
-	public IStock register(String companyName, String stockCode) throws RemoteException, DuplicateCompanyNameException, DuplicateStockCodeException {
-		IStock stock = this.stockExchangeManager.issueStock(companyName, stockCode);
-		this.stock = stock;
-		System.out.println("Register successfully: Company " + companyName);
+	public IStock register(String companyId, String stockCode) throws RemoteException, DuplicateCompanyNameException, DuplicateStockCodeException, NotFoundAccountException {
+		IStock stock = this.stockExchangeManager.issueStock(companyId, stockCode);
+		System.out.println("Register successfully: Company " + companyId);
 		return stock;
 	}
 
 	@Override
-	public void responseBid(IBid bid) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+	public void acceptBid(int bidId, String companyId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotFoundAccountException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, TimeOutException {
+		this.stockExchangeManager.acceptBid(bidId, companyId);
 	}
 
 	@Override
-	public ArrayList<IMessage> retrieveMessage() throws RemoteException {
-		return this.stockExchangeManager.retrieveMessages(Utility.COMPANY_ID_PREFIX + this.stock.getCode());
+	public ArrayList<IMessage> retrieveMessage(String companyId) throws RemoteException {
+		return this.stockExchangeManager.retrieveMessages(companyId);
 	}
 	
 }

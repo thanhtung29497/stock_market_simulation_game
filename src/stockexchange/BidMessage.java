@@ -11,13 +11,8 @@ public class BidMessage extends Message implements IBidMessage {
 	private IBidCollection bids;
 
 	public BidMessage(MessageType type, String message, IBidCollection bids) {
-		super(message, type);
+		super(type, message);
 		this.bids = bids;
-	}
-	
-	public BidMessage(MessageType type, String message) {
-		super(message, type);
-		this.bids = new BidCollection();
 	}
 
 	@Override

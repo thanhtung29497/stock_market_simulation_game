@@ -12,5 +12,6 @@ public interface IBidCollection extends Serializable {
 	public void addBid(IBid bid);
 	public IBid getBidById(int id) throws NotFoundBidException;
 	public void changeBidStatus(int id, BidStatus status) throws NotFoundBidException;
+	public ArrayList<IBid> getBidsByStockCode(String stockCode);
 	public void clear();
 }

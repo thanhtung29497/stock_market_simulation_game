@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import common.IBankMessage;
 import common.IBidMessage;
 import common.IMessage;
+import common.IRankCollection;
 import common.IRankMessage;
 import common.IStockMessage;
 import common.MessageType;
@@ -16,6 +17,7 @@ import ui.player.PlayerFrameController;
 public class MessageRetrievingTask extends TimerTask {
 	private PlayerFrameController viewController;
 	private PlayerController modelController;
+	private PlayerClient client;
 	
 	private void testPrintBankMessage(ArrayList<IBankMessage> messages) {
 		messages.forEach(message -> {
@@ -56,12 +58,20 @@ public class MessageRetrievingTask extends TimerTask {
 					} else if (message.getType() == MessageType.UpdateBid) {
 						this.viewController.UpdateIBidCollection(((IBidMessage)message).getBids());
 					} else if (message.getType() == MessageType.UpdateRank) {
-						this.viewController.updateRank(((IRankMessage)message).getRankBoard());
+						IRankCollection ranks = ((IRankMessage)message).getRankBoard();
+						this.modelController.info.setRank(ranks.getRankByName(this.modelController.getInfo().getName()));
+						this.viewController.updateRank(ranks);
+						this.viewController.setRank(this.modelController.getInfo().getRank());
+					} else if (message.getType() == MessageType.Start) {
+						this.client.startGame();
+					} else if (message.getType() == MessageType.End) {
+						this.client.endGame();
 					}
 					
 					this.viewController.setMoney(this.modelController.getTotalAmount());
 				}
 				this.testPrintStockMessage(stockExchangeMessages);
+				stockExchangeMessages.removeIf(message -> message.getType() == MessageType.UpdateRank);
 				this.viewController.addStockExchangeMessages(stockExchangeMessages);
 			}
 		} catch(RemoteException e) {
@@ -82,8 +92,9 @@ public class MessageRetrievingTask extends TimerTask {
 		}
 	}
 	
-	public MessageRetrievingTask(PlayerFrameController viewController, PlayerController modelController) {
+	public MessageRetrievingTask(PlayerFrameController viewController, PlayerController modelController, PlayerClient client) {
 		this.viewController = viewController;
 		this.modelController = modelController;
+		this.client = client;
 	}	
 }

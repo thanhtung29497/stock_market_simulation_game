@@ -9,6 +9,7 @@ import java.util.Timer;
 import common.BidType;
 import common.Convention;
 import common.IAccountRemote;
+import common.IBid;
 import common.IPlayerStockRemote;
 
 import exception.BidNotAvailableException;
@@ -22,6 +23,7 @@ import exception.NotFoundBidException;
 import exception.NotFoundStockCodeException;
 import exception.OfferorNotEnoughMoneyException;
 import exception.OutOfStockPriceRangeException;
+import exception.TimeOutException;
 import ui.player.PlayerFrameController;
 
 public class PlayerClient {
@@ -31,6 +33,7 @@ public class PlayerClient {
 	private Registry registry;
 	private IAccountRemote accountController;
 	private	IPlayerStockRemote stockController;
+	private Timer timer;
 	
 	private PlayerClient() {
 		this.viewController = new PlayerFrameController(this);
@@ -53,18 +56,32 @@ public class PlayerClient {
 		this.modelController.registerStockExchange();
 		
 		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController), Convention.RETRIEVE_MESSAGE_PERIOD, Convention.RETRIEVE_MESSAGE_PERIOD);
-		
+		timer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController, this), Convention.RETRIEVE_MESSAGE_PERIOD, Convention.RETRIEVE_MESSAGE_PERIOD);
+	}
+	
+	private void initView() throws RemoteException {
 		this.viewController.startTrans(this.modelController.getAllStocks(),
 				this.modelController.getAllBids(),
 				this.modelController.getInfo(),
 				this.modelController.getRankBoard(),
 				this.modelController.getOwnStocks());
-		
+	}
+	
+	public void startGame() {
+		this.timer = new Timer();
 		timer.scheduleAtFixedRate(new TimeUpdatingTask(viewController, modelController), 1000, 1000);
-		
-//		IStock stock = this.modelController.getAllStocks().toArray().get(0);
-//		this.postBid(BidType.Buy, stock.getCode(), stock.getCapPrice(), 5);
+		try {
+			this.viewController.UpdateIBidCollection(this.modelController.getAllBids());
+			this.viewController.updateRank(this.modelController.getRankBoard());
+			this.viewController.UpdateStocks(this.modelController.getAllStocks());
+		} catch (RemoteException e) {
+			this.viewController.loginFalse("Failed to connect to server");
+		}
+	}
+	
+	public void endGame() {
+		this.viewController.loginFalse("Game end! Your rank is " + this.modelController.getInfo().getRank());
+		timer.cancel();
 	}
 	
 	public void register(String name, String password) {
@@ -73,6 +90,7 @@ public class PlayerClient {
 			this.modelController.registerBank(name, password);
 			this.modelController.loginBank();
 			this.registerStockExchangeAndInit();
+			this.initView();
 			
 		} catch (RemoteException | NotBoundException e) {
 			e.printStackTrace();
@@ -91,6 +109,7 @@ public class PlayerClient {
 			this.connectToRegistry();
 			this.modelController.loginBank(name, password);
 			this.registerStockExchangeAndInit();
+			this.initView();
 			
 		} catch (RemoteException | NotBoundException e) {
 			this.viewController.loginFalse("Failed to connect to server");
@@ -114,6 +133,8 @@ public class PlayerClient {
 			this.viewController.loginFalse("Not enough stock to make transaction");
 		} catch (NotFoundAccountException e) {
 			this.viewController.loginFalse("Something went wrong with your account");
+		} catch (TimeOutException e) {
+			this.viewController.loginFalse("Time out");
 		}
 	}
 	
@@ -134,6 +155,8 @@ public class PlayerClient {
 			this.viewController.loginFalse("Offeror " + e.getOfferorName() + " not enough money to make transaction");
 		} catch (NotFoundAccountException e) {
 			this.viewController.loginFalse("Something went wrong with your account");
+		} catch (TimeOutException e) {
+			this.viewController.loginFalse("Time is out");
 		}
 	}
 		

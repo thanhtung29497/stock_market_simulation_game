@@ -144,7 +144,7 @@ public class PlayerFrame extends JFrame {
 		JScrollPane pl_StockMessage = new JScrollPane();
 		
 		list_BankMs = new JList();
-		list_BankMs.setCellRenderer(new ListCellRenderer());
+		//list_BankMs.setCellRenderer(new ListCellRenderer());
 		pl_BankMessage.setViewportView(list_BankMs);
 		
 		sl_contentPane.putConstraint(SpringLayout.WEST, pl_StockMessage, 0, SpringLayout.WEST, pl_PlayerInfo);
@@ -350,7 +350,7 @@ public class PlayerFrame extends JFrame {
 		setVisible(true);
 	}
 	public void addBankMessage(String msg) {
-		BankMsgData.addElement(msg);
+		BankMsgData.addElement("<html><body style='width: 140px;border-top:1px solid'>"+msg+"</body></html>");
 		list_BankMs.setListData(BankMsgData);
 		list_BankMs.ensureIndexIsVisible(BankMsgData.size()-1);
 	}

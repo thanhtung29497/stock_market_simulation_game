@@ -11,7 +11,7 @@ public class RankMessage extends Message implements IRankMessage  {
 	private IRankCollection ranks;
 
 	public RankMessage(MessageType type, String message, IRankCollection ranks) {
-		super(message, type);
+		super(type, message);
 		this.ranks = ranks;
 	}
 

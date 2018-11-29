@@ -11,7 +11,7 @@ public class StockMessage extends Message implements IStockMessage {
 	private static final long serialVersionUID = 1L;
 
 	public StockMessage(MessageType type, String message, IStockCollection stocks) {
-		super(message, type);
+		super(type, message);
 		this.stocks = stocks;
 	}
 

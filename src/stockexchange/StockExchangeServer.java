@@ -5,6 +5,7 @@ import java.rmi.registry.Registry;
 
 import common.Convention;
 import common.IBankController;
+import ui.server.StockExchangeFrame;
 
 public class StockExchangeServer {
 	
@@ -22,6 +23,9 @@ public class StockExchangeServer {
 			registry.rebind(Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.COMPANY_STOCK_CONTROLLER_NAME, companyStockController);
 			
 			System.out.println("Stock Exchange Server is ready\n");
+			
+			StockExchangeFrame frame = new StockExchangeFrame(stockExchangeManager);
+			frame.setVisible(true);
 		} catch (Exception e) {
 			System.out.println("Stock Exchange Server is failed due to:");
 			e.printStackTrace();

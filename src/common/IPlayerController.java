@@ -15,14 +15,15 @@ import exception.NotFoundBidException;
 import exception.NotFoundStockCodeException;
 import exception.OfferorNotEnoughMoneyException;
 import exception.OutOfStockPriceRangeException;
+import exception.TimeOutException;
 
 public interface IPlayerController extends IStockOwner {
 	public IPlayerInfo getInfo();
 	public IStockCollection getAllStocks() throws RemoteException;
 	public IBidCollection getAllBids() throws RemoteException;
 	public IStockCollection getOwnStocks() throws RemoteException;
-	public void postBid(BidType type, String stockCode, double offerPrice, int quantity) throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException, NotFoundAccountException;
-	public void acceptBid(int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, NotFoundAccountException;
+	public void postBid(BidType type, String stockCode, double offerPrice, int quantity) throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException, NotFoundAccountException, TimeOutException;
+	public void acceptBid(int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, NotFoundAccountException, TimeOutException;
 	public double getTotalAmount() throws RemoteException, NotFoundAccountException;
 	public void registerBank(String name, String password) throws ExceedMaximumAccountException, DuplicateLoginNameException, RemoteException;
 	public void loginBank() throws InvalidLoginException, NotFoundAccountException, RemoteException;

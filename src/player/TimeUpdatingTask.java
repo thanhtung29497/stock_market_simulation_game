@@ -21,7 +21,7 @@ public class TimeUpdatingTask extends TimerTask {
 			if (this.countDownNumber == 0) {
 				this.currentTime = this.modelController.getCurrentTime();
 				this.countDownNumber = Convention.RETRIEVE_TIME_NUMBER_PERIOD;
-			} else {
+			} else if (this.currentTime.getSeconds() > 0){
 				this.currentTime = this.currentTime.minusSeconds(1);
 			}
 			this.viewController.setTime((int)(this.currentTime.toMinutes() % 60), (int)(this.currentTime.getSeconds() % 60));
@@ -35,7 +35,6 @@ public class TimeUpdatingTask extends TimerTask {
 		this.modelController = modelController;
 		try {
 			this.currentTime = this.modelController.getCurrentTime();
-			System.out.println(this.currentTime.toMinutes() % 60 + ":" + this.currentTime.getSeconds() % 60);
 			this.viewController.setTime((int)(this.currentTime.toMinutes() % 60), (int)(this.currentTime.getSeconds() % 60));
 		} catch (RemoteException e) {
 			this.viewController.loginFalse("Failed to connect to server");

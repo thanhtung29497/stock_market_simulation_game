@@ -5,7 +5,6 @@ import java.rmi.server.UnicastRemoteObject;
 
 import common.IAccount;
 import common.IBankController;
-import exception.InvalidLoginException;
 import exception.NotEnoughMoneyException;
 import exception.NotFoundAccountException;
 
@@ -48,6 +47,11 @@ public class BankController extends UnicastRemoteObject implements IBankControll
 		this.bankManager.addBalance(payeeId, money, bidId);
 		this.bankManager.subtractBalance(payerId, money, bidId);
 		
+	}
+
+	@Override
+	public void end() throws RemoteException {
+		this.bankManager.end();
 	}
 
 }

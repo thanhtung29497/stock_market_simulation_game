@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import common.Convention;
 import common.IStock;
 import common.IStockCollection;
 
@@ -123,6 +124,15 @@ public class StockCollection implements IStockCollection {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void resetPrice() {
+		for (String key: this.stockMap.keySet()) {
+			StockInfo stockInfo = this.stockMap.get(key);
+			stockInfo.stock.setPrice(Convention.INITIAL_SHARE_PRICE);
+			this.stockMap.put(key, stockInfo);
+		}
 	}
 
 }
