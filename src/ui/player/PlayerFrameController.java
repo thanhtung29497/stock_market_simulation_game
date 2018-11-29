@@ -44,20 +44,17 @@ public class PlayerFrameController {
 	public void startTrans(IStockCollection stocks, IBidCollection bids, IPlayerInfo playerInfo, IRankCollection ranks, IStockCollection ownStock) {
 		_loginFrame.dispose();
 		_playerFrame = new PlayerFrame();
-		UpdateStocks(stocks);
-		UpdateIBidCollection(bids);
-		setMoney((float)playerInfo.getMoney());
+		UpdateStocksAndBids(stocks,bids);
+		setMoney(playerInfo.getMoney());
 	}
-	public void UpdateStocks(IStockCollection stocks) {
-		_playerFrame.showStocks(stocks);
-	}
-	public void UpdateIBidCollection(IBidCollection bids) {
+	public void UpdateStocksAndBids(IStockCollection stocks,IBidCollection bids) {
+		_playerFrame.showStocks(stocks,bids);
 		_playerFrame.showBid(bids);
 	}
+	
 	public void updateRank(IRankCollection ranks) {
-		for (IRank rank: ranks.getRankBoard()) {
-			System.out.println(rank.getRank() + ". " + rank.getPlayerName() + " " + rank.getAmount());
-		}
+		_playerFrame.updateRank(ranks);
+		
 	}
 	public void loginFalse(String Msg) {
 		JOptionPane.showMessageDialog(_loginFrame, Msg, "Login false",JOptionPane.OK_OPTION );

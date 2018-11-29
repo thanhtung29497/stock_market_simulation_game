@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-
+import ui.table.BidBoard;
 import ui.table.StockBoard;
 
 import javax.swing.JLabel;
@@ -24,7 +24,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import common.BidType;
+import common.IBid;
 import common.IBidCollection;
+import common.IRank;
+import common.IRankCollection;
+import common.IStock;
 import common.IStockCollection;
 
 import javax.swing.table.DefaultTableCellRenderer;
@@ -153,16 +158,28 @@ public class PlayerFrame extends JFrame {
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		Pl_BidBroad.add(scrollPane_1, BorderLayout.CENTER);
-		
-		tablBid = new JTable() ;
-		tablBid.setModel(new DefaultTableModel(
+	 
+		tablBid=new BidBoard(new DefaultTableModel(
 			new Object[][] {
-				{"12.2"}
+				{},
 			},
 			new String[] {
 				"New column", "New column", "New column", "New column", "New column", "New column"
 			}
-		) );
+		) {
+			boolean[] columnEditables = new boolean[] {
+				false, false, false, false, false, false
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		} );
+		tablBid.getColumnModel().getColumn(0).setResizable(false);
+		tablBid.getColumnModel().getColumn(1).setResizable(false);
+		tablBid.getColumnModel().getColumn(2).setResizable(false);
+		tablBid.getColumnModel().getColumn(3).setResizable(false);
+		tablBid.getColumnModel().getColumn(4).setResizable(false);
+		tablBid.getColumnModel().getColumn(5).setResizable(false);
 		tablBid.getTableHeader().setReorderingAllowed(false);
 		scrollPane_1.setViewportView(tablBid);
 		sl_contentPane.putConstraint(SpringLayout.EAST, pl_StockMessage, 0, SpringLayout.EAST, pl_PlayerInfo);
@@ -191,7 +208,7 @@ public class PlayerFrame extends JFrame {
 							{},
 						},
 						new String[] {
-								"CK","Trần","Sàn","TC","KL2","Giá 2","KL1","Giá 1","Giá","KL","+/-","KL1","Giá 1","KL2","Giá 2"
+								"CK","Trần","Sàn","TC","KL2","Giá 2","KL1","Giá 1","Giá","KL","KL1","Giá 1","KL2","Giá 2","Sở hữu"
 						}
 					) {
 						boolean[] columnEditables = new boolean[] {
@@ -330,9 +347,10 @@ public class PlayerFrame extends JFrame {
 		table_rank = new JTable();
 		table_rank.setModel(new DefaultTableModel(
 			new Object[][] {
+				{null, null, null},
 			},
 			new String[] {
-				"Rank","Player","Momney"
+				"Rank", "Player", "Momney"
 			}
 		) {
 			boolean[] columnEditables = new boolean[] {
@@ -343,6 +361,7 @@ public class PlayerFrame extends JFrame {
 			}
 		});
 		table_rank.getColumnModel().getColumn(0).setResizable(false);
+		table_rank.getColumnModel().getColumn(0).setPreferredWidth(41);
 		table_rank.getColumnModel().getColumn(1).setResizable(false);
 		table_rank.getColumnModel().getColumn(2).setResizable(false);
 		scrollPane_2.setViewportView(table_rank);
@@ -363,12 +382,20 @@ public class PlayerFrame extends JFrame {
 		lblRank.setText(rank.toString());
 	};
 	public void showMoney(Double money) {
-		labelMoney.setText(money.toString());
+		labelMoney.setText(String.format("%.2f", money));
 	};
 	public void showTime(Integer min,Integer sec) {
-		labelTime.setText(min.toString()+":"+sec.toString());
+		labelTime.setText(min.toString()+":"+String.format("%02d",sec));
 	};
-	
+	public void updateRank(IRankCollection ranks) {
+		DefaultTableModel md = (DefaultTableModel) table_rank.getModel();
+		while(md.getRowCount()>0)
+			md.removeRow(0);
+		for (IRank rank: ranks.getRankBoard()) {
+			md.addRow(new Object[] {rank.getRank(),rank.getPlayerName(),String.format("%.2f",rank.getAmount())});
+		}
+		md.fireTableDataChanged();
+	}
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -381,21 +408,73 @@ public class PlayerFrame extends JFrame {
 			}
 		});
 	}
-	public void showStocks(IStockCollection stocks) {
+	public String[] stockLine(IStock stock,IBidCollection bids) {
+//		ArrayList<IBid> sellBid = bids.getTopBids(BidType.Sell, stock.getCode(), 2);
+//		ArrayList<IBid> buyBid = bids.getTopBids(BidType.Buy, stock.getCode(), 2);
+//		IBid matchBid = bids.getLatestMatchedBid(stock.getCode());
+		String[] output = new String[15];
+		output[0]=stock.getCode();
+		output[1]=String.format("%.2f",stock.getCapPrice());
+		output[2]=String.format("%.2f",stock.getFloorPrice());
+		output[3]=String.format("%.2f",stock.getPrice());
+		for(int i=4;i<14;i++) {
+			output[i] =String.format("%.2f", Math.random()*(stock.getCapPrice()-stock.getFloorPrice())+stock.getFloorPrice());
+		}
+//		if(sellBid.size()==2) {
+//			output[4]=String.format("%.2f",sellBid.get(1).getOfferPrice());
+//			output[5]=String.format("%.2f",sellBid.get(1).getQuantity());
+//		}else {
+//			output[4]=output[5]="";
+//		}
+//		if(sellBid.size()>0) {
+//			output[6]=String.format("%.2f",sellBid.get(0).getOfferPrice());
+//			output[7]=String.format("%.2f",sellBid.get(0).getQuantity());
+//		}else {
+//			output[6]=output[7]="";
+//		}
+//		output[8]=String.format("%.2f",matchBid.getOfferPrice());
+//		output[9]=String.format("%.2f",matchBid.getQuantity());
+//		if(buyBid.size()>0) {
+//			output[10]=String.format("%.2f",sellBid.get(0).getOfferPrice());
+//			output[11]=String.format("%.2f",sellBid.get(0).getQuantity());
+//		}else {
+//			output[10]=output[11]="";
+//		}
+//		if(sellBid.size()==2) {
+//			output[12]=String.format("%.2f",sellBid.get(1).getOfferPrice());
+//			output[13]=String.format("%.2f",sellBid.get(1).getQuantity());
+//		}else {
+//			output[12]=output[13]="";
+//		}
+		output[14]="10";
+		return output;
+	};
+	public void showStocks(IStockCollection stocks,IBidCollection bids) {
 		DefaultTableModel model = (DefaultTableModel) tablStock.getModel();
 		model.setRowCount(0);
 		stocks.toArray().forEach(stock -> {
-			model.addRow(new String[] {stock.getCode(),
-										String.valueOf(stock.getCapPrice()),
-										String.valueOf(stock.getFloorPrice()),
-										String.valueOf(stock.getPrice()),
-										});
+			model.addRow(stockLine(stock,bids));
 		});
 		model.fireTableDataChanged();
 	}
 	public void showBid(IBidCollection bids) {
-		// TODO Auto-generated method stub
-		
+		DefaultTableModel model = (DefaultTableModel) tablBid.getModel();
+		model.setRowCount(0);
+		bids.getAllBids().forEach(bid->{
+			model.addRow(new String[] {
+					String.valueOf(bid.getId()),
+					bid.getStock().getCode(),
+					bid.getOfferorName(),
+					String.format("%.2f",bid.getOfferPrice()),
+					String.valueOf(bid.getQuantity())
+			});
+		});
+		for(int i=0;i<5;i++) {
+			model.addRow(new String[]{"c","d","e","f","g","Matched"});
+			model.addRow(new String[]{"c","d","e","f","g","Sell"});
+			model.addRow(new String[]{"c","d","e","f","g","Buy"});
+		}
+		model.fireTableDataChanged();
 	}
 }
 class ListCellRenderer extends DefaultListCellRenderer{
