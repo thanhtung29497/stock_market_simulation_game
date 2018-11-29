@@ -23,31 +23,33 @@ import ui.table.tame.GroupableTableHeader;
 
 public class StockBoard extends JTable{
 	
-//	protected class HeaderRenderer extends JLabel implements TableCellRenderer {
-//		 
-//	    public HeaderRenderer() {
-//	    	
-//	        setFont(new Font("Consolas", Font.BOLD, 14));
-//	        setForeground(Color.BLUE);
-//	        setBorder(BorderFactory.createEtchedBorder());
-//	    }
-//	     
-//	    @Override
-//	    public Component getTableCellRendererComponent(JTable table, Object value,
-//	            boolean isSelected, boolean hasFocus, int row, int column) {
-//	        setText(value.toString() + "cong");
-//	        return this;
-//	    }
-//	 
-//	}
-	
+
+	private Color getColor(int row,int column) {
+		if(this.getValueAt(row, column).equals(""))
+			return Color.white;
+		String val =(String) getValueAt(row,column);
+		String tb =(String) getValueAt(row,3);
+		if(val.equals(tb)) return Color.YELLOW;
+		else if(val.equals((String)getValueAt(row,1))) return Color.magenta;
+		else if(val.equals((String)getValueAt(row,2))) return Color.blue;
+		else if(Float.parseFloat(val)<Float.parseFloat(tb)) return Color.RED;
+		else return Color.green;
+	}
 	public Component prepareRenderer (TableCellRenderer renderer, int index_row, int index_col){
 	    Component comp = super.prepareRenderer(renderer, index_row, index_col);
 	    switch (index_col){
 	    case 0:
 	    	comp.setForeground(Color.red);break;
 	    case 1:
-	    	comp.setForeground(Color.yellow);break;
+	    	comp.setForeground(Color.magenta);break;
+	    case 2:
+	    	comp.setForeground(Color.blue);break;
+	    case 3:
+	    	comp.setForeground(Color.YELLOW);break;
+	    case 14:
+	    	comp.setForeground(Color.white);break;
+	    default:
+	    	comp.setForeground(getColor(index_row,index_col));
 	    }
 	    return comp;
 	}
@@ -70,10 +72,10 @@ public class StockBoard extends JTable{
 	    g_khoplenh.add(cm.getColumn(9));
 	    g_khoplenh.add(cm.getColumn(10));
 	    ColumnGroup g_ban = new ColumnGroup("Dự bán");
+	    g_ban.add(cm.getColumn(10));
 	    g_ban.add(cm.getColumn(11));
 	    g_ban.add(cm.getColumn(12));
 	    g_ban.add(cm.getColumn(13));
-	    g_ban.add(cm.getColumn(14));
 	    GroupableTableHeader header = (GroupableTableHeader)getTableHeader();
 	    header.addColumnGroup(g_mua);
 	    header.addColumnGroup(g_khoplenh);
