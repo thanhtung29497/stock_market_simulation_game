@@ -54,9 +54,9 @@ public class MessageRetrievingTask extends TimerTask {
 				for (IMessage message: stockExchangeMessages) {
 					if (message.getType() == MessageType.IssueStock 
 							|| message.getType() == MessageType.AdjustStockPrice) {
-						this.viewController.UpdateStocks(((IStockMessage)message).getStocks());
+						this.viewController.UpdateStocksAndBids(((IStockMessage)message).getStocks(), this.modelController.getAllBids());
 					} else if (message.getType() == MessageType.UpdateBid) {
-						this.viewController.UpdateIBidCollection(((IBidMessage)message).getBids());
+						this.viewController.UpdateStocksAndBids(this.modelController.getAllStocks(), ((IBidMessage)message).getBids());
 					} else if (message.getType() == MessageType.UpdateRank) {
 						IRankCollection ranks = ((IRankMessage)message).getRankBoard();
 						this.modelController.info.setRank(ranks.getRankByName(this.modelController.getInfo().getName()));

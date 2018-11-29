@@ -71,9 +71,8 @@ public class PlayerClient {
 		this.timer = new Timer();
 		timer.scheduleAtFixedRate(new TimeUpdatingTask(viewController, modelController), 1000, 1000);
 		try {
-			this.viewController.UpdateIBidCollection(this.modelController.getAllBids());
+			this.viewController.UpdateStocksAndBids(this.modelController.getAllStocks(), this.modelController.getAllBids());
 			this.viewController.updateRank(this.modelController.getRankBoard());
-			this.viewController.UpdateStocks(this.modelController.getAllStocks());
 		} catch (RemoteException e) {
 			this.viewController.loginFalse("Failed to connect to server");
 		}
