@@ -66,7 +66,7 @@ public class PlayerClient {
 				this.modelController.getRankBoard(),
 				this.modelController.getOwnStocks());
 	}
-	
+
 	public void startGame() {
 		this.timer = new Timer();
 		timer.scheduleAtFixedRate(new TimeUpdatingTask(viewController, modelController), 1000, 1000);

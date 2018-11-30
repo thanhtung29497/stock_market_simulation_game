@@ -28,10 +28,11 @@ public class BidCollection implements IBidCollection {
 		
 	private static final long serialVersionUID = 1L;
 	private HashMap<Integer, IBid> bids;
-	private IBid lastestMatchedBid;
+	private HashMap<String, IBid> lastestMatchedBid;
 
 	public BidCollection() {
 		this.bids = new HashMap<>();
+		this.lastestMatchedBid = new HashMap<>();
 	}
 	
 	@Override
@@ -45,7 +46,7 @@ public class BidCollection implements IBidCollection {
 
 	@Override
 	public ArrayList<IBid> getTopBids(BidType type, String stockCode, int number) {
-		ArrayList<IBid> bids = this.getAllBids();
+		ArrayList<IBid> bids = this.getBidsByStockCode(stockCode);
 		if (type == BidType.Buy) {
 			bids.removeIf(this.sellBidFilter);
 			bids.sort(this.buyBidComparator);
@@ -62,7 +63,7 @@ public class BidCollection implements IBidCollection {
 
 	@Override
 	public IBid getLatestMatchedBid(String stockCode) {
-		return this.lastestMatchedBid;
+		return this.lastestMatchedBid.get(stockCode);
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class BidCollection implements IBidCollection {
 		IBid bid = this.bids.get(id);
 		bid.changeStatus(status);
 		if (status == BidStatus.Matched) {
-			this.lastestMatchedBid = bid;
+			this.lastestMatchedBid.put(bid.getStock().getCode(), bid);
 		}
 		this.bids.put(id, bid);
 	}

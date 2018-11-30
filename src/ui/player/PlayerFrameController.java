@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 
+import common.BidType;
 import common.IBankMessage;
 import common.IBidCollection;
 import common.IStockCollection;
@@ -37,13 +38,16 @@ public class PlayerFrameController {
 		_client = client;
 	}
 	
+	public void acceptBid(int id) {
+		_client.acceptBid(id);
+	}
 	public void start() {
 		_loginFrame = new LoginFrame(this);
 	}
 	
 	public void startTrans(IStockCollection stocks, IBidCollection bids, IPlayerInfo playerInfo, IRankCollection ranks, IStockCollection ownStock) {
 		_loginFrame.dispose();
-		_playerFrame = new PlayerFrame();
+		_playerFrame = new PlayerFrame(this);
 		UpdateStocksAndBids(stocks,bids);
 		setMoney(playerInfo.getMoney());
 	}
@@ -80,6 +84,9 @@ public class PlayerFrameController {
 	}
 	public void setMoney(double money) {
 		_playerFrame.showMoney(money);
+	}
+	void postBid(BidType type, String stockCode, double offerPrice, int quantity) {
+		_client.postBid(type, stockCode, offerPrice, quantity);;
 	}
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {

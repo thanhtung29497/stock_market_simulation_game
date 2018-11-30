@@ -70,7 +70,6 @@ public class StockBoard extends JTable{
 	    ColumnGroup g_khoplenh = new ColumnGroup("Khớp lệnh");
 	    g_khoplenh.add(cm.getColumn(8));
 	    g_khoplenh.add(cm.getColumn(9));
-	    g_khoplenh.add(cm.getColumn(10));
 	    ColumnGroup g_ban = new ColumnGroup("Dự bán");
 	    g_ban.add(cm.getColumn(10));
 	    g_ban.add(cm.getColumn(11));
@@ -80,5 +79,6 @@ public class StockBoard extends JTable{
 	    header.addColumnGroup(g_mua);
 	    header.addColumnGroup(g_khoplenh);
 	    header.addColumnGroup(g_ban);
+	    this.setRowHeight(30);
 	}
 }

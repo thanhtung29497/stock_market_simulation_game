@@ -253,9 +253,6 @@ public class StockExchangeManager {
 		this.addMessageByKey(offerorId, new Message(MessageType.PostBid, "Your bid was succesfully posted"));
 		
 		for (String key: this.messages.keySet()) {
-			if (key.equals(offerorId)) {
-				continue;
-			}
 			this.addMessageByKey(key, new BidMessage(MessageType.UpdateBid,
 					"New bid was posted!", this.bids));
 		}

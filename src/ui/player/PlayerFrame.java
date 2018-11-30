@@ -24,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import common.BidStatus;
 import common.BidType;
 import common.IBid;
 import common.IBidCollection;
@@ -37,11 +38,14 @@ import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.List;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
@@ -66,6 +70,7 @@ public class PlayerFrame extends JFrame {
 	JLabel labelTime;
 	JLabel labelMoney;
 	JLabel lblRank;
+	JComboBox<String> cbbCode;
 	private JTable table_rank;
 	private JTextField textField;
 	/**
@@ -76,10 +81,10 @@ public class PlayerFrame extends JFrame {
 		BankMsgData = new Vector<String>();
 		StockMsgData = new Vector<String>();
 	}
-	public PlayerFrame() {
+	public PlayerFrame(PlayerFrameController _controller) {
 		dataInit();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1000, 600);
+		setSize(1000,900);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -164,9 +169,13 @@ public class PlayerFrame extends JFrame {
 				{},
 			},
 			new String[] {
-				"New column", "New column", "New column", "New column", "New column", "New column"
+				"ID","Type","Stock code","Price","Quantity","Status"
 			}
 		) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			boolean[] columnEditables = new boolean[] {
 				false, false, false, false, false, false
 			};
@@ -174,6 +183,22 @@ public class PlayerFrame extends JFrame {
 				return columnEditables[column];
 			}
 		} );
+		tablBid.setRowSelectionAllowed(true);
+		tablBid.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				if(e.getClickCount()==2) {
+					int id = Integer.parseInt((String)tablBid.getValueAt(tablBid.getSelectedRow(),0));
+					int conf = JOptionPane.showConfirmDialog(null,
+							String.format("Accept Bid id(%d)?",id));
+					if(conf == 0) {
+						_controller.acceptBid(id);
+					}
+				}
+					System.out.printf("click roif %d",tablBid.getSelectedRow() );
+			}
+		});
 		tablBid.getColumnModel().getColumn(0).setResizable(false);
 		tablBid.getColumnModel().getColumn(1).setResizable(false);
 		tablBid.getColumnModel().getColumn(2).setResizable(false);
@@ -211,11 +236,14 @@ public class PlayerFrame extends JFrame {
 								"CK","Trần","Sàn","TC","KL2","Giá 2","KL1","Giá 1","Giá","KL","KL1","Giá 1","KL2","Giá 2","Sở hữu"
 						}
 					) {
-						boolean[] columnEditables = new boolean[] {
-								false, false, false, false, false
-						};
+				
+						/**
+						 * 
+						 */
+						private static final long serialVersionUID = 1L;
+
 						public boolean isCellEditable(int row, int column) {
-							return columnEditables[column];
+							return false;
 						}
 					});
 		for(int i=0;i<12;i++)
@@ -243,7 +271,7 @@ public class PlayerFrame extends JFrame {
 		sl_pl_Transaction.putConstraint(SpringLayout.WEST, cbbType, 42, SpringLayout.EAST, lblType);
 		pl_Transaction.add(cbbType);
 		
-		JComboBox cbbCode = new JComboBox();
+		cbbCode = new JComboBox<>();
 		sl_pl_Transaction.putConstraint(SpringLayout.WEST, cbbCode, 0, SpringLayout.WEST, cbbType);
 		sl_pl_Transaction.putConstraint(SpringLayout.EAST, cbbCode, 0, SpringLayout.EAST, cbbType);
 		pl_Transaction.add(cbbCode);
@@ -278,6 +306,16 @@ public class PlayerFrame extends JFrame {
 		textField.setColumns(10);
 		
 		JButton btnSend = new JButton("Send");
+		btnSend.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String code = (String)cbbCode.getSelectedItem();
+				_controller.postBid((cbbType.getSelectedIndex()==0)?BidType.Sell:BidType.Buy, 
+						(String)cbbCode.getSelectedItem(),
+						Float.parseFloat(textField.getText()) ,
+						(int)spinner.getValue());
+			}
+		});
 		sl_pl_Transaction.putConstraint(SpringLayout.WEST, btnSend, 0, SpringLayout.WEST, textField);
 		sl_pl_Transaction.putConstraint(SpringLayout.SOUTH, btnSend, -10, SpringLayout.SOUTH, pl_Transaction);
 		pl_Transaction.add(btnSend);
@@ -290,7 +328,7 @@ public class PlayerFrame extends JFrame {
 		contentPane.add(lblTrans);
 		
 		
-		
+	
 		JLabel lblSockEnc = new JLabel("Stock Enchange Message");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_StockMessage, 10, SpringLayout.SOUTH, lblSockEnc);
 		
@@ -309,7 +347,6 @@ public class PlayerFrame extends JFrame {
 		pl_PlayerInfo.add(lblMoney);
 		
 		JLabel lblTime = new JLabel("Time");
-		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, lblTime, 20, SpringLayout.SOUTH, lblMoney);
 		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblTime, 0, SpringLayout.WEST, lblMoney);
 		pl_PlayerInfo.add(lblTime);
 		
@@ -332,6 +369,17 @@ public class PlayerFrame extends JFrame {
 		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, lblRank, 0, SpringLayout.NORTH, lblrank);
 		sl_pl_PlayerInfo.putConstraint(SpringLayout.EAST, lblRank, 0, SpringLayout.EAST, labelMoney);
 		pl_PlayerInfo.add(lblRank);
+		
+		JLabel lblNewLabel = new JLabel("Balance");
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, lblTime, 20, SpringLayout.SOUTH, lblNewLabel);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, lblNewLabel, 10, SpringLayout.SOUTH, lblMoney);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblNewLabel, 0, SpringLayout.WEST, lblMoney);
+		pl_PlayerInfo.add(lblNewLabel);
+		
+		JLabel lblMastercong = new JLabel("MasterCOng");
+		lblMastercong.setForeground(Color.RED);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblMastercong, 0, SpringLayout.WEST, pl_PlayerInfo);
+		pl_PlayerInfo.add(lblMastercong);
 		contentPane.add(lblSockEnc);
 		
 		JLabel lblRankTable = new JLabel("Rank");
@@ -353,6 +401,10 @@ public class PlayerFrame extends JFrame {
 				"Rank", "Player", "Momney"
 			}
 		) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			boolean[] columnEditables = new boolean[] {
 				false, false, false
 			};
@@ -369,7 +421,7 @@ public class PlayerFrame extends JFrame {
 		setVisible(true);
 	}
 	public void addBankMessage(String msg) {
-		BankMsgData.addElement("<html><body style='width: 140px;border-top:1px solid'>"+msg+"</body></html>");
+		BankMsgData.addElement(msg);
 		list_BankMs.setListData(BankMsgData);
 		list_BankMs.ensureIndexIsVisible(BankMsgData.size()-1);
 	}
@@ -396,64 +448,70 @@ public class PlayerFrame extends JFrame {
 		}
 		md.fireTableDataChanged();
 	}
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					PlayerFrame frame = new PlayerFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					PlayerFrame frame = new PlayerFrame();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 	public String[] stockLine(IStock stock,IBidCollection bids) {
-//		ArrayList<IBid> sellBid = bids.getTopBids(BidType.Sell, stock.getCode(), 2);
-//		ArrayList<IBid> buyBid = bids.getTopBids(BidType.Buy, stock.getCode(), 2);
-//		IBid matchBid = bids.getLatestMatchedBid(stock.getCode());
+		ArrayList<IBid> sellBid = bids.getTopBids(BidType.Sell, stock.getCode(), 2);
+		ArrayList<IBid> buyBid = bids.getTopBids(BidType.Buy, stock.getCode(), 2);
+		IBid matchBid = bids.getLatestMatchedBid(stock.getCode());
 		String[] output = new String[15];
 		output[0]=stock.getCode();
 		output[1]=String.format("%.2f",stock.getCapPrice());
 		output[2]=String.format("%.2f",stock.getFloorPrice());
 		output[3]=String.format("%.2f",stock.getPrice());
-		for(int i=4;i<14;i++) {
-			output[i] =String.format("%.2f", Math.random()*(stock.getCapPrice()-stock.getFloorPrice())+stock.getFloorPrice());
+//		for(int i=4;i<14;i++) {
+//			output[i] =String.format("%.2f", Math.random()*(stock.getCapPrice()-stock.getFloorPrice())+stock.getFloorPrice());
+//		}
+		if(buyBid.size()==2) {
+			output[5]=String.format("%.2f",buyBid.get(1).getOfferPrice());
+			output[4]=String.format("%.2f",buyBid.get(1).getQuantity());
+		}else {
+			output[4]=output[5]="";
 		}
-//		if(sellBid.size()==2) {
-//			output[4]=String.format("%.2f",sellBid.get(1).getOfferPrice());
-//			output[5]=String.format("%.2f",sellBid.get(1).getQuantity());
-//		}else {
-//			output[4]=output[5]="";
-//		}
-//		if(sellBid.size()>0) {
-//			output[6]=String.format("%.2f",sellBid.get(0).getOfferPrice());
-//			output[7]=String.format("%.2f",sellBid.get(0).getQuantity());
-//		}else {
-//			output[6]=output[7]="";
-//		}
-//		output[8]=String.format("%.2f",matchBid.getOfferPrice());
-//		output[9]=String.format("%.2f",matchBid.getQuantity());
-//		if(buyBid.size()>0) {
-//			output[10]=String.format("%.2f",sellBid.get(0).getOfferPrice());
-//			output[11]=String.format("%.2f",sellBid.get(0).getQuantity());
-//		}else {
-//			output[10]=output[11]="";
-//		}
-//		if(sellBid.size()==2) {
-//			output[12]=String.format("%.2f",sellBid.get(1).getOfferPrice());
-//			output[13]=String.format("%.2f",sellBid.get(1).getQuantity());
-//		}else {
-//			output[12]=output[13]="";
-//		}
+		if(buyBid.size()>0) {
+			output[7]=String.format("%.2f",buyBid.get(0).getOfferPrice());
+			output[6]=String.format("%d",buyBid.get(0).getQuantity());
+		}else {
+			output[6]=output[7]="";
+		}
+		if(matchBid!=null) {
+		output[8]=String.format("%.2f",matchBid.getOfferPrice());
+		output[9]=String.format("%d",matchBid.getQuantity());
+		}else {
+			output[8]=output[9]="";
+		}
+		if(sellBid.size()>0) {
+			output[11]=String.format("%.2f",sellBid.get(0).getOfferPrice());
+			output[10]=String.format("%d",sellBid.get(0).getQuantity());
+		}else {
+			output[10]=output[11]="";
+		}
+		if(sellBid.size()==2) {
+			output[13]=String.format("%.2f",sellBid.get(1).getOfferPrice());
+			output[12]=String.format("%d",sellBid.get(1).getQuantity());
+		}else {
+			output[12]=output[13]="";
+		}
 		output[14]="10";
 		return output;
 	};
 	public void showStocks(IStockCollection stocks,IBidCollection bids) {
 		DefaultTableModel model = (DefaultTableModel) tablStock.getModel();
 		model.setRowCount(0);
+		cbbCode.removeAllItems();
 		stocks.toArray().forEach(stock -> {
 			model.addRow(stockLine(stock,bids));
+			cbbCode.addItem(stock.getCode());
 		});
 		model.fireTableDataChanged();
 	}
@@ -463,24 +521,25 @@ public class PlayerFrame extends JFrame {
 		bids.getAllBids().forEach(bid->{
 			model.addRow(new String[] {
 					String.valueOf(bid.getId()),
+					bid.getType() == BidType.Sell ? "Sell" : "Buy",
 					bid.getStock().getCode(),
-					bid.getOfferorName(),
 					String.format("%.2f",bid.getOfferPrice()),
-					String.valueOf(bid.getQuantity())
+					String.valueOf(bid.getQuantity()),
+					bid.getStatus() == BidStatus.Available ? "Available" : "Matched"
 			});
 		});
-		for(int i=0;i<5;i++) {
-			model.addRow(new String[]{"c","d","e","f","g","Matched"});
-			model.addRow(new String[]{"c","d","e","f","g","Sell"});
-			model.addRow(new String[]{"c","d","e","f","g","Buy"});
-		}
 		model.fireTableDataChanged();
 	}
 }
 class ListCellRenderer extends DefaultListCellRenderer{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public Component getListCellRendererComponent(JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
-		String str= "<html><body style='width: 140px;border-top:1px solid'>"+value.toString()+"<br></body></html>";
+		String str= "<html><body style='width: 140px;border-top:1px solid'>"+value.toString()+"</html>";
 		return super.getListCellRendererComponent(list, str, index, isSelected, cellHasFocus);
 	}
 }
