@@ -46,7 +46,7 @@ public class StockBoard extends JTable{
 	    	comp.setForeground(Color.blue);break;
 	    case 3:
 	    	comp.setForeground(Color.YELLOW);break;
-	    case 14:
+	    case 4:
 	    	comp.setForeground(Color.white);break;
 	    default:
 	    	comp.setForeground(getColor(index_row,index_col));
@@ -63,15 +63,15 @@ public class StockBoard extends JTable{
 		TableColumnModel cm = getColumnModel();
 		cm.setColumnMargin(0);
 	    ColumnGroup g_mua = new ColumnGroup("Dự mua");
-	    g_mua.add(cm.getColumn(4));
+	    g_mua.add(cm.getColumn(8));
 	    g_mua.add(cm.getColumn(5));
 	    g_mua.add(cm.getColumn(6));
 	    g_mua.add(cm.getColumn(7));
 	    ColumnGroup g_khoplenh = new ColumnGroup("Khớp lệnh");
-	    g_khoplenh.add(cm.getColumn(8));
+	    g_khoplenh.add(cm.getColumn(10));
 	    g_khoplenh.add(cm.getColumn(9));
 	    ColumnGroup g_ban = new ColumnGroup("Dự bán");
-	    g_ban.add(cm.getColumn(10));
+	    g_ban.add(cm.getColumn(14));
 	    g_ban.add(cm.getColumn(11));
 	    g_ban.add(cm.getColumn(12));
 	    g_ban.add(cm.getColumn(13));

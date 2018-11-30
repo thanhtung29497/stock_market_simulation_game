@@ -69,6 +69,7 @@ public class PlayerFrame extends JFrame {
 	JList list_StockMessage;
 	JLabel labelTime;
 	JLabel labelMoney;
+	JLabel lblBalance;
 	JLabel lblRank;
 	JComboBox<String> cbbCode;
 	private JTable table_rank;
@@ -233,7 +234,7 @@ public class PlayerFrame extends JFrame {
 							{},
 						},
 						new String[] {
-								"CK","Trần","Sàn","TC","KL2","Giá 2","KL1","Giá 1","Giá","KL","KL1","Giá 1","KL2","Giá 2","Sở hữu"
+								"CK","Trần","Sàn","TC","Sở hữu","KL2","Giá 2","KL1","Giá 1","Giá","KL","KL1","Giá 1","KL2","Giá 2"
 						}
 					) {
 				
@@ -287,13 +288,13 @@ public class PlayerFrame extends JFrame {
 		sl_pl_Transaction.putConstraint(SpringLayout.WEST, lblPrice, 0, SpringLayout.WEST, lblType);
 		pl_Transaction.add(lblPrice);
 		
-		JLabel lblQuanitity = new JLabel("Quanitity");
-		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, lblQuanitity, 50, SpringLayout.SOUTH, lblPrice);
-		sl_pl_Transaction.putConstraint(SpringLayout.WEST, lblQuanitity, 0, SpringLayout.WEST, lblType);
-		pl_Transaction.add(lblQuanitity);
+		JLabel lblQuantity = new JLabel("Quantity");
+		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, lblQuantity, 50, SpringLayout.SOUTH, lblPrice);
+		sl_pl_Transaction.putConstraint(SpringLayout.WEST, lblQuantity, 0, SpringLayout.WEST, lblType);
+		pl_Transaction.add(lblQuantity);
 		
 		JSpinner spinner = new JSpinner();
-		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, spinner, 0, SpringLayout.NORTH, lblQuanitity);
+		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, spinner, 0, SpringLayout.NORTH, lblQuantity);
 		sl_pl_Transaction.putConstraint(SpringLayout.WEST, spinner, 0, SpringLayout.WEST, cbbType);
 		sl_pl_Transaction.putConstraint(SpringLayout.EAST, spinner, 0, SpringLayout.EAST, cbbCode);
 		pl_Transaction.add(spinner);
@@ -329,7 +330,7 @@ public class PlayerFrame extends JFrame {
 		
 		
 	
-		JLabel lblSockEnc = new JLabel("Stock Enchange Message");
+		JLabel lblSockEnc = new JLabel("Stock Exchange Message");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_StockMessage, 10, SpringLayout.SOUTH, lblSockEnc);
 		
 		list_StockMessage = new JList();
@@ -380,6 +381,11 @@ public class PlayerFrame extends JFrame {
 		lblMastercong.setForeground(Color.RED);
 		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblMastercong, 0, SpringLayout.WEST, pl_PlayerInfo);
 		pl_PlayerInfo.add(lblMastercong);
+		
+		lblBalance = new JLabel("00.00");
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, lblBalance, 10, SpringLayout.SOUTH, labelMoney);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblBalance, 0, SpringLayout.WEST, labelMoney);
+		pl_PlayerInfo.add(lblBalance);
 		contentPane.add(lblSockEnc);
 		
 		JLabel lblRankTable = new JLabel("Rank");
@@ -398,7 +404,7 @@ public class PlayerFrame extends JFrame {
 				{null, null, null},
 			},
 			new String[] {
-				"Rank", "Player", "Momney"
+				"Rank", "Player", "Money"
 			}
 		) {
 			/**
@@ -436,6 +442,9 @@ public class PlayerFrame extends JFrame {
 	public void showMoney(Double money) {
 		labelMoney.setText(String.format("%.2f", money));
 	};
+	public void showBalance(Double money) {
+		lblBalance.setText(String.format("%.2f", money));
+	};
 	public void showTime(Integer min,Integer sec) {
 		labelTime.setText(min.toString()+":"+String.format("%02d",sec));
 	};
@@ -469,40 +478,38 @@ public class PlayerFrame extends JFrame {
 		output[1]=String.format("%.2f",stock.getCapPrice());
 		output[2]=String.format("%.2f",stock.getFloorPrice());
 		output[3]=String.format("%.2f",stock.getPrice());
-//		for(int i=4;i<14;i++) {
-//			output[i] =String.format("%.2f", Math.random()*(stock.getCapPrice()-stock.getFloorPrice())+stock.getFloorPrice());
-//		}
+		output[4]="0";
 		if(buyBid.size()==2) {
-			output[5]=String.format("%.2f",buyBid.get(1).getOfferPrice());
-			output[4]=String.format("%.2f",buyBid.get(1).getQuantity());
+			output[6]=String.format("%.2f",buyBid.get(1).getOfferPrice());
+			output[5]=String.format("%.2f",buyBid.get(1).getQuantity());
 		}else {
-			output[4]=output[5]="";
+			output[6]=output[5]="";
 		}
 		if(buyBid.size()>0) {
-			output[7]=String.format("%.2f",buyBid.get(0).getOfferPrice());
-			output[6]=String.format("%d",buyBid.get(0).getQuantity());
+			output[8]=String.format("%.2f",buyBid.get(0).getOfferPrice());
+			output[7]=String.format("%d",buyBid.get(0).getQuantity());
 		}else {
-			output[6]=output[7]="";
+			output[8]=output[7]="";
 		}
 		if(matchBid!=null) {
-		output[8]=String.format("%.2f",matchBid.getOfferPrice());
-		output[9]=String.format("%d",matchBid.getQuantity());
+		output[9]=String.format("%.2f",matchBid.getOfferPrice());
+		output[10]=String.format("%d",matchBid.getQuantity());
 		}else {
-			output[8]=output[9]="";
+			output[10]=output[9]="";
 		}
 		if(sellBid.size()>0) {
-			output[11]=String.format("%.2f",sellBid.get(0).getOfferPrice());
-			output[10]=String.format("%d",sellBid.get(0).getQuantity());
+			output[12]=String.format("%.2f",sellBid.get(0).getOfferPrice());
+			output[11]=String.format("%d",sellBid.get(0).getQuantity());
 		}else {
-			output[10]=output[11]="";
+			output[12]=output[11]="";
 		}
 		if(sellBid.size()==2) {
-			output[13]=String.format("%.2f",sellBid.get(1).getOfferPrice());
-			output[12]=String.format("%d",sellBid.get(1).getQuantity());
+			output[14]=String.format("%.2f",sellBid.get(1).getOfferPrice());
+			output[13]=String.format("%d",sellBid.get(1).getQuantity());
 		}else {
-			output[12]=output[13]="";
+			output[14]=output[13]="";
 		}
-		output[14]="10";
+		
 		return output;
 	};
 	public void showStocks(IStockCollection stocks,IBidCollection bids) {

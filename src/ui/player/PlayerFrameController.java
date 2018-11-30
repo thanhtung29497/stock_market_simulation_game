@@ -50,6 +50,7 @@ public class PlayerFrameController {
 		_playerFrame = new PlayerFrame(this);
 		UpdateStocksAndBids(stocks,bids);
 		setMoney(playerInfo.getMoney());
+		setBalance(playerInfo.getBalance());
 	}
 	public void UpdateStocksAndBids(IStockCollection stocks,IBidCollection bids) {
 		_playerFrame.showStocks(stocks,bids);
@@ -57,7 +58,9 @@ public class PlayerFrameController {
 	}
 	
 	public void updateRank(IRankCollection ranks) {
-		_playerFrame.updateRank(ranks);
+		if (this._playerFrame != null) {
+			_playerFrame.updateRank(ranks);
+		}
 		
 	}
 	public void loginFalse(String Msg) {
@@ -84,6 +87,9 @@ public class PlayerFrameController {
 	}
 	public void setMoney(double money) {
 		_playerFrame.showMoney(money);
+	}
+	public void setBalance(double money) {
+		_playerFrame.showBalance(money);
 	}
 	void postBid(BidType type, String stockCode, double offerPrice, int quantity) {
 		_client.postBid(type, stockCode, offerPrice, quantity);;

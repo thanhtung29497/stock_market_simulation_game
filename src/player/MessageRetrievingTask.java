@@ -36,6 +36,8 @@ public class MessageRetrievingTask extends TimerTask {
 		try {
 			bankMessages = this.modelController.retrieveBankMessages();
 			if (!bankMessages.isEmpty()) {
+				IBankMessage lastMessage = bankMessages.get(bankMessages.size() - 1);
+				this.viewController.setBalance(lastMessage.getBalance());
 				this.viewController.setMoney(this.modelController.getTotalAmount());
 				this.testPrintBankMessage(bankMessages);
 				this.viewController.addBankMessages(bankMessages);
