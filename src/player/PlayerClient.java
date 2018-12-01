@@ -81,13 +81,13 @@ public class PlayerClient {
 			this.viewController.UpdateStocksAndBids(this.modelController.getAllStocks(), this.modelController.getAllBids());
 			this.viewController.updateRank(this.modelController.getRankBoard());
 		} catch (RemoteException e) {
-			this.viewController.loginFalse("Failed to connect to server");
+			this.viewController.errorShow("Server error", "Failed to connect to server");
 		}
 	}
 	
 	public void endGame() {
 		this.timeOut = true;
-		this.viewController.loginFalse("Game end! Your rank is " + this.modelController.getInfo().getRank());
+		this.viewController.errorShow("Notification", "Game end! Your rank is " + this.modelController.getInfo().getRank());
 		timer.cancel();
 	}
 	
@@ -101,13 +101,13 @@ public class PlayerClient {
 			
 		} catch (RemoteException | NotBoundException e) {
 			e.printStackTrace();
-			this.viewController.signUpFalse("Failed to connect to server");
+			this.viewController.errorShow("Server error", "Failed to connect to server");
 		} catch (ExceedMaximumAccountException e) {
-			this.viewController.signUpFalse("Exceed of maximum account");
+			this.viewController.errorShow("Account error", "Exceed of maximum account");
 		} catch (DuplicateLoginNameException e) {
-			this.viewController.signUpFalse("Duplicate login name");
+			this.viewController.errorShow("Login error", "Duplicate login name");
 		} catch (InvalidLoginException | NotFoundAccountException e) {
-			this.viewController.signUpFalse("Invalid register");
+			this.viewController.errorShow("Login error", "Invalid register");
 		}
 	}
 	
@@ -119,9 +119,9 @@ public class PlayerClient {
 			this.initView();
 			
 		} catch (RemoteException | NotBoundException e) {
-			this.viewController.loginFalse("Failed to connect to server");
+			this.viewController.errorShow("Server error", "Failed to connect to server");
 		} catch (InvalidLoginException | NotFoundAccountException e) {
-			this.viewController.loginFalse("Wrong account name or password");
+			this.viewController.errorShow("Login error", "Wrong account name or password");
 		}
 	}
 	
@@ -129,21 +129,21 @@ public class PlayerClient {
 		try {
 			this.modelController.postBid(type, stockCode, offerPrice, quantity);
 		} catch (RemoteException e) {
-			this.viewController.loginFalse("Failed to connect to server");
+			this.viewController.errorShow("Server error", "Failed to connect to server");
 		} catch (NotEnoughMoneyException e) {
-			this.viewController.loginFalse("Not enough money to make transaction");
+			this.viewController.errorShow("Error", "Not enough money to make transaction");
 		} catch (NotFoundStockCodeException e) {
-			this.viewController.loginFalse("Invalid stock code " + stockCode);
+			this.viewController.errorShow("Invalid bid", "Invalid stock code " + stockCode);
 		} catch (OutOfStockPriceRangeException e) {
-			this.viewController.loginFalse("The price you offer is out of range");
+			this.viewController.errorShow("Invalid bid", "The price you offer is out of range");
 		} catch (NotEnoughStockQuantityException e) {
-			this.viewController.loginFalse("Not enough stock to make transaction");
+			this.viewController.errorShow("Invalid bid", "Not enough stock to make transaction");
 		} catch (NotFoundAccountException e) {
-			this.viewController.loginFalse("Something went wrong with your account");
+			this.viewController.errorShow("Account error", "Something went wrong with your account");
 		} catch (TimeOutException e) {
-			this.viewController.loginFalse("Time out");
+			this.viewController.errorShow("Warning", "Time out");
 		} catch (NonPositiveStockQuantityException e) {
-			this.viewController.loginFalse("The quantity of stock must be positive");
+			this.viewController.errorShow("Invalid bid", "The quantity of stock must be positive");
 		}
 	}
 	
@@ -151,21 +151,21 @@ public class PlayerClient {
 		try {
 			this.modelController.acceptBid(bidId);
 		} catch (RemoteException e) {
-			this.viewController.loginFalse("Failed to connect to server");
+			this.viewController.errorShow("Server error", "Failed to connect to server");
 		} catch (NotFoundBidException e) {
-			this.viewController.loginFalse("Not found bid id " + bidId);
+			this.viewController.errorShow("Invalid bid", "Not found bid id " + bidId);
 		} catch (BidNotAvailableException e) {
-			this.viewController.loginFalse("Bid might be matched");
+			this.viewController.errorShow("Invalid bid", "Bid might be matched");
 		} catch (NotEnoughStockQuantityException e) {
-			this.viewController.loginFalse("Not enough stock to make transaction");
+			this.viewController.errorShow("Invalid bid", "Not enough stock to make transaction");
 		} catch (NotEnoughMoneyException e) {
-			this.viewController.loginFalse("Not enough money to make transaction");
+			this.viewController.errorShow("Invalid bid", "Not enough money to make transaction");
 		} catch (OfferorNotEnoughMoneyException e) {
-			this.viewController.loginFalse("Offeror " + e.getOfferorName() + " not enough money to make transaction");
+			this.viewController.errorShow("Invalid bid", "Offeror " + e.getOfferorName() + " not enough money to make transaction");
 		} catch (NotFoundAccountException e) {
-			this.viewController.loginFalse("Something went wrong with your account");
+			this.viewController.errorShow("Account error", "Something went wrong with your account");
 		} catch (TimeOutException e) {
-			this.viewController.loginFalse("Time is out");
+			this.viewController.errorShow("Warning", "Time is out");
 		}
 	}
 		

@@ -121,7 +121,7 @@ public class StockExchangeManager {
 		for (String key: this.messages.keySet()) {
 			if (Utility.isPlayerId(key)) {
 				this.addMessageByKey(key, new StockMessage(MessageType.UpdateStock,
-						"New stock was issued: " + stock.getCode(), this.getOwnStock(key)));
+						"New stock was issued: " + stock.getCode(), this.stocks));
 			}
 		}
 		
@@ -175,7 +175,7 @@ public class StockExchangeManager {
 		
 		for (String key: this.messages.keySet()) {
 			this.addMessageByKey(key, new StockMessage(MessageType.UpdateStock, 
-					"Session close, adjust stock price", this.getOwnStock(key)));
+					"Session close, adjust stock price", this.stocks));
 			this.addMessageByKey(key, new RankMessage(MessageType.UpdateRank,
 					"Rank board was updated", this.rankBoard));
 		}

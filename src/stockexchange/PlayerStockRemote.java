@@ -64,7 +64,9 @@ public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerSto
 
 	@Override
 	public void acceptBid(String accountId, int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, NotFoundAccountException, TimeOutException {
-		this.stockExchangeManager.acceptBid(bidId, accountId);
+		synchronized (this.stockExchangeManager) {
+			this.stockExchangeManager.acceptBid(bidId, accountId);
+		}
 	}
 
 	@Override

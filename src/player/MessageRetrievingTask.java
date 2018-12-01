@@ -9,6 +9,8 @@ import common.IBidMessage;
 import common.IMessage;
 import common.IRankCollection;
 import common.IRankMessage;
+import common.IStock;
+import common.IStockCollection;
 import common.IStockMessage;
 import common.MessageType;
 import exception.NotFoundAccountException;
@@ -43,9 +45,9 @@ public class MessageRetrievingTask extends TimerTask {
 				this.viewController.addBankMessages(bankMessages);
 			}
 		} catch (RemoteException e) {
-			this.viewController.loginFalse("Failed to connect to server");
+			this.viewController.errorShow("login false","Failed to connect to server");
 		} catch (NotFoundAccountException e) {
-			this.viewController.loginFalse("Something went wrong with your account");
+			this.viewController.errorShow("login false","Something went wrong with your account");
 		}
 	}
 	
@@ -59,8 +61,17 @@ public class MessageRetrievingTask extends TimerTask {
 				this.client.startGame();
 			}
 		} catch (RemoteException e) {
-			this.viewController.loginFalse("Failed to connect to server");
+			this.viewController.errorShow("Server error", "Failed to connect to server");
 		}
+	}
+	
+	private IStockCollection combineStockBoardAndOwnStocks(IStockCollection stocks, IStockCollection ownStocks) {
+		for (IStock stock: ownStocks.toArray()) {
+			String stockCode = stock.getCode();
+			int quantity = ownStocks.getStockQuantity(stockCode);
+			stocks.addQuantity(stockCode, quantity);
+		}
+		return stocks;
 	}
 	
 	private void retrieveStockMessages() {
@@ -69,10 +80,21 @@ public class MessageRetrievingTask extends TimerTask {
 			if (!stockExchangeMessages.isEmpty()) {
 				for (IMessage message: stockExchangeMessages) {
 					if (message.getType() == MessageType.UpdateStock) {
-						this.viewController.UpdateStocksAndBids(((IStockMessage)message).getStocks(), this.modelController.getAllBids());
+						
+						IStockCollection stocks = ((IStockMessage)message).getStocks();
+						IStockCollection ownStocks = this.modelController.getOwnStocks();
+						this.viewController.UpdateStocksAndBids(this.combineStockBoardAndOwnStocks(stocks, ownStocks), 
+								this.modelController.getAllBids());
+						
 					} else if (message.getType() == MessageType.UpdateBid) {
-						this.viewController.UpdateStocksAndBids(this.modelController.getAllStocks(), ((IBidMessage)message).getBids());
+						
+						IStockCollection stocks = this.modelController.getAllStocks();
+						IStockCollection ownStocks = this.modelController.getOwnStocks();
+						this.viewController.UpdateStocksAndBids(this.combineStockBoardAndOwnStocks(stocks, ownStocks), 
+								((IBidMessage)message).getBids());
+						
 					} else if (message.getType() == MessageType.UpdateRank) {
+						
 						IRankCollection ranks = ((IRankMessage)message).getRankBoard();
 						this.modelController.info.setRank(ranks.getRankByName(this.modelController.getInfo().getName()));
 						this.viewController.updateRank(ranks);
@@ -81,14 +103,17 @@ public class MessageRetrievingTask extends TimerTask {
 					
 					this.viewController.setMoney(this.modelController.getTotalAmount());
 				}
-				this.testPrintStockMessage(stockExchangeMessages);
-				stockExchangeMessages.removeIf(message -> message.getType() == MessageType.UpdateRank);
+				
+				// this.testPrintStockMessage(stockExchangeMessages);
+				
+				stockExchangeMessages.removeIf(message -> message.getType() == MessageType.UpdateRank
+						|| message.getType() == MessageType.UpdateBid);
 				this.viewController.addStockExchangeMessages(stockExchangeMessages);
 			}
 		} catch(RemoteException e) {
-			this.viewController.loginFalse("Failed to connect to server");
+			this.viewController.errorShow("Server error", "Failed to connect to server");
 		} catch (NotFoundAccountException e) {
-			this.viewController.loginFalse("Something went wrong with your account");
+			this.viewController.errorShow("Error", "Something went wrong with your account");
 		}
 	}
 	

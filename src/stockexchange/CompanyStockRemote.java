@@ -36,7 +36,9 @@ public class CompanyStockRemote extends UnicastRemoteObject implements ICompanyS
 
 	@Override
 	public void acceptBid(int bidId, String companyId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotFoundAccountException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, TimeOutException {
-		this.stockExchangeManager.acceptBid(bidId, companyId);
+		synchronized (this.stockExchangeManager) {
+			this.stockExchangeManager.acceptBid(bidId, companyId);
+		}
 	}
 
 	@Override
