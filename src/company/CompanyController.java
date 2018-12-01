@@ -26,7 +26,6 @@ public class CompanyController implements ICompanyController {
 	private String name;
 	private IStock stock;
 	private String id;
-	private int quantity;
 	private ICompanyStockRemote stockController;
 	private IAccountRemote accountController;
 	
@@ -72,8 +71,8 @@ public class CompanyController implements ICompanyController {
 	}
 
 	@Override
-	public int getStockQuantity() {
-		return this.quantity;
+	public int getStockQuantity() throws RemoteException {
+		return this.stockController.getStockQuantity(this.id, this.stock.getCode());
 	}
 
 	@Override

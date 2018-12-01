@@ -9,13 +9,13 @@ import java.util.Timer;
 import common.BidType;
 import common.Convention;
 import common.IAccountRemote;
-import common.IBid;
 import common.IPlayerStockRemote;
 
 import exception.BidNotAvailableException;
 import exception.DuplicateLoginNameException;
 import exception.ExceedMaximumAccountException;
 import exception.InvalidLoginException;
+import exception.NonPostitiveStockQuantityException;
 import exception.NotEnoughMoneyException;
 import exception.NotEnoughStockQuantityException;
 import exception.NotFoundAccountException;
@@ -34,9 +34,15 @@ public class PlayerClient {
 	private IAccountRemote accountController;
 	private	IPlayerStockRemote stockController;
 	private Timer timer;
+	private Boolean timeOut;
 	
 	private PlayerClient() {
 		this.viewController = new PlayerFrameController(this);
+		this.timeOut = true;
+	}
+	
+	public Boolean isTimeOut() {
+		return this.timeOut;
 	}
 	
 	public void run() {
@@ -56,7 +62,7 @@ public class PlayerClient {
 		this.modelController.registerStockExchange();
 		
 		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController, this), Convention.RETRIEVE_MESSAGE_PERIOD, Convention.RETRIEVE_MESSAGE_PERIOD);
+		timer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController, this), Convention.PLAYER_RETRIEVE_MESSAGE_PERIOD, Convention.PLAYER_RETRIEVE_MESSAGE_PERIOD);
 	}
 	
 	private void initView() throws RemoteException {
@@ -68,6 +74,7 @@ public class PlayerClient {
 	}
 
 	public void startGame() {
+		this.timeOut = false;
 		this.timer = new Timer();
 		timer.scheduleAtFixedRate(new TimeUpdatingTask(viewController, modelController), 1000, 1000);
 		try {
@@ -79,6 +86,7 @@ public class PlayerClient {
 	}
 	
 	public void endGame() {
+		this.timeOut = true;
 		this.viewController.loginFalse("Game end! Your rank is " + this.modelController.getInfo().getRank());
 		timer.cancel();
 	}
@@ -134,6 +142,8 @@ public class PlayerClient {
 			this.viewController.loginFalse("Something went wrong with your account");
 		} catch (TimeOutException e) {
 			this.viewController.loginFalse("Time out");
+		} catch (NonPostitiveStockQuantityException e) {
+			this.viewController.loginFalse("The quantity of stock must be positive");
 		}
 	}
 	

@@ -17,10 +17,10 @@ public class BidCollection implements IBidCollection {
 	private interface SerializablePredicate<T> extends Predicate<T>, Serializable {};
 	private interface SerializableComparator<T> extends Comparator<T>, Serializable {};
 	
-	private final Comparator<IBid> buyBidComparator = (SerializableComparator<IBid>)((IBid bid0, IBid bid1)
-			-> ((Double)(bid0.getOfferPrice() - bid1.getOfferPrice())).intValue());
-	private final Comparator<IBid> sellBidComparator = (SerializableComparator<IBid>)((IBid bid0, IBid bid1)
-			-> ((Double)(bid1.getOfferPrice() - bid0.getOfferPrice())).intValue());
+	private Comparator<IBid> buyBidComparator = (SerializableComparator<IBid>)((IBid bid0, IBid bid1)
+			-> (bid0.getOfferPrice() < bid1.getOfferPrice() ? 1 : -1));
+	private Comparator<IBid> sellBidComparator = (SerializableComparator<IBid>)((IBid bid0, IBid bid1)
+			-> (bid0.getOfferPrice() > bid1.getOfferPrice() ? 1 : -1));
 
 	private final Predicate<IBid> buyBidFilter = (SerializablePredicate<IBid>)((IBid bid) -> bid.getType() == BidType.Buy);
 	private final Predicate<IBid> sellBidFilter = (SerializablePredicate<IBid>)((IBid bid) -> bid.getType() == BidType.Sell);
@@ -47,9 +47,15 @@ public class BidCollection implements IBidCollection {
 	@Override
 	public ArrayList<IBid> getTopBids(BidType type, String stockCode, int number) {
 		ArrayList<IBid> bids = this.getBidsByStockCode(stockCode);
+		if (bids.isEmpty()) {
+			return bids;
+		}
 		if (type == BidType.Buy) {
 			bids.removeIf(this.sellBidFilter);
 			bids.sort(this.buyBidComparator);
+			for (IBid bid: bids) {
+				System.out.println(bid.getOfferPrice());
+			}
 		} else {
 			bids.removeIf(this.buyBidFilter);
 			bids.sort(this.sellBidComparator);
@@ -58,7 +64,7 @@ public class BidCollection implements IBidCollection {
 		if (bids.size() < number) {
 			return bids;
 		}
-		return new ArrayList<>(bids.subList(0, number - 1));
+		return new ArrayList<>(bids.subList(0, number));
 	}
 
 	@Override

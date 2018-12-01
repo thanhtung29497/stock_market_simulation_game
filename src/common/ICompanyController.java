@@ -24,5 +24,5 @@ public interface ICompanyController extends IStockOwner {
 	public void acceptBid(int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotFoundAccountException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, TimeOutException;
 	public Boolean hasStock();
 	public void setStock(IStock stock);
-	public int getStockQuantity();
+	public int getStockQuantity() throws RemoteException;
 }

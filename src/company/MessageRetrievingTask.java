@@ -25,7 +25,7 @@ public class MessageRetrievingTask extends TimerTask {
 	private ICompanyController controller;
 	private final int ACCEPT_BID_PERCENT = 50;
 	
-	private Boolean doesAcceptBid(IBid bid) {
+	private Boolean doesAcceptBid(IBid bid) throws RemoteException {
 		if (bid.getType() != BidType.Buy || bid.getStatus() != BidStatus.Available
 				|| bid.getQuantity() > this.controller.getStockQuantity()) {
 			return false;
@@ -41,7 +41,9 @@ public class MessageRetrievingTask extends TimerTask {
 		try {
 			ArrayList<IMessage> messages = this.controller.retrieveMessage();
 			for (IMessage message: messages) {
+				
 				if (message.getType() == MessageType.UpdateBid) {
+					System.out.println(message.getMessage());
 					ArrayList<IBid> bids = ((IBidMessage)message).getBids().getBidsByStockCode(this.controller.getStockCode());
 					for (IBid bid: bids) {
 						if (this.doesAcceptBid(bid)) {

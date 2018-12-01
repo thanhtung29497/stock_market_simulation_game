@@ -377,10 +377,10 @@ public class PlayerFrame extends JFrame {
 		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblNewLabel, 0, SpringLayout.WEST, lblMoney);
 		pl_PlayerInfo.add(lblNewLabel);
 		
-		JLabel lblMastercong = new JLabel("MasterCOng");
-		lblMastercong.setForeground(Color.RED);
-		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblMastercong, 0, SpringLayout.WEST, pl_PlayerInfo);
-		pl_PlayerInfo.add(lblMastercong);
+		JLabel lblName = new JLabel("MasterCOng");
+		lblName.setForeground(Color.RED);
+		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblName, 0, SpringLayout.WEST, pl_PlayerInfo);
+		pl_PlayerInfo.add(lblName);
 		
 		lblBalance = new JLabel("00.00");
 		sl_pl_PlayerInfo.putConstraint(SpringLayout.NORTH, lblBalance, 10, SpringLayout.SOUTH, labelMoney);
@@ -481,7 +481,7 @@ public class PlayerFrame extends JFrame {
 		output[4]="0";
 		if(buyBid.size()==2) {
 			output[6]=String.format("%.2f",buyBid.get(1).getOfferPrice());
-			output[5]=String.format("%.2f",buyBid.get(1).getQuantity());
+			output[5]=String.format("%d",buyBid.get(1).getQuantity());
 		}else {
 			output[6]=output[5]="";
 		}

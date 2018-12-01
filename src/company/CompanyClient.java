@@ -34,7 +34,7 @@ public class CompanyClient {
 				companyController.registerBank();
 				companyController.registerStockExchange(name.substring(0, 3).toUpperCase());
 				Timer timer = new Timer();
-				timer.scheduleAtFixedRate(new MessageRetrievingTask(companyController), 0, Convention.RETRIEVE_MESSAGE_PERIOD);
+				timer.scheduleAtFixedRate(new MessageRetrievingTask(companyController), 0, Convention.COMPANY_RETRIEVE_MESSAGE_PERIOD);
 				
 				
 			}

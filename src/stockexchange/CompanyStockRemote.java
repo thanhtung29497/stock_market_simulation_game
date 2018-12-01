@@ -43,5 +43,10 @@ public class CompanyStockRemote extends UnicastRemoteObject implements ICompanyS
 	public ArrayList<IMessage> retrieveMessage(String companyId) throws RemoteException {
 		return this.stockExchangeManager.retrieveMessages(companyId);
 	}
+
+	@Override
+	public int getStockQuantity(String companyId, String stockCode) throws RemoteException {
+		return this.stockExchangeManager.getStockQuantityOfCompany(companyId, stockCode);
+	}
 	
 }

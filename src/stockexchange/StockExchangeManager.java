@@ -25,6 +25,7 @@ import exception.BidNotAvailableException;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
 import exception.InvalidLoginException;
+import exception.NonPostitiveStockQuantityException;
 import exception.NotEnoughMoneyException;
 import exception.NotEnoughStockQuantityException;
 import exception.NotFoundAccountException;
@@ -153,7 +154,7 @@ public class StockExchangeManager {
 		return this.stocks;
 	}
 	
-	public IStockCollection getPlayerStock(String playerId) {
+	public IStockCollection getOwnStock(String playerId) {
 		return this.ownStocks.get(playerId);
 	}	
 	
@@ -186,9 +187,14 @@ public class StockExchangeManager {
 	
 	public double getTotalAmount(String playerId) throws RemoteException, NotFoundAccountException {
 		double balance = this.bankController.getBalanceById(playerId);
-		IStockCollection playerStock = this.getPlayerStock(playerId);
+		IStockCollection playerStock = this.getOwnStock(playerId);
 		double stockValue = playerStock.getTotalStockValue();
 		return balance + stockValue;
+	}
+	
+	public int getStockQuantityOfCompany(String companyId, String stockCode) {
+		IStockCollection companyStock = this.getOwnStock(companyId);
+		return companyStock.getStockQuantity(stockCode);
 	}
 	
 	public Boolean isOutOfStockPriceRange(String stockCode, double offerPrice) {
@@ -206,7 +212,7 @@ public class StockExchangeManager {
 	}
 	
 	public void postBid(BidType type, String stockCode, int quantity, double offerPrice, String offerorId) 
-			throws NotFoundStockCodeException, NotFoundAccountException, OutOfStockPriceRangeException, RemoteException, NotEnoughMoneyException, NotEnoughStockQuantityException, TimeOutException {
+			throws NotFoundStockCodeException, NotFoundAccountException, OutOfStockPriceRangeException, RemoteException, NotEnoughMoneyException, NotEnoughStockQuantityException, TimeOutException, NonPostitiveStockQuantityException {
 		
 		if (this.startMilestone == null) {
 			throw new TimeOutException();
@@ -217,6 +223,11 @@ public class StockExchangeManager {
 		// valid stock code ?
 		if (!this.stocks.hasStockCode(stockCode)) {
 			throw new NotFoundStockCodeException(stockCode);
+		}
+		
+		// stock quantity > 0
+		if (quantity <= 0) {
+			throw new NonPostitiveStockQuantityException();
 		}
 		
 		// valid account name ?
@@ -289,7 +300,7 @@ public class StockExchangeManager {
 				throw new NotEnoughStockQuantityException(offereeStockQuantity, 
 						bid.getQuantity(), stockCode);
 			}
-			double offerorBalance = this.bankController.getBalanceById(offerorName);
+			double offerorBalance = this.bankController.getBalanceById(offerorId);
 			if (offerorBalance < bidValue) {
 				throw new OfferorNotEnoughMoneyException(offerorName);
 			}
@@ -306,7 +317,7 @@ public class StockExchangeManager {
 			this.updateStockQuantity(offereeId, stockCode, -bidQuantity);
 			this.addMessageByKey(offerorId, new Message(MessageType.MatchBid,
 					"Number of stock " + stockCode + " was added by " + bidQuantity + " due to bid " + bidId));
-			this.addMessageByKey(offerorName, new Message(MessageType.MatchBid,
+			this.addMessageByKey(offereeId, new Message(MessageType.MatchBid,
 					"Number of stock " + stockCode + " was reduced by " + bidQuantity + " due to bid " + bidId));
 		} else {
 			this.bankController.makeTransaction(offereeId, offerorId, bidId, bid.getValue());
@@ -314,7 +325,7 @@ public class StockExchangeManager {
 			this.updateStockQuantity(offereeId, stockCode, bidQuantity);
 			this.addMessageByKey(offerorId, new Message(MessageType.MatchBid,
 					"Number of stock " + stockCode + " was reduced by " + bidQuantity + " due to bid " + bidId));
-			this.addMessageByKey(offerorId, new Message(MessageType.MatchBid,
+			this.addMessageByKey(offereeId, new Message(MessageType.MatchBid,
 					"Number of stock " + stockCode + " was added by " + bidQuantity + " due to bid " + bidId));
 		}
 		

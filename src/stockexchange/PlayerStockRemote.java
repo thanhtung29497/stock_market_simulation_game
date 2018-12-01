@@ -13,6 +13,7 @@ import common.IRankCollection;
 import common.IStockCollection;
 import exception.BidNotAvailableException;
 import exception.InvalidLoginException;
+import exception.NonPostitiveStockQuantityException;
 import exception.NotEnoughMoneyException;
 import exception.NotEnoughStockQuantityException;
 import exception.NotFoundAccountException;
@@ -57,7 +58,7 @@ public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerSto
 
 	@Override
 	public void postBid(String accountId, BidType type, String stockCode, int quantity, double offerPrice)
-			throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException, NotFoundAccountException, TimeOutException {
+			throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException, NotFoundAccountException, TimeOutException, NonPostitiveStockQuantityException {
 		this.stockExchangeManager.postBid(type, stockCode, quantity, offerPrice, accountId);
 	}
 
@@ -68,7 +69,7 @@ public class PlayerStockRemote extends UnicastRemoteObject implements IPlayerSto
 
 	@Override
 	public IStockCollection getOwnStocks(String accountId) throws RemoteException {
-		return this.stockExchangeManager.getPlayerStock(accountId);
+		return this.stockExchangeManager.getOwnStock(accountId);
 	}
 
 	@Override

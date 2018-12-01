@@ -49,9 +49,23 @@ public class MessageRetrievingTask extends TimerTask {
 		}
 	}
 	
+	private void checkGameStatus() {
+		try {
+			if (this.modelController.getCurrentTime().isZero()) {
+				if (!this.client.isTimeOut()) {
+					this.client.endGame();
+				}
+			} else if (this.client.isTimeOut()) {
+				this.client.startGame();
+			}
+		} catch (RemoteException e) {
+			this.viewController.loginFalse("Failed to connect to server");
+		}
+	}
+	
 	private void retrieveStockMessages() {
 		try {
-			ArrayList<IMessage> stockExchangeMessages = this.modelController.retrieveStockExchangeMessages();
+			ArrayList<IMessage> stockExchangeMessages = this.modelController.retrieveStockExchangeMessages();			
 			if (!stockExchangeMessages.isEmpty()) {
 				for (IMessage message: stockExchangeMessages) {
 					if (message.getType() == MessageType.IssueStock 
@@ -64,10 +78,6 @@ public class MessageRetrievingTask extends TimerTask {
 						this.modelController.info.setRank(ranks.getRankByName(this.modelController.getInfo().getName()));
 						this.viewController.updateRank(ranks);
 						this.viewController.setRank(this.modelController.getInfo().getRank());
-					} else if (message.getType() == MessageType.Start) {
-						this.client.startGame();
-					} else if (message.getType() == MessageType.End) {
-						this.client.endGame();
 					}
 					
 					this.viewController.setMoney(this.modelController.getTotalAmount());
@@ -86,6 +96,7 @@ public class MessageRetrievingTask extends TimerTask {
 	@Override
 	public void run() {
 		try {
+			this.checkGameStatus();
 			this.retrieveBankMessages();
 			this.retrieveStockMessages();
 		} catch (Exception e) {
