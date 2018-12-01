@@ -1,21 +1,19 @@
 package ui.server;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import stockexchange.StockExchangeManager;
+import stockexchange.StockExchangeServer;
 import ui.table.StockBoard;
 
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 import javax.swing.SpringLayout;
 import javax.swing.JLabel;
@@ -24,12 +22,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import common.BidType;
-import common.IBid;
+import common.Convention;
 import common.IBidCollection;
 import common.IRank;
 import common.IRankCollection;
-import common.IStock;
 import common.IStockCollection;
 
 import javax.swing.border.LineBorder;
@@ -39,18 +35,18 @@ public class StockExchangeFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private StockExchangeManager manager;
+	private StockExchangeServer server;
 	private JTextField tfInitialStockPrice;
 	private JTextField tfDuration;
-	private JTextField tfSessionPeried;
-	private JTextField tfImitialBalance;
+	private JTextField tfSessionPeriod;
+	private JTextField tfInitialShareNumber;
 	private JTable tableRank;
 	private StockBoard table;
 	private JLabel lblTime;
 	/**
 	 * Create the frame.
 	 */
-	public StockExchangeFrame(StockExchangeManager stockExchangeManager) {
+	public StockExchangeFrame(StockExchangeServer server) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 100, 1000, 600);
 		contentPane = new JPanel();
@@ -80,7 +76,7 @@ public class StockExchangeFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					stockExchangeManager.start();
+					server.stop();
 				} catch (RemoteException e1) {
 					JOptionPane.showMessageDialog(contentPane, "Failed to connect to server", "Error", ERROR);
 				}
@@ -93,20 +89,20 @@ public class StockExchangeFrame extends JFrame {
 		sl_panel.putConstraint(SpringLayout.EAST, btnStop, -5, SpringLayout.WEST, btnStart);
 		panel.add(btnStop);
 		
-		JLabel lblDuration = new JLabel("Duration");
+		JLabel lblDuration = new JLabel("Duration (minute)");
 		sl_panel.putConstraint(SpringLayout.NORTH, lblDuration, 30, SpringLayout.NORTH, panel);
 		sl_panel.putConstraint(SpringLayout.WEST, lblDuration, 10, SpringLayout.WEST, panel);
 		panel.add(lblDuration);
 		
-		JLabel lblSesionPeried = new JLabel("Sesion peried");
-		sl_panel.putConstraint(SpringLayout.WEST, lblSesionPeried, 0, SpringLayout.WEST, lblDuration);
-		panel.add(lblSesionPeried);
+		JLabel lblSesionPeriod = new JLabel("Sesion period (second)");
+		sl_panel.putConstraint(SpringLayout.WEST, lblSesionPeriod, 0, SpringLayout.WEST, lblDuration);
+		panel.add(lblSesionPeriod);
 		
-		JLabel lblImitialBalance = new JLabel("Imitial Balance");
-		sl_panel.putConstraint(SpringLayout.WEST, lblImitialBalance, 0, SpringLayout.WEST, lblDuration);
-		panel.add(lblImitialBalance);
+		JLabel lblInitialShareNumber = new JLabel("Initial share number");
+		sl_panel.putConstraint(SpringLayout.WEST, lblInitialShareNumber, 0, SpringLayout.WEST, lblDuration);
+		panel.add(lblInitialShareNumber);
 		
-		JLabel lblInitialStockPrice = new JLabel("Initial Stock Price");
+		JLabel lblInitialStockPrice = new JLabel("Initial Stock Price ($)");
 		sl_panel.putConstraint(SpringLayout.WEST, lblInitialStockPrice, 0, SpringLayout.WEST, lblDuration);
 		panel.add(lblInitialStockPrice);
 		
@@ -114,32 +110,36 @@ public class StockExchangeFrame extends JFrame {
 		sl_panel.putConstraint(SpringLayout.NORTH, tfInitialStockPrice, 5, SpringLayout.SOUTH, lblInitialStockPrice);
 		panel.add(tfInitialStockPrice);
 		tfInitialStockPrice.setColumns(10);
+		tfInitialStockPrice.setText(String.valueOf(Convention.INITIAL_SHARE_PRICE));
 		
 		tfDuration = new JTextField();
 		sl_panel.putConstraint(SpringLayout.WEST, tfInitialStockPrice, 0, SpringLayout.WEST, tfDuration);
-		sl_panel.putConstraint(SpringLayout.NORTH, lblSesionPeried, 15, SpringLayout.SOUTH, tfDuration);
+		sl_panel.putConstraint(SpringLayout.NORTH, lblSesionPeriod, 15, SpringLayout.SOUTH, tfDuration);
 		sl_panel.putConstraint(SpringLayout.NORTH, tfDuration, 5, SpringLayout.SOUTH, lblDuration);
 		sl_panel.putConstraint(SpringLayout.WEST, tfDuration, 30, SpringLayout.WEST, panel);
 		sl_panel.putConstraint(SpringLayout.EAST, tfDuration, -5, SpringLayout.EAST, panel);
 		panel.add(tfDuration);
 		tfDuration.setColumns(10);
+		tfDuration.setText(String.valueOf(Convention.GAME_DURATION / 60000));
 		
-		tfSessionPeried = new JTextField();
-		sl_panel.putConstraint(SpringLayout.NORTH, lblImitialBalance, 15, SpringLayout.SOUTH, tfSessionPeried);
-		sl_panel.putConstraint(SpringLayout.NORTH, tfSessionPeried, 5, SpringLayout.SOUTH, lblSesionPeried);
-		sl_panel.putConstraint(SpringLayout.WEST, tfSessionPeried, 0, SpringLayout.WEST, tfDuration);
-		sl_panel.putConstraint(SpringLayout.EAST, tfSessionPeried, 0, SpringLayout.EAST, tfDuration);
-		panel.add(tfSessionPeried);
-		tfSessionPeried.setColumns(10);
+		tfSessionPeriod = new JTextField();
+		sl_panel.putConstraint(SpringLayout.NORTH, lblInitialShareNumber, 15, SpringLayout.SOUTH, tfSessionPeriod);
+		sl_panel.putConstraint(SpringLayout.NORTH, tfSessionPeriod, 5, SpringLayout.SOUTH, lblSesionPeriod);
+		sl_panel.putConstraint(SpringLayout.WEST, tfSessionPeriod, 0, SpringLayout.WEST, tfDuration);
+		sl_panel.putConstraint(SpringLayout.EAST, tfSessionPeriod, 0, SpringLayout.EAST, tfDuration);
+		panel.add(tfSessionPeriod);
+		tfSessionPeriod.setColumns(10);
+		tfSessionPeriod.setText(String.valueOf(Convention.STOCK_EXCHANGE_SESSION / 1000));
 		
-		tfImitialBalance = new JTextField();
-		sl_panel.putConstraint(SpringLayout.EAST, tfInitialStockPrice, 0, SpringLayout.EAST, tfImitialBalance);
-		sl_panel.putConstraint(SpringLayout.NORTH, lblInitialStockPrice, 15, SpringLayout.SOUTH, tfImitialBalance);
-		sl_panel.putConstraint(SpringLayout.NORTH, tfImitialBalance, 5, SpringLayout.SOUTH, lblImitialBalance);
-		sl_panel.putConstraint(SpringLayout.WEST, tfImitialBalance, 0, SpringLayout.WEST, tfSessionPeried);
-		sl_panel.putConstraint(SpringLayout.EAST, tfImitialBalance, 0, SpringLayout.EAST, tfSessionPeried);
-		panel.add(tfImitialBalance);
-		tfImitialBalance.setColumns(10);
+		tfInitialShareNumber = new JTextField();
+		sl_panel.putConstraint(SpringLayout.EAST, tfInitialStockPrice, 0, SpringLayout.EAST, tfInitialShareNumber);
+		sl_panel.putConstraint(SpringLayout.NORTH, lblInitialStockPrice, 15, SpringLayout.SOUTH, tfInitialShareNumber);
+		sl_panel.putConstraint(SpringLayout.NORTH, tfInitialShareNumber, 5, SpringLayout.SOUTH, lblInitialShareNumber);
+		sl_panel.putConstraint(SpringLayout.WEST, tfInitialShareNumber, 0, SpringLayout.WEST, tfSessionPeriod);
+		sl_panel.putConstraint(SpringLayout.EAST, tfInitialShareNumber, 0, SpringLayout.EAST, tfSessionPeriod);
+		panel.add(tfInitialShareNumber);
+		tfInitialShareNumber.setColumns(10);
+		tfInitialShareNumber.setText(String.valueOf(Convention.INITIAL_SHARE_NUMBER));
 		
 		JPanel panel_1 = new JPanel();
 		sl_contentPane.putConstraint(SpringLayout.NORTH, panel_1, 5, SpringLayout.SOUTH, panel);
@@ -192,7 +192,11 @@ public class StockExchangeFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					stockExchangeManager.start();
+					server.start(
+							Integer.parseInt(tfDuration.getText()),
+							Integer.parseInt(tfSessionPeriod.getText()),
+							Integer.parseInt(tfInitialShareNumber.getText()),
+							Double.parseDouble(tfInitialStockPrice.getText()));
 				} catch (RemoteException e1) {
 					JOptionPane.showMessageDialog(contentPane, "Failed to connect to server", "Error", ERROR);
 				}

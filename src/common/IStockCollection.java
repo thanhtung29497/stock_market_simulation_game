@@ -16,5 +16,6 @@ public interface IStockCollection extends Serializable {
 	public double getTotalStockValue();
 	public Boolean hasCompanyName(String companyName);
 	public void resetPrice();
+	public Boolean wasChanged();
 	public int size();
 }

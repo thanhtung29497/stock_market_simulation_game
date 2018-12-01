@@ -24,7 +24,7 @@ import exception.TimeOutException;
 public class MessageRetrievingTask extends TimerTask {
 
 	private ICompanyController controller;
-	private final int ACCEPT_BID_PERCENT = 10;
+	private final int ACCEPT_BID_PERCENT = 5;
 	
 	private Boolean doesAcceptBid(IBid bid) throws RemoteException, NotFoundAccountException {
 		if (bid.getStatus() != BidStatus.Available) {

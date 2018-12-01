@@ -74,6 +74,8 @@ public class StockExchangeManager {
 	public void end() throws RemoteException {
 		this.startMilestone = null;
 		this.bankController.end();
+		this.rankBoard.resetRank();
+		this.bids.reset();
 		this.bids.clear();
 		timer.cancel();
 		for (String key: this.messages.keySet()) {
@@ -169,7 +171,7 @@ public class StockExchangeManager {
 		for (String playerId: this.ownStocks.keySet()) {
 			IStockCollection playerStock = this.ownStocks.get(playerId);
 			playerStock.updateStockPrice(stockPrices);
-			amounts.put(this.idToName.get(playerId), playerStock.getTotalStockValue() + this.getTotalAmount(playerId));
+			amounts.put(this.idToName.get(playerId), this.getTotalAmount(playerId));
 		}
 		this.rankBoard.updateAllAmounts(amounts);
 		

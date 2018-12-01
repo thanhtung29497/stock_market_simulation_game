@@ -23,10 +23,12 @@ public class StockCollection implements IStockCollection {
 	}
 
 	private HashMap<String, StockInfo> stockMap;
+	private Boolean hasChanged;
 	private static final long serialVersionUID = 1L;
 	
 	public StockCollection() {
 		this.stockMap = new HashMap<>();
+		this.hasChanged = false;
 	}
 	
 	public StockCollection(IStock stock, int quantity) {
@@ -82,6 +84,7 @@ public class StockCollection implements IStockCollection {
 			stockInfo.quantity += quantity;
 			this.stockMap.put(stockCode, stockInfo);
 		}
+		this.hasChanged = true;
 	}
 
 	@Override
@@ -92,6 +95,7 @@ public class StockCollection implements IStockCollection {
 	@Override
 	public void addStock(IStock stock, int quantity) {
 		this.stockMap.put(stock.getCode(), new StockInfo(stock, quantity));
+		this.hasChanged = true;
 	}
 
 	@Override
@@ -105,6 +109,7 @@ public class StockCollection implements IStockCollection {
 				this.stockMap.put(stockCode, stockInfo);
 			}
 		}
+		this.hasChanged = true;
 	}
 
 	@Override
@@ -133,11 +138,19 @@ public class StockCollection implements IStockCollection {
 			stockInfo.stock.setPrice(Convention.INITIAL_SHARE_PRICE);
 			this.stockMap.put(key, stockInfo);
 		}
+		this.hasChanged = true;
 	}
 
 	@Override
 	public int size() {
 		return this.stockMap.size();
+	}
+
+	@Override
+	public Boolean wasChanged() {
+		Boolean result = this.hasChanged;
+		this.hasChanged = false;
+		return result;
 	}
 
 }

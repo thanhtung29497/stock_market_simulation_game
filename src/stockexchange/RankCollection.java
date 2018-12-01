@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import common.Convention;
 import common.IRank;
 import common.IRankCollection;
 
@@ -12,7 +13,17 @@ public class RankCollection implements IRankCollection {
 	
 	private interface SerializableComparator<T> extends Comparator<T>, Serializable {};
 	private Comparator<IRank> rankComparator = (SerializableComparator<IRank>)((IRank rank0, IRank rank1)
-			-> (rank0.getAmount() < rank1.getAmount() ? 1 : -1));
+			-> {
+				if (rank0.getAmount() < rank1.getAmount()) {
+					return 1;
+				} else if (rank0.getAmount() > rank1.getAmount()) {
+					return -1;
+				} else if (rank0.getPlayerName().compareTo(rank1.getPlayerName()) > 0) {
+					return 1;
+				} else {
+					return -1;
+				}
+			});
 
 	private static final long serialVersionUID = 1L;
 	private ArrayList<IRank> ranks;
@@ -77,6 +88,14 @@ public class RankCollection implements IRankCollection {
 		for (IRank rank: this.ranks) {
 			double amount = amounts.get(rank.getPlayerName());
 			rank.setAmount(amount);
+		}
+		this.sort();
+	}
+
+	@Override
+	public void resetRank() {
+		for (IRank rank: this.ranks) {
+			rank.setAmount(Convention.INITIAL_BALANCE);
 		}
 		this.sort();
 	}	

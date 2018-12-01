@@ -21,6 +21,14 @@ public class BidCollection implements IBidCollection {
 			-> (bid0.getOfferPrice() < bid1.getOfferPrice() ? 1 : -1));
 	private Comparator<IBid> sellBidComparator = (SerializableComparator<IBid>)((IBid bid0, IBid bid1)
 			-> (bid0.getOfferPrice() > bid1.getOfferPrice() ? 1 : -1));
+	private Comparator<IBid> topBidComparator = (SerializableComparator<IBid>)((IBid bid0, IBid bid1)
+			-> {
+				double standard0 = bid0.getType() == BidType.Buy ? (bid0.getOfferPrice() - bid0.getStock().getPrice()) 
+						: (bid0.getStock().getPrice() - bid0.getOfferPrice());
+				double standard1 = bid1.getType() == BidType.Buy ? (bid1.getOfferPrice() - bid1.getStock().getPrice()) 
+						: (bid1.getStock().getPrice() - bid1.getOfferPrice());
+				return standard0 < standard1 ? 1 : -1;
+			});
 	
 	private final Predicate<IBid> buyBidFilter = (SerializablePredicate<IBid>)((IBid bid) -> bid.getType() == BidType.Buy);
 	private final Predicate<IBid> sellBidFilter = (SerializablePredicate<IBid>)((IBid bid) -> bid.getType() == BidType.Sell);
@@ -29,10 +37,12 @@ public class BidCollection implements IBidCollection {
 	private static final long serialVersionUID = 1L;
 	private HashMap<Integer, IBid> bids;
 	private HashMap<String, IBid> lastestMatchedBid;
+	private Boolean hasChanged;
 
 	public BidCollection() {
 		this.bids = new HashMap<>();
 		this.lastestMatchedBid = new HashMap<>();
+		this.hasChanged = false;
 	}
 	
 	@Override
@@ -73,6 +83,7 @@ public class BidCollection implements IBidCollection {
 	@Override
 	public void addBid(IBid bid) {
 		this.bids.put(bid.getId(), bid);
+		this.hasChanged = true;
 	}
 
 	@Override
@@ -95,6 +106,7 @@ public class BidCollection implements IBidCollection {
 			this.lastestMatchedBid.put(bid.getStock().getCode(), bid);
 		}
 		this.bids.put(id, bid);
+		this.hasChanged = true;
 	}
 
 	@Override
@@ -123,7 +135,27 @@ public class BidCollection implements IBidCollection {
 
 	@Override
 	public ArrayList<IBid> getAllTopBids(int number) {
-		return new ArrayList<>();
+		ArrayList<IBid> result = this.getAllBids();
+		result.sort(this.topBidComparator);
+		if (result.size() < number) {
+			return result;
+		}
+		
+		return new ArrayList<>(result.subList(0, number));
+	}
+
+	@Override
+	public Boolean wasChanged() {
+		Boolean result = this.hasChanged;
+		this.hasChanged = false;
+		return result;
+	}
+
+	@Override
+	public void reset() {
+		this.lastestMatchedBid = new HashMap<>();
+		this.bids = new HashMap<>();
+		this.hasChanged = true;
 	}
 
 }

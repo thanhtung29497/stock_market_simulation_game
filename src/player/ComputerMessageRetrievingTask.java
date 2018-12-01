@@ -30,7 +30,7 @@ import exception.TimeOutException;
 public class ComputerMessageRetrievingTask extends TimerTask {
 
 	private ComputerPlayer modelController;
-	private final int ACCEPT_BID_PERCENT = 10;
+	private final int ACCEPT_BID_PERCENT = 5;
 	private final int POST_BID_PERCENT = 50;
 	private Random random;
 	
@@ -81,6 +81,7 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 	private void updateMoney() throws RemoteException, NotFoundAccountException {
 		double money = this.modelController.getTotalAmount();
 		ArrayList<IBankMessage> messages = this.modelController.retrieveBankMessages();
+		
 		if (!messages.isEmpty()) {
 			IBankMessage lastMessage = messages.get(messages.size() - 1);
 			this.modelController.info.setBalance(lastMessage.getBalance());
@@ -91,18 +92,25 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 		ArrayList<IMessage> messages = this.modelController.retrieveStockExchangeMessages();
 		for (IMessage message: messages) {
 			if (message.getType() == MessageType.UpdateStock) {
+				
 				IStockCollection stocks = this.modelController.getOwnStocks();
 				System.out.println(this.modelController.getInfo().getId());
 				stocks.toArray().forEach(stock -> {
 					System.out.println(stock.getCode() + ": " + stock.getPrice() + " " + stocks.getStockQuantity(stock.getCode()));
 				});
+				
 			} else if (message.getType() == MessageType.UpdateBid) {
+				
 				IBidCollection bids = ((IBidMessage)message).getBids();
-				for (IBid bid: bids.getAllBids()) {
+				if (this.random.nextInt(100) >= this.ACCEPT_BID_PERCENT) {
+					continue;
+				}
+				for (IBid bid: bids.getAllTopBids(5)) {
 					if (this.doesAcceptBid(bid)) {
 						this.modelController.acceptBid(bid.getId());
 					}
 				}
+				
 			}
 		}
 	}

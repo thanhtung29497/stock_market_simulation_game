@@ -10,4 +10,5 @@ public interface IRankCollection extends Serializable{
 	public void addPlayerIfAbsent(String playerName, double amount);
 	public void updateAmount(String playerName, double amount);
 	public void updateAllAmounts(HashMap<String, Double> amounts);
+	public void resetRank();
 }

@@ -67,6 +67,9 @@ public class ComputerPlayerClient {
 	private void run() {
 		this.addNewPlayer();
 		this.addNewPlayer();
+		this.addNewPlayer();
+		this.addNewPlayer();
+		this.addNewPlayer();
 	}
 	
 	public static void main (String[] args) {
