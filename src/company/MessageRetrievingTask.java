@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import common.BidStatus;
 import common.BidType;
 import common.IBid;
+import common.IBidCollection;
 import common.IBidMessage;
 import common.ICompanyController;
 import common.IMessage;
@@ -23,11 +24,16 @@ import exception.TimeOutException;
 public class MessageRetrievingTask extends TimerTask {
 
 	private ICompanyController controller;
-	private final int ACCEPT_BID_PERCENT = 50;
+	private final int ACCEPT_BID_PERCENT = 10;
 	
-	private Boolean doesAcceptBid(IBid bid) throws RemoteException {
-		if (bid.getType() != BidType.Buy || bid.getStatus() != BidStatus.Available
-				|| bid.getQuantity() > this.controller.getStockQuantity()) {
+	private Boolean doesAcceptBid(IBid bid) throws RemoteException, NotFoundAccountException {
+		if (bid.getStatus() != BidStatus.Available) {
+			return false;
+		}
+		if (bid.getType() == BidType.Buy && bid.getQuantity() > this.controller.getStockQuantity()) {
+			return false;
+		}
+		if (bid.getType() == BidType.Sell && this.controller.getBalance() < bid.getValue()) {
 			return false;
 		}
 		
@@ -44,13 +50,14 @@ public class MessageRetrievingTask extends TimerTask {
 				
 				if (message.getType() == MessageType.UpdateBid) {
 					System.out.println(message.getMessage());
-					ArrayList<IBid> bids = ((IBidMessage)message).getBids().getBidsByStockCode(this.controller.getStockCode());
-					for (IBid bid: bids) {
+					IBidCollection bids = ((IBidMessage)message).getBids();
+					String stockCode = this.controller.getStockCode();
+					for (IBid bid: bids.getTopBids(stockCode, 3)) {
 						if (this.doesAcceptBid(bid)) {
 							this.controller.acceptBid(bid.getId());
 						}
 					}
-				} else if (message.getType() == MessageType.AdjustStockPrice) {
+				} else if (message.getType() == MessageType.UpdateStock) {
 					
 				}
 			}

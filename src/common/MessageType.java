@@ -3,8 +3,7 @@ package common;
 public enum MessageType {
 	Start,
 	End,
-	IssueStock,
-	AdjustStockPrice,
+	UpdateStock,
 	PostBid,
 	MatchBid,
 	UpdateRank,

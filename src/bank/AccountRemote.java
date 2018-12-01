@@ -12,7 +12,6 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 	private static final long serialVersionUID = 1L;
 	public static final String DOMAIN = "account";
 	private BankManager bankManager;
-	private Account account;
 
 	protected AccountRemote(BankManager bankManager) throws RemoteException {
 		super();
@@ -36,7 +35,6 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 		if (!account.checkPassword(password)) {
 			throw new InvalidLoginException();
 		}
-		this.account = account;
 		System.out.println("Login successfully: " + account.getId());
 		return account;
 	}
@@ -54,8 +52,8 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 	}
 
 	@Override
-	public IAccount getAccount() {
-		return this.account;
+	public double getBalance(String accountId) throws NotFoundAccountException {
+		return this.bankManager.getAccountById(accountId).getBalance();
 	}
 
 	@Override
@@ -72,5 +70,16 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 		this.bankManager.addAccount(account);
 		System.out.println("Register successfully: Company " + account.getName());
 		return account.getId();
+	}
+
+	@Override
+	public IAccount registerComputer() throws RemoteException, ExceedMaximumAccountException, DuplicateLoginNameException {
+		Account account = new Account();
+		if (this.bankManager.checkLoginName(account.getName())) {
+			throw new DuplicateLoginNameException(account.getName());
+		}
+		this.bankManager.addAccount(account);
+		System.out.println("Register successfully: " + account.getName());
+		return account;
 	}	
 }

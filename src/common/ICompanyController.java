@@ -25,4 +25,5 @@ public interface ICompanyController extends IStockOwner {
 	public Boolean hasStock();
 	public void setStock(IStock stock);
 	public int getStockQuantity() throws RemoteException;
+	public double getBalance() throws RemoteException, NotFoundAccountException;
 }

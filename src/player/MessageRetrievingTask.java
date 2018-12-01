@@ -68,8 +68,7 @@ public class MessageRetrievingTask extends TimerTask {
 			ArrayList<IMessage> stockExchangeMessages = this.modelController.retrieveStockExchangeMessages();			
 			if (!stockExchangeMessages.isEmpty()) {
 				for (IMessage message: stockExchangeMessages) {
-					if (message.getType() == MessageType.IssueStock 
-							|| message.getType() == MessageType.AdjustStockPrice) {
+					if (message.getType() == MessageType.UpdateStock) {
 						this.viewController.UpdateStocksAndBids(((IStockMessage)message).getStocks(), this.modelController.getAllBids());
 					} else if (message.getType() == MessageType.UpdateBid) {
 						this.viewController.UpdateStocksAndBids(this.modelController.getAllStocks(), ((IBidMessage)message).getBids());

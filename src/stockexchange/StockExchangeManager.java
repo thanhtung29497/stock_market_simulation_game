@@ -25,7 +25,7 @@ import exception.BidNotAvailableException;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
 import exception.InvalidLoginException;
-import exception.NonPostitiveStockQuantityException;
+import exception.NonPositiveStockQuantityException;
 import exception.NotEnoughMoneyException;
 import exception.NotEnoughStockQuantityException;
 import exception.NotFoundAccountException;
@@ -120,8 +120,8 @@ public class StockExchangeManager {
 		
 		for (String key: this.messages.keySet()) {
 			if (Utility.isPlayerId(key)) {
-				this.addMessageByKey(key, new StockMessage(MessageType.IssueStock,
-						"New stock was issued: " + stock.getCode(), this.stocks));
+				this.addMessageByKey(key, new StockMessage(MessageType.UpdateStock,
+						"New stock was issued: " + stock.getCode(), this.getOwnStock(key)));
 			}
 		}
 		
@@ -174,8 +174,8 @@ public class StockExchangeManager {
 		this.rankBoard.updateAllAmounts(amounts);
 		
 		for (String key: this.messages.keySet()) {
-			this.addMessageByKey(key, new StockMessage(MessageType.AdjustStockPrice, 
-					"Session close, adjust stock price", this.getStocks()));
+			this.addMessageByKey(key, new StockMessage(MessageType.UpdateStock, 
+					"Session close, adjust stock price", this.getOwnStock(key)));
 			this.addMessageByKey(key, new RankMessage(MessageType.UpdateRank,
 					"Rank board was updated", this.rankBoard));
 		}
@@ -212,7 +212,7 @@ public class StockExchangeManager {
 	}
 	
 	public void postBid(BidType type, String stockCode, int quantity, double offerPrice, String offerorId) 
-			throws NotFoundStockCodeException, NotFoundAccountException, OutOfStockPriceRangeException, RemoteException, NotEnoughMoneyException, NotEnoughStockQuantityException, TimeOutException, NonPostitiveStockQuantityException {
+			throws NotFoundStockCodeException, NotFoundAccountException, OutOfStockPriceRangeException, RemoteException, NotEnoughMoneyException, NotEnoughStockQuantityException, TimeOutException, NonPositiveStockQuantityException {
 		
 		if (this.startMilestone == null) {
 			throw new TimeOutException();
@@ -227,7 +227,7 @@ public class StockExchangeManager {
 		
 		// stock quantity > 0
 		if (quantity <= 0) {
-			throw new NonPostitiveStockQuantityException();
+			throw new NonPositiveStockQuantityException();
 		}
 		
 		// valid account name ?

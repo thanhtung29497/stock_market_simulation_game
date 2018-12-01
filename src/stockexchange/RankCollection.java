@@ -1,5 +1,6 @@
 package stockexchange;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -9,16 +10,9 @@ import common.IRankCollection;
 
 public class RankCollection implements IRankCollection {
 	
-	private class RankComparator implements Comparator<IRank> {
-
-		@Override
-		public int compare(IRank rank0, IRank rank1) {
-			if (rank0.getAmount() > rank1.getAmount()) {
-				return 1;
-			}
-			return 0;
-		}
-	}
+	private interface SerializableComparator<T> extends Comparator<T>, Serializable {};
+	private Comparator<IRank> rankComparator = (SerializableComparator<IRank>)((IRank rank0, IRank rank1)
+			-> (rank0.getAmount() < rank1.getAmount() ? 1 : -1));
 
 	private static final long serialVersionUID = 1L;
 	private ArrayList<IRank> ranks;
@@ -43,7 +37,7 @@ public class RankCollection implements IRankCollection {
 	}
 	
 	private void sort() {
-		this.ranks.sort(new RankComparator());
+		this.ranks.sort(this.rankComparator);
 		int currentRank = 0;
 		for (IRank rank: this.ranks) {
 			rank.setRank(++currentRank);

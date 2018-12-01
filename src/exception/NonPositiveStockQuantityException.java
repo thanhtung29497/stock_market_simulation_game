@@ -1,10 +1,10 @@
 package exception;
 
-public class NonPostitiveStockQuantityException extends Exception {
+public class NonPositiveStockQuantityException extends Exception {
 	
 	private static final long serialVersionUID = 1L;
 
-	public NonPostitiveStockQuantityException() {
+	public NonPositiveStockQuantityException() {
 		System.out.println("The quantity of stock must be positive");
 	}
 }

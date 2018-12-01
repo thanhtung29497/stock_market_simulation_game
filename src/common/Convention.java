@@ -18,7 +18,8 @@ public class Convention {
 	public static final String STOCK_EXCHANGE_SERVER_NAME = "stockexchange";
 	public static final String PLAYER_STOCK_CONTROLLER_NAME = "player";
 	public static final String COMPANY_STOCK_CONTROLLER_NAME = "company";
-	public static final int PLAYER_RETRIEVE_MESSAGE_PERIOD = 100;
+	public static final int PLAYER_RETRIEVE_MESSAGE_PERIOD = 500;
 	public static final int COMPANY_RETRIEVE_MESSAGE_PERIOD = 5000;
+	public static final int COMPUTER_RETRIEVE_MESSAGE_PERIOD = 1000;
 	public static final int RETRIEVE_TIME_NUMBER_PERIOD = 60;
 }

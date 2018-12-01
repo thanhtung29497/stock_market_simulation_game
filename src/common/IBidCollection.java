@@ -7,7 +7,9 @@ import exception.NotFoundBidException;
 
 public interface IBidCollection extends Serializable {
 	public ArrayList<IBid> getAllBids();
+	public ArrayList<IBid> getAllTopBids(int number);
 	public ArrayList<IBid> getTopBids(BidType type, String stockCode, int number);
+	public ArrayList<IBid> getTopBids(String stockCode, int number);
 	public IBid getLatestMatchedBid(String stockCode);
 	public void addBid(IBid bid);
 	public IBid getBidById(int id) throws NotFoundBidException;

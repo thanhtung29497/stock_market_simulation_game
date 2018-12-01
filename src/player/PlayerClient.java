@@ -15,7 +15,7 @@ import exception.BidNotAvailableException;
 import exception.DuplicateLoginNameException;
 import exception.ExceedMaximumAccountException;
 import exception.InvalidLoginException;
-import exception.NonPostitiveStockQuantityException;
+import exception.NonPositiveStockQuantityException;
 import exception.NotEnoughMoneyException;
 import exception.NotEnoughStockQuantityException;
 import exception.NotFoundAccountException;
@@ -142,7 +142,7 @@ public class PlayerClient {
 			this.viewController.loginFalse("Something went wrong with your account");
 		} catch (TimeOutException e) {
 			this.viewController.loginFalse("Time out");
-		} catch (NonPostitiveStockQuantityException e) {
+		} catch (NonPositiveStockQuantityException e) {
 			this.viewController.loginFalse("The quantity of stock must be positive");
 		}
 	}

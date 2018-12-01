@@ -17,6 +17,13 @@ public class Account implements IAccount {
 		this.id = Utility.generateAccountId();
 	}
 	
+	public Account() {
+		this.name = Utility.generateComputerName();
+		this.password = Convention.COMPUTER_PLAYER_PASSWORD;
+		this.balance = Convention.INITIAL_BALANCE;
+		this.id = this.name;
+	}
+	
 	public Account(String name) {
 		this.name = name;
 		this.password = "";

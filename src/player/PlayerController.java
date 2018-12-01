@@ -85,7 +85,7 @@ public abstract class PlayerController implements IPlayerController{
 	}
 
 	@Override
-	public void postBid(BidType type, String stockCode, double offerPrice, int quantity) throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException, NotFoundAccountException, TimeOutException, NonPostitiveStockQuantityException {
+	public void postBid(BidType type, String stockCode, double offerPrice, int quantity) throws RemoteException, NotEnoughMoneyException, NotFoundStockCodeException, OutOfStockPriceRangeException, NotEnoughStockQuantityException, NotFoundAccountException, TimeOutException, NonPositiveStockQuantityException {
 		this.stockRemote.postBid(this.info.getId(), type, stockCode, quantity, offerPrice);
 	}
 

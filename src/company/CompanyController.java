@@ -33,7 +33,6 @@ public class CompanyController implements ICompanyController {
 		this.name = name;
 		this.accountController = accountController;
 		this.stockController = stockController;
-		this.quantity = 0;
 	}
 	
 	@Override
@@ -78,6 +77,11 @@ public class CompanyController implements ICompanyController {
 	@Override
 	public void acceptBid(int bidId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotFoundAccountException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, TimeOutException {
 		this.stockController.acceptBid(bidId, this.id);
+	}
+
+	@Override
+	public double getBalance() throws RemoteException, NotFoundAccountException {
+		return this.accountController.getBalance(this.id);
 	}
 
 }

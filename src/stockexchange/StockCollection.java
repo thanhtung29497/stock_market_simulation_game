@@ -135,4 +135,9 @@ public class StockCollection implements IStockCollection {
 		}
 	}
 
+	@Override
+	public int size() {
+		return this.stockMap.size();
+	}
+
 }
