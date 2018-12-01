@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.TimerTask;
 
+import javax.swing.JOptionPane;
+
 import common.IBankMessage;
 import common.IBidMessage;
 import common.IMessage;
@@ -43,9 +45,9 @@ public class MessageRetrievingTask extends TimerTask {
 				this.viewController.addBankMessages(bankMessages);
 			}
 		} catch (RemoteException e) {
-			this.viewController.loginFalse("Failed to connect to server");
+			this.viewController.errorShow("login false","Failed to connect to server");
 		} catch (NotFoundAccountException e) {
-			this.viewController.loginFalse("Something went wrong with your account");
+			this.viewController.errorShow("login false","Something went wrong with your account");
 		}
 	}
 	

@@ -33,7 +33,7 @@ public class CompanyController implements ICompanyController {
 		this.name = name;
 		this.accountController = accountController;
 		this.stockController = stockController;
-		this.quantity = 0;
+		//this.quantity = 0;
 	}
 	
 	@Override

@@ -61,7 +61,7 @@ public class PlayerFrame extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTable tablStock;
+	private StockBoard tablStock;
 	private JTable tablBid;
 	Vector<String> BankMsgData ;
 	Vector<String> StockMsgData ;
@@ -155,7 +155,7 @@ public class PlayerFrame extends JFrame {
 		JScrollPane pl_StockMessage = new JScrollPane();
 		
 		list_BankMs = new JList();
-		//list_BankMs.setCellRenderer(new ListCellRenderer());
+		list_BankMs.setCellRenderer(new ListCellRenderer());
 		pl_BankMessage.setViewportView(list_BankMs);
 		
 		sl_contentPane.putConstraint(SpringLayout.WEST, pl_StockMessage, 0, SpringLayout.WEST, pl_PlayerInfo);
@@ -228,26 +228,8 @@ public class PlayerFrame extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		pl_StockBoard.add(scrollPane, BorderLayout.CENTER);
 		
-		tablStock = new StockBoard(
-					new DefaultTableModel(
-						new Object[][] {
-							{},
-						},
-						new String[] {
-								"CK","Trần","Sàn","TC","Sở hữu","KL2","Giá 2","KL1","Giá 1","Giá","KL","KL1","Giá 1","KL2","Giá 2"
-						}
-					) {
-				
-						/**
-						 * 
-						 */
-						private static final long serialVersionUID = 1L;
-
-						public boolean isCellEditable(int row, int column) {
-							return false;
-						}
-					});
-		for(int i=0;i<12;i++)
+		tablStock = new StockBoard();
+		for(int i=0;i<15;i++)
 			tablStock.getColumnModel().getColumn(i).setResizable(false);
 		
 		tablStock.setBackground(Color.black);
@@ -407,15 +389,10 @@ public class PlayerFrame extends JFrame {
 				"Rank", "Player", "Money"
 			}
 		) {
-			/**
-			 * 
-			 */
 			private static final long serialVersionUID = 1L;
-			boolean[] columnEditables = new boolean[] {
-				false, false, false
-			};
+			
 			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
+				return false;
 			}
 		});
 		table_rank.getColumnModel().getColumn(0).setResizable(false);
@@ -457,70 +434,14 @@ public class PlayerFrame extends JFrame {
 		}
 		md.fireTableDataChanged();
 	}
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					PlayerFrame frame = new PlayerFrame();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-	public String[] stockLine(IStock stock,IBidCollection bids) {
-		ArrayList<IBid> sellBid = bids.getTopBids(BidType.Sell, stock.getCode(), 2);
-		ArrayList<IBid> buyBid = bids.getTopBids(BidType.Buy, stock.getCode(), 2);
-		IBid matchBid = bids.getLatestMatchedBid(stock.getCode());
-		String[] output = new String[15];
-		output[0]=stock.getCode();
-		output[1]=String.format("%.2f",stock.getCapPrice());
-		output[2]=String.format("%.2f",stock.getFloorPrice());
-		output[3]=String.format("%.2f",stock.getPrice());
-		output[4]="0";
-		if(buyBid.size()==2) {
-			output[6]=String.format("%.2f",buyBid.get(1).getOfferPrice());
-			output[5]=String.format("%d",buyBid.get(1).getQuantity());
-		}else {
-			output[6]=output[5]="";
-		}
-		if(buyBid.size()>0) {
-			output[8]=String.format("%.2f",buyBid.get(0).getOfferPrice());
-			output[7]=String.format("%d",buyBid.get(0).getQuantity());
-		}else {
-			output[8]=output[7]="";
-		}
-		if(matchBid!=null) {
-		output[9]=String.format("%.2f",matchBid.getOfferPrice());
-		output[10]=String.format("%d",matchBid.getQuantity());
-		}else {
-			output[10]=output[9]="";
-		}
-		if(sellBid.size()>0) {
-			output[12]=String.format("%.2f",sellBid.get(0).getOfferPrice());
-			output[11]=String.format("%d",sellBid.get(0).getQuantity());
-		}else {
-			output[12]=output[11]="";
-		}
-		if(sellBid.size()==2) {
-			output[14]=String.format("%.2f",sellBid.get(1).getOfferPrice());
-			output[13]=String.format("%d",sellBid.get(1).getQuantity());
-		}else {
-			output[14]=output[13]="";
-		}
-		
-		return output;
-	};
+
 	public void showStocks(IStockCollection stocks,IBidCollection bids) {
-		DefaultTableModel model = (DefaultTableModel) tablStock.getModel();
-		model.setRowCount(0);
-		cbbCode.removeAllItems();
+		tablStock.showStocks(stocks,bids);
+		cbbCode.removeAll();
 		stocks.toArray().forEach(stock -> {
-			model.addRow(stockLine(stock,bids));
 			cbbCode.addItem(stock.getCode());
+			
 		});
-		model.fireTableDataChanged();
 	}
 	public void showBid(IBidCollection bids) {
 		DefaultTableModel model = (DefaultTableModel) tablBid.getModel();
@@ -546,6 +467,7 @@ class ListCellRenderer extends DefaultListCellRenderer{
 
 	@Override
 	public Component getListCellRendererComponent(JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
+		Component cmp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		String str= "<html><body style='width: 140px;border-top:1px solid'>"+value.toString()+"</html>";
 		return super.getListCellRendererComponent(list, str, index, isSelected, cellHasFocus);
 	}

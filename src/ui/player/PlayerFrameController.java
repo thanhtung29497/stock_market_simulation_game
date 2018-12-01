@@ -65,12 +65,8 @@ public class PlayerFrameController {
 		}
 		
 	}
-	public void loginFalse(String Msg) {
-		JOptionPane.showMessageDialog(_loginFrame, Msg, "Login false",JOptionPane.OK_OPTION );
-	}
-	
-	public void signUpFalse(String Msg) {
-		JOptionPane.showMessageDialog(_loginFrame, Msg, "SignUp false",JOptionPane.OK_OPTION );
+	public void errorShow(String title,String message) {
+		JOptionPane.showMessageDialog(null,message , title, JOptionPane.OK_OPTION);
 	}
 	
 	public void login(String acc,String pass) {
@@ -104,15 +100,10 @@ public class PlayerFrameController {
 	void postBid(BidType type, String stockCode, double offerPrice, int quantity) {
 		_client.postBid(type, stockCode, offerPrice, quantity);;
 	}
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					PlayerFrameController frame = new PlayerFrameController(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public void loginFalse(String ms) {
+//		JOptionPane.showMessageDialog(null, "sua code di", "login false bor r", JOptionPane.CANCEL_OPTION);
+//	}
+//	public void signUpFalse(String ms) {
+//		JOptionPane.showMessageDialog(null, "sua code di", "login false bor r", JOptionPane.CANCEL_OPTION);
+//	}
 }
