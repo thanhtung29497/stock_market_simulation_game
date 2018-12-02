@@ -31,6 +31,16 @@ public class StockBoard extends JTable{
 	
 
 	private Color getColor(int row,int column) {
+		if(column == 5)
+			return getColor(row,6);
+		else if(column==7)
+			return getColor(row,8);
+		else if(column==10)
+			return getColor(row,9);
+		else if(column==11)
+			return getColor(row,12);
+		else if(column==13)
+			return getColor(row,14);
 		if(this.getValueAt(row, column).equals(""))
 			return Color.white;
 		String val =(String) getValueAt(row,column);
@@ -109,10 +119,8 @@ public class StockBoard extends JTable{
 	public void showStocks(IStockCollection stocks,IBidCollection bids) {
 		DefaultTableModel model = (DefaultTableModel) getModel();
 		model.setRowCount(0);
-		
 		stocks.toArray().forEach(stock -> {
 			model.addRow(stockLine(stock,bids,stocks.getStockQuantity(stock.getCode())));
-			
 		});
 		model.fireTableDataChanged();
 	}

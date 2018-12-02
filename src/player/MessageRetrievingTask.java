@@ -45,9 +45,9 @@ public class MessageRetrievingTask extends TimerTask {
 				this.viewController.addBankMessages(bankMessages);
 			}
 		} catch (RemoteException e) {
-			this.viewController.errorShow("login false","Failed to connect to server");
+			this.viewController.ShowMessage("login false","Failed to connect to server");
 		} catch (NotFoundAccountException e) {
-			this.viewController.errorShow("login false","Something went wrong with your account");
+			this.viewController.ShowMessage("login false","Something went wrong with your account");
 		}
 	}
 	
@@ -61,7 +61,7 @@ public class MessageRetrievingTask extends TimerTask {
 				this.client.startGame();
 			}
 		} catch (RemoteException e) {
-			this.viewController.errorShow("Server error", "Failed to connect to server");
+			this.viewController.ShowMessage("Server error", "Failed to connect to server");
 		}
 	}
 	
@@ -111,9 +111,9 @@ public class MessageRetrievingTask extends TimerTask {
 				this.viewController.addStockExchangeMessages(stockExchangeMessages);
 			}
 		} catch(RemoteException e) {
-			this.viewController.errorShow("Server error", "Failed to connect to server");
+			this.viewController.ShowMessage("Server error", "Failed to connect to server");
 		} catch (NotFoundAccountException e) {
-			this.viewController.errorShow("Error", "Something went wrong with your account");
+			this.viewController.ShowMessage("Error", "Something went wrong with your account");
 		}
 	}
 	

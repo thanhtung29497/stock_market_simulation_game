@@ -82,7 +82,7 @@ public class PlayerFrame extends JFrame {
 		BankMsgData = new Vector<String>();
 		StockMsgData = new Vector<String>();
 	}
-	public PlayerFrame(PlayerFrameController _controller) {
+	public PlayerFrame(PlayerFrameController _controller,String userName) {
 		dataInit();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1000,900);
@@ -167,7 +167,6 @@ public class PlayerFrame extends JFrame {
 	 
 		tablBid=new BidBoard(new DefaultTableModel(
 			new Object[][] {
-				{},
 			},
 			new String[] {
 				"ID","Type","Stock code","Price","Quantity","Status"
@@ -359,7 +358,7 @@ public class PlayerFrame extends JFrame {
 		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblNewLabel, 0, SpringLayout.WEST, lblMoney);
 		pl_PlayerInfo.add(lblNewLabel);
 		
-		JLabel lblName = new JLabel("MasterCOng");
+		JLabel lblName = new JLabel(userName);
 		lblName.setForeground(Color.RED);
 		sl_pl_PlayerInfo.putConstraint(SpringLayout.WEST, lblName, 0, SpringLayout.WEST, pl_PlayerInfo);
 		pl_PlayerInfo.add(lblName);
@@ -383,7 +382,6 @@ public class PlayerFrame extends JFrame {
 		table_rank = new JTable();
 		table_rank.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, null, null},
 			},
 			new String[] {
 				"Rank", "Player", "Money"
