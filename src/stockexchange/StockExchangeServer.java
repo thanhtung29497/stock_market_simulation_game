@@ -6,7 +6,7 @@ import java.rmi.registry.Registry;
 import java.util.Timer;
 
 import common.Convention;
-import common.IBankController;
+import common.IBankRemote;
 import ui.server.StockExchangeFrame;
 
 public class StockExchangeServer {
@@ -30,7 +30,7 @@ public class StockExchangeServer {
 	public StockExchangeServer() {
 		try {
 			registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
-			IBankController bankController = (IBankController)registry.lookup(Convention.BANK_SERVER_NAME + "/" + Convention.BANK_CONTROLLER_NAME);
+			IBankRemote bankController = (IBankRemote)registry.lookup(Convention.BANK_SERVER_NAME + "/" + Convention.BANK_CONTROLLER_NAME);
 			
 			this.manager = new StockExchangeManager(bankController);
 			PlayerStockRemote playerStockController = new PlayerStockRemote(manager);

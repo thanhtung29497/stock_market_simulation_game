@@ -17,11 +17,9 @@ import exception.ExceedMaximumAccountException;
 public class CompanyClient {
 	
 	public static void main (String[] args) {
-		try {
+		try { 
 			Registry registry;
-			
-				registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
-			
+			registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
 			
 			String[] companyNames = {"1group", "2group", "3group", "4group", "5group", "6group", "7group", "8group", "9group", "10group"};
 			for (String name: companyNames) {
@@ -39,16 +37,13 @@ public class CompanyClient {
 				
 			}
 			System.in.read();
-		} catch (RemoteException e) {
+		} catch (RemoteException | NotBoundException e) {
 			System.out.println("Server error");
 			e.printStackTrace();
 		} catch (DuplicateLoginNameException e) {
 			System.out.println("Company name does exist");
 		} catch (ExceedMaximumAccountException e) {
 			System.out.println("Maximum account");
-		} catch (NotBoundException e) {
-			System.out.println("Server error");
-			e.printStackTrace();
 		} catch (DuplicateCompanyNameException e) {
 			System.out.println("");
 		} catch (DuplicateStockCodeException e) {

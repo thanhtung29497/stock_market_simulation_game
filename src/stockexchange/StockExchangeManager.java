@@ -11,7 +11,7 @@ import common.BidStatus;
 import common.BidType;
 import common.Convention;
 import common.IAccount;
-import common.IBankController;
+import common.IBankRemote;
 import common.IBid;
 import common.IBidCollection;
 import common.IMessage;
@@ -37,7 +37,7 @@ import exception.TimeOutException;
 
 public class StockExchangeManager {
 	
-	private IBankController bankController;
+	private IBankRemote bankController;
 	private IStockCollection stocks;
 	private IBidCollection bids;
 	private IRankCollection rankBoard;
@@ -48,7 +48,7 @@ public class StockExchangeManager {
 	private HashMap<String, String> nameToId;
 	private Timer timer;
 
-	public StockExchangeManager(IBankController bankController) {
+	public StockExchangeManager(IBankRemote bankController) {
 		this.bankController = bankController;
 		this.stocks = new StockCollection();
 		this.messages = new HashMap<>();
@@ -76,7 +76,6 @@ public class StockExchangeManager {
 		this.bankController.end();
 		this.rankBoard.resetRank();
 		this.bids.reset();
-		this.bids.clear();
 		timer.cancel();
 		for (String key: this.messages.keySet()) {
 			this.addMessageByKey(key, new Message(MessageType.End, "Game end"));
@@ -296,8 +295,8 @@ public class StockExchangeManager {
 		BidType bidType = bid.getType();
 		
 		if (bidType == BidType.Buy) {
-			IStockCollection acceptorStock = this.ownStocks.get(offereeId);
-			int offereeStockQuantity = acceptorStock.getStockQuantity(stockCode);
+			IStockCollection offereeStock = this.ownStocks.get(offereeId);
+			int offereeStockQuantity = offereeStock.getStockQuantity(stockCode);
 			if (offereeStockQuantity < bidQuantity) {
 				throw new NotEnoughStockQuantityException(offereeStockQuantity, 
 						bid.getQuantity(), stockCode);
@@ -310,6 +309,12 @@ public class StockExchangeManager {
 			double offereeBalance = this.bankController.getBalanceById(offereeId);
 			if (offereeBalance < bidValue) {
 				throw new NotEnoughMoneyException();
+			}
+			IStockCollection offerorStock = this.ownStocks.get(offerorId);
+			int offerorStockQuantity = offerorStock.getStockQuantity(stockCode);
+			if (offerorStockQuantity < bidQuantity) {
+				throw new NotEnoughStockQuantityException(offerorStockQuantity, 
+						bid.getQuantity(), stockCode);
 			}
 		}
 				

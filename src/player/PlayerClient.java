@@ -62,7 +62,7 @@ public class PlayerClient {
 		this.modelController.registerStockExchange();
 		
 		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new MessageRetrievingTask(viewController, modelController, this), Convention.PLAYER_RETRIEVE_MESSAGE_PERIOD, Convention.PLAYER_RETRIEVE_MESSAGE_PERIOD);
+		timer.scheduleAtFixedRate(new PlayerMessageRetrievingTask(viewController, modelController, this), Convention.PLAYER_RETRIEVE_MESSAGE_PERIOD, Convention.PLAYER_RETRIEVE_MESSAGE_PERIOD);
 	}
 	
 	private void initView() throws RemoteException {

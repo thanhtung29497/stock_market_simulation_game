@@ -12,7 +12,7 @@ public class BankServer {
 		try {
 			BankManager bankManager = new BankManager();
 			AccountRemote accountController = new AccountRemote(bankManager);
-			BankController bankController = new BankController(bankManager);
+			BankRemote bankController = new BankRemote(bankManager);
 		
 			registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
 			registry.rebind(Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME, accountController);

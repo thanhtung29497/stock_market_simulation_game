@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 
 import common.IBankMessage;
+import common.IBidCollection;
 import common.IBidMessage;
 import common.IMessage;
 import common.IRankCollection;
@@ -16,7 +17,7 @@ import common.MessageType;
 import exception.NotFoundAccountException;
 import ui.player.PlayerFrameController;
 
-public class MessageRetrievingTask extends TimerTask {
+public class PlayerMessageRetrievingTask extends TimerTask {
 	private PlayerFrameController viewController;
 	private PlayerController modelController;
 	private PlayerClient client;
@@ -78,33 +79,17 @@ public class MessageRetrievingTask extends TimerTask {
 		try {
 			ArrayList<IMessage> stockExchangeMessages = this.modelController.retrieveStockExchangeMessages();			
 			if (!stockExchangeMessages.isEmpty()) {
-				for (IMessage message: stockExchangeMessages) {
-					if (message.getType() == MessageType.UpdateStock) {
-						
-						IStockCollection stocks = ((IStockMessage)message).getStocks();
-						IStockCollection ownStocks = this.modelController.getOwnStocks();
-						this.viewController.UpdateStocksAndBids(this.combineStockBoardAndOwnStocks(stocks, ownStocks), 
-								this.modelController.getAllBids());
-						
-					} else if (message.getType() == MessageType.UpdateBid) {
-						
-						IStockCollection stocks = this.modelController.getAllStocks();
-						IStockCollection ownStocks = this.modelController.getOwnStocks();
-						this.viewController.UpdateStocksAndBids(this.combineStockBoardAndOwnStocks(stocks, ownStocks), 
-								((IBidMessage)message).getBids());
-						
-					} else if (message.getType() == MessageType.UpdateRank) {
-						
-						IRankCollection ranks = ((IRankMessage)message).getRankBoard();
-						this.modelController.info.setRank(ranks.getRankByName(this.modelController.getInfo().getName()));
-						this.viewController.updateRank(ranks);
-						this.viewController.setRank(this.modelController.getInfo().getRank());
-					}
-					
-					this.viewController.setMoney(this.modelController.getTotalAmount());
-				}
+				IStockCollection stocks = this.modelController.getAllStocks();
+				IStockCollection ownStocks = this.modelController.getOwnStocks();
+				IBidCollection bids = this.modelController.getAllBids();
+				IRankCollection ranks = this.modelController.getRankBoard();
 				
-				// this.testPrintStockMessage(stockExchangeMessages);
+				this.viewController.UpdateStocksAndBids(
+						this.combineStockBoardAndOwnStocks(stocks, ownStocks), bids);
+				this.viewController.updateRank(ranks);
+				this.viewController.setRank(this.modelController.getInfo().getRank());					
+				this.viewController.setMoney(this.modelController.getTotalAmount());
+				
 				
 				stockExchangeMessages.removeIf(message -> message.getType() == MessageType.UpdateRank
 						|| message.getType() == MessageType.UpdateBid);
@@ -129,7 +114,7 @@ public class MessageRetrievingTask extends TimerTask {
 		}
 	}
 	
-	public MessageRetrievingTask(PlayerFrameController viewController, PlayerController modelController, PlayerClient client) {
+	public PlayerMessageRetrievingTask(PlayerFrameController viewController, PlayerController modelController, PlayerClient client) {
 		this.viewController = viewController;
 		this.modelController = modelController;
 		this.client = client;

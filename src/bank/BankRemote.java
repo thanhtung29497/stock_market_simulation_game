@@ -4,16 +4,16 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import common.IAccount;
-import common.IBankController;
+import common.IBankRemote;
 import exception.NotEnoughMoneyException;
 import exception.NotFoundAccountException;
 
-public class BankController extends UnicastRemoteObject implements IBankController {
+public class BankRemote extends UnicastRemoteObject implements IBankRemote {
 
 	private static final long serialVersionUID = 1L;
 	BankManager bankManager;
 	
-	protected BankController(BankManager bankManager) throws RemoteException {
+	protected BankRemote(BankManager bankManager) throws RemoteException {
 		super();
 		this.bankManager = bankManager;
 	}

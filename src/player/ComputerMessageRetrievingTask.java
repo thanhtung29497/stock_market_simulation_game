@@ -66,6 +66,9 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 				maxStockQuantity = ((Double)(this.modelController.info.getBalance() / stock.getPrice())).intValue();
 			} else {
 				maxStockQuantity = ownStocks.getStockQuantity(stockCode);
+				if (maxStockQuantity < 0) {
+					System.out.println("Error");
+				}
 			}
 			
 			int stockQuantity = this.random.nextInt(maxStockQuantity % 20 + 1);
@@ -142,6 +145,8 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 		} catch (OutOfStockPriceRangeException e) {
 			e.printStackTrace();
 		} catch (NonPositiveStockQuantityException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
