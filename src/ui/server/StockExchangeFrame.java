@@ -77,6 +77,11 @@ public class StockExchangeFrame extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				try {
 					server.stop();
+
+					tfDuration.setEnabled(true);
+					tfSessionPeriod.setEnabled(true);
+					tfInitialShareNumber.setEnabled(true);
+					tfInitialStockPrice.setEnabled(true);
 				} catch (RemoteException e1) {
 					JOptionPane.showMessageDialog(contentPane, "Failed to connect to server", "Error", ERROR);
 				}
@@ -197,8 +202,12 @@ public class StockExchangeFrame extends JFrame {
 							Integer.parseInt(tfSessionPeriod.getText()),
 							Integer.parseInt(tfInitialShareNumber.getText()),
 							Double.parseDouble(tfInitialStockPrice.getText()));
+					tfDuration.setEnabled(false);
+					tfSessionPeriod.setEnabled(false);
+					tfInitialShareNumber.setEnabled(false);
+					tfInitialStockPrice.setEnabled(false);
 				} catch (RemoteException e1) {
-					JOptionPane.showMessageDialog(contentPane, "Failed to connect to server", "Error", ERROR);
+					JOptionPane.showMessageDialog(null, "Failed to connect to server", "Error", ERROR);
 				}
 				btnStop.setEnabled(true);
 				btnStart.setEnabled(false);
@@ -220,5 +229,8 @@ public class StockExchangeFrame extends JFrame {
 	}
 	public void showTime(int min,int sec) {
 		lblTime.setText(String.format("%d:%02d",min,sec));
+	}
+	public void ShowMessage(String title,String msg) {
+		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.OK_OPTION);
 	}
 }

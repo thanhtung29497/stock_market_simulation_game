@@ -8,6 +8,7 @@ import common.ICompanyController;
 import common.ICompanyStockRemote;
 import common.IMessage;
 import common.IStock;
+import common.IStockCollection;
 import exception.BidNotAvailableException;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateLoginNameException;
@@ -82,6 +83,11 @@ public class CompanyController implements ICompanyController {
 	@Override
 	public double getBalance() throws RemoteException, NotFoundAccountException {
 		return this.accountController.getBalance(this.id);
+	}
+
+	@Override
+	public IStockCollection getCompanyStocks() throws RemoteException {
+		return this.stockController.getCompanyStocks();
 	}
 
 }

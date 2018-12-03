@@ -20,7 +20,6 @@ import common.IStock;
 import common.IStockCollection;
 import common.Message;
 import common.MessageType;
-import common.Utility;
 import exception.BidNotAvailableException;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
@@ -66,6 +65,8 @@ public class StockExchangeManager {
 			this.addMessageByKey(key, new Message(MessageType.Start, "Game start"));
 		}
 		this.stocks.resetPrice();
+		this.rankBoard.resetRank();
+		this.bids.reset();
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new StockPriceAdjustmentTask(this), Convention.STOCK_EXCHANGE_SESSION, Convention.STOCK_EXCHANGE_SESSION);
 		timer.schedule(new GameEndingTask(this), Convention.GAME_DURATION);
@@ -74,8 +75,6 @@ public class StockExchangeManager {
 	public void end() throws RemoteException {
 		this.startMilestone = null;
 		this.bankController.end();
-		this.rankBoard.resetRank();
-		this.bids.reset();
 		timer.cancel();
 		for (String key: this.messages.keySet()) {
 			this.addMessageByKey(key, new Message(MessageType.End, "Game end"));
@@ -118,17 +117,27 @@ public class StockExchangeManager {
 		Stock stock = new Stock(stockCode, Convention.INITIAL_SHARE_PRICE, companyName);
 		this.stocks.addStock(stock, 0);
 		this.ownStocks.put(companyId, new StockCollection(stock, Convention.INITIAL_SHARE_NUMBER));
-		
-		for (String key: this.messages.keySet()) {
-			if (Utility.isPlayerId(key)) {
-				this.addMessageByKey(key, new StockMessage(MessageType.UpdateStock,
-						"New stock was issued: " + stock.getCode(), this.stocks));
-			}
-		}
-		
 		this.messages.put(companyId, new ArrayList<>());
 		
+		for (String key: this.messages.keySet()) {
+			this.addMessageByKey(key, new StockMessage(MessageType.UpdateStock,
+				"New stock was issued: " + stock.getCode(), this.stocks));
+		}
+		
 		return stock;
+	}
+	
+	public IStockCollection getCompanyStocks() {
+		IStockCollection newStocks = new StockCollection();
+		for (IStock stock: this.stocks.toArray()) {
+			String stockCode = stock.getCode();
+			String companyName = this.stocks.getStock(stockCode).getCompanyName();
+			String companyId = this.nameToId.get(companyName);
+			int quantity = this.getStockQuantityOfCompany(companyId, stockCode);
+			newStocks.addStock(stock, quantity);
+		}
+		
+		return newStocks;
 	}
 	
 	public void registerPlayer(String playerId) throws RemoteException, InvalidLoginException, NotFoundAccountException {
@@ -318,8 +327,9 @@ public class StockExchangeManager {
 			}
 		}
 				
+		this.bankController.makeTransaction(bid, offereeId);
 		if (bidType == BidType.Buy) {
-			this.bankController.makeTransaction(offerorId, offereeId , bidId, bid.getValue());
+			
 			this.updateStockQuantity(offerorId, stockCode, bidQuantity);
 			this.updateStockQuantity(offereeId, stockCode, -bidQuantity);
 			this.addMessageByKey(offerorId, new Message(MessageType.MatchBid,
@@ -327,7 +337,7 @@ public class StockExchangeManager {
 			this.addMessageByKey(offereeId, new Message(MessageType.MatchBid,
 					"Number of stock " + stockCode + " was reduced by " + bidQuantity + " due to bid " + bidId));
 		} else {
-			this.bankController.makeTransaction(offereeId, offerorId, bidId, bid.getValue());
+			
 			this.updateStockQuantity(offerorId, stockCode, -bidQuantity);
 			this.updateStockQuantity(offereeId, stockCode, bidQuantity);
 			this.addMessageByKey(offerorId, new Message(MessageType.MatchBid,

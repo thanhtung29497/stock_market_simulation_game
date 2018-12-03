@@ -26,6 +26,7 @@ import exception.NotFoundStockCodeException;
 import exception.OfferorNotEnoughMoneyException;
 import exception.OutOfStockPriceRangeException;
 import exception.TimeOutException;
+import ui.bot.ComputerPlayerFrame;
 
 public class ComputerMessageRetrievingTask extends TimerTask {
 
@@ -33,6 +34,7 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 	private final int ACCEPT_BID_PERCENT = 5;
 	private final int POST_BID_PERCENT = 50;
 	private Random random;
+	private ComputerPlayerFrame viewController;
 	
 	private Boolean doesAcceptBid(IBid bid) throws RemoteException {
 		if (bid.getStatus() == BidStatus.Matched || this.modelController.getCurrentTime().isZero()) {
@@ -54,6 +56,9 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 			IStockCollection stocks = this.modelController.getAllStocks();
 			IStockCollection ownStocks = this.modelController.getOwnStocks();
 			
+			if (stocks.size() == 0) {
+				return;
+			}
 			int stockCodeRandom = this.random.nextInt(stocks.size());
 			IStock stock = stocks.toArray().get(stockCodeRandom);
 			String stockCode = stock.getCode();
@@ -73,7 +78,7 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 			
 			int stockQuantity = this.random.nextInt(maxStockQuantity % 20 + 1);
 			if (stockQuantity == 0) return;
-			
+		
 			Double priceRange = stock.getPrice() * Convention.STOCK_PERCENT_RANGE * 2;
 			double offerPrice = stock.getFloorPrice() + this.random.nextInt(priceRange.intValue());
 			
@@ -82,12 +87,15 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 	}
 	
 	private void updateMoney() throws RemoteException, NotFoundAccountException {
-		double money = this.modelController.getTotalAmount();
 		ArrayList<IBankMessage> messages = this.modelController.retrieveBankMessages();
 		
 		if (!messages.isEmpty()) {
 			IBankMessage lastMessage = messages.get(messages.size() - 1);
 			this.modelController.info.setBalance(lastMessage.getBalance());
+			
+			this.viewController.addMessage(this.modelController.getInfo().getName() + ": " 
+					+ lastMessage.getMessage() 
+					+ " (" + String.format("%.2f", lastMessage.getBalance()) + ")");
 		}
 	}
 	
@@ -97,10 +105,6 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 			if (message.getType() == MessageType.UpdateStock) {
 				
 				IStockCollection stocks = this.modelController.getOwnStocks();
-				System.out.println(this.modelController.getInfo().getId());
-				stocks.toArray().forEach(stock -> {
-					System.out.println(stock.getCode() + ": " + stock.getPrice() + " " + stocks.getStockQuantity(stock.getCode()));
-				});
 				
 			} else if (message.getType() == MessageType.UpdateBid) {
 				
@@ -114,6 +118,10 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 					}
 				}
 				
+			} else if (message.getType() == MessageType.MatchBid) {
+				
+				this.viewController.addMessage(this.modelController.getInfo().getName() + ": " 
+						+ message.getMessage());
 			}
 		}
 	}
@@ -152,8 +160,9 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 
 	}
 	
-	public ComputerMessageRetrievingTask(ComputerPlayer modelController) {
+	public ComputerMessageRetrievingTask(ComputerPlayer modelController, ComputerPlayerFrame viewController) {
 		this.modelController = modelController;
+		this.viewController = viewController;
 		this.random = new Random();
 	}
 

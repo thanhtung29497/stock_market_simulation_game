@@ -5,19 +5,33 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 
 import common.IBankMessage;
-import common.IBidCollection;
+import common.IBidMessage;
 import common.IMessage;
 import common.IRankCollection;
+import common.IRankMessage;
 import common.IStock;
 import common.IStockCollection;
+import common.IStockMessage;
 import common.MessageType;
 import exception.NotFoundAccountException;
 import ui.player.PlayerFrameController;
 
-public class PlayerMessageRetrievingTask extends TimerTask {
+public class MessageRetrievingTask extends TimerTask {
 	private PlayerFrameController viewController;
 	private PlayerController modelController;
 	private PlayerClient client;
+	
+	private void testPrintBankMessage(ArrayList<IBankMessage> messages) {
+		messages.forEach(message -> {
+			System.out.println("Bank: " + message.getMessage() + ": " + message.getBalance());
+		});
+	}
+	
+	private void testPrintStockMessage(ArrayList<IMessage> messages) {
+		messages.forEach(message -> {
+			System.out.println("Stock: " + message.getMessage());
+		});
+	}
 
 	private void retrieveBankMessages() {
 		ArrayList<IBankMessage> bankMessages;
@@ -27,12 +41,13 @@ public class PlayerMessageRetrievingTask extends TimerTask {
 				IBankMessage lastMessage = bankMessages.get(bankMessages.size() - 1);
 				this.viewController.setBalance(lastMessage.getBalance());
 				this.viewController.setMoney(this.modelController.getTotalAmount());
+				this.testPrintBankMessage(bankMessages);
 				this.viewController.addBankMessages(bankMessages);
 			}
 		} catch (RemoteException e) {
-			this.viewController.ShowMessage("Error","Failed to connect to server");
+			this.viewController.ShowMessage("login false","Failed to connect to server");
 		} catch (NotFoundAccountException e) {
-			this.viewController.ShowMessage("Error","Something went wrong with your account");
+			this.viewController.ShowMessage("login false","Something went wrong with your account");
 		}
 	}
 	
@@ -63,26 +78,36 @@ public class PlayerMessageRetrievingTask extends TimerTask {
 		try {
 			ArrayList<IMessage> stockExchangeMessages = this.modelController.retrieveStockExchangeMessages();			
 			if (!stockExchangeMessages.isEmpty()) {
-				IStockCollection stocks = this.modelController.getAllStocks();
-				IStockCollection ownStocks = this.modelController.getOwnStocks();
-				IBidCollection bids = this.modelController.getAllBids();
-				IRankCollection ranks = this.modelController.getRankBoard();
+				for (IMessage message: stockExchangeMessages) {
+					if (message.getType() == MessageType.UpdateStock) {
+						
+						IStockCollection stocks = ((IStockMessage)message).getStocks();
+						IStockCollection ownStocks = this.modelController.getOwnStocks();
+						this.viewController.UpdateStocksAndBids(this.combineStockBoardAndOwnStocks(stocks, ownStocks), 
+								this.modelController.getAllBids());
+						
+					} else if (message.getType() == MessageType.UpdateBid) {
+						
+						IStockCollection stocks = this.modelController.getAllStocks();
+						IStockCollection ownStocks = this.modelController.getOwnStocks();
+						this.viewController.UpdateStocksAndBids(this.combineStockBoardAndOwnStocks(stocks, ownStocks), 
+								((IBidMessage)message).getBids());
+						
+					} else if (message.getType() == MessageType.UpdateRank) {
+						
+						IRankCollection ranks = ((IRankMessage)message).getRankBoard();
+						this.modelController.info.setRank(ranks.getRankByName(this.modelController.getInfo().getName()));
+						this.viewController.updateRank(ranks);
+						this.viewController.setRank(this.modelController.getInfo().getRank());
+					}
+					
+					this.viewController.setMoney(this.modelController.getTotalAmount());
+				}
 				
-				this.viewController.UpdateStocksAndBids(
-						this.combineStockBoardAndOwnStocks(stocks, ownStocks), bids);
-				this.viewController.updateRank(ranks);
-				this.viewController.setRank(this.modelController.getInfo().getRank());					
-				this.viewController.setMoney(this.modelController.getTotalAmount());
-				
+				// this.testPrintStockMessage(stockExchangeMessages);
 				
 				stockExchangeMessages.removeIf(message -> message.getType() == MessageType.UpdateRank
 						|| message.getType() == MessageType.UpdateBid);
-				for (IMessage message: stockExchangeMessages) {
-					if (message.getType() == MessageType.PostBid 
-							|| message.getType() == MessageType.MatchBid) {
-						this.viewController.ShowMessage("Notification", message.getMessage());
-					}
-				}
 				this.viewController.addStockExchangeMessages(stockExchangeMessages);
 			}
 		} catch(RemoteException e) {
@@ -104,7 +129,7 @@ public class PlayerMessageRetrievingTask extends TimerTask {
 		}
 	}
 	
-	public PlayerMessageRetrievingTask(PlayerFrameController viewController, PlayerController modelController, PlayerClient client) {
+	public MessageRetrievingTask(PlayerFrameController viewController, PlayerController modelController, PlayerClient client) {
 		this.viewController = viewController;
 		this.modelController = modelController;
 		this.client = client;

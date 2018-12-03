@@ -11,6 +11,6 @@ public interface IBankRemote extends Remote {
 	public void end() throws RemoteException;
 	public IAccount login(String id) throws RemoteException, NotFoundAccountException;
 	public double getBalanceById(String id) throws RemoteException, NotFoundAccountException;
-	public void makeTransaction(String payerId, String payeeId, int bidId, double money)
+	public void makeTransaction(IBid bid, String offereeId)
 		throws RemoteException, NotEnoughMoneyException, NotFoundAccountException;
 }

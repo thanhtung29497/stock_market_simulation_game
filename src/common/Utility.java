@@ -1,10 +1,19 @@
 package common;
 
 public class Utility {
-	public static int COMPUTER_INDEX = 0;
+	public static int COMPUTER_COUNT = 0;
 	public static String generateComputerName() {
-		Utility.COMPUTER_INDEX++;
-		return Convention.COMPUTER_PLAYER_NAME + Utility.COMPUTER_INDEX;
+		Utility.COMPUTER_COUNT++;
+		return Convention.COMPUTER_PLAYER_NAME + Utility.COMPUTER_COUNT;
+	}
+	
+	public static int COMPANY_COUNT = 0;
+	public static String generateCompanyName() {
+		Utility.COMPANY_COUNT++;
+		return Convention.COMPANY_NAME + Utility.COMPANY_COUNT;
+	}
+	public static String generateStockCode() {
+		return "CP" + Utility.COMPANY_COUNT;
 	}
 	
 	public static int BID_INDEX = 0;

@@ -52,9 +52,9 @@ public class PlayerClient {
 	private void connectToRegistry() throws RemoteException, NotBoundException {
 		this.registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
 		this.accountController = (IAccountRemote)registry.lookup(
-				Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
+				Convention.URL + "/" + Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
 		this.stockController = (IPlayerStockRemote)registry.lookup(
-				Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME);
+				Convention.URL + "/" + Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME);
 		this.modelController = new HumanPlayer(this.accountController, this.stockController);
 	}
 	
@@ -81,13 +81,13 @@ public class PlayerClient {
 			this.viewController.UpdateStocksAndBids(this.modelController.getAllStocks(), this.modelController.getAllBids());
 			this.viewController.updateRank(this.modelController.getRankBoard());
 		} catch (RemoteException e) {
-			this.viewController.errorShow("Server error", "Failed to connect to server");
+			this.viewController.ShowMessage("Server error", "Failed to connect to server");
 		}
 	}
 	
 	public void endGame() {
 		this.timeOut = true;
-		this.viewController.errorShow("Notification", "Game end! Your rank is " + this.modelController.getInfo().getRank());
+		this.viewController.ShowMessage("Notification", "Game end! Your rank is " + this.modelController.getInfo().getRank());
 		timer.cancel();
 	}
 	
@@ -101,13 +101,13 @@ public class PlayerClient {
 			
 		} catch (RemoteException | NotBoundException e) {
 			e.printStackTrace();
-			this.viewController.errorShow("Server error", "Failed to connect to server");
+			this.viewController.ShowMessage("Server error", "Failed to connect to server");
 		} catch (ExceedMaximumAccountException e) {
-			this.viewController.errorShow("Account error", "Exceed of maximum account");
+			this.viewController.ShowMessage("Account error", "Exceed of maximum account");
 		} catch (DuplicateLoginNameException e) {
-			this.viewController.errorShow("Login error", "Duplicate login name");
+			this.viewController.ShowMessage("Login error", "Duplicate login name");
 		} catch (InvalidLoginException | NotFoundAccountException e) {
-			this.viewController.errorShow("Login error", "Invalid register");
+			this.viewController.ShowMessage("Login error", "Invalid register");
 		}
 	}
 	
@@ -119,9 +119,9 @@ public class PlayerClient {
 			this.initView();
 			
 		} catch (RemoteException | NotBoundException e) {
-			this.viewController.errorShow("Server error", "Failed to connect to server");
+			this.viewController.ShowMessage("Server error", "Failed to connect to server");
 		} catch (InvalidLoginException | NotFoundAccountException e) {
-			this.viewController.errorShow("Login error", "Wrong account name or password");
+			this.viewController.ShowMessage("Login error", "Wrong account name or password");
 		}
 	}
 	
@@ -129,21 +129,21 @@ public class PlayerClient {
 		try {
 			this.modelController.postBid(type, stockCode, offerPrice, quantity);
 		} catch (RemoteException e) {
-			this.viewController.errorShow("Server error", "Failed to connect to server");
+			this.viewController.ShowMessage("Server error", "Failed to connect to server");
 		} catch (NotEnoughMoneyException e) {
-			this.viewController.errorShow("Error", "Not enough money to make transaction");
+			this.viewController.ShowMessage("Error", "Not enough money to make transaction");
 		} catch (NotFoundStockCodeException e) {
-			this.viewController.errorShow("Invalid bid", "Invalid stock code " + stockCode);
+			this.viewController.ShowMessage("Invalid bid", "Invalid stock code " + stockCode);
 		} catch (OutOfStockPriceRangeException e) {
-			this.viewController.errorShow("Invalid bid", "The price you offer is out of range");
+			this.viewController.ShowMessage("Invalid bid", "The price you offer is out of range");
 		} catch (NotEnoughStockQuantityException e) {
-			this.viewController.errorShow("Invalid bid", "Not enough stock to make transaction");
+			this.viewController.ShowMessage("Invalid bid", "Not enough stock to make transaction");
 		} catch (NotFoundAccountException e) {
-			this.viewController.errorShow("Account error", "Something went wrong with your account");
+			this.viewController.ShowMessage("Account error", "Something went wrong with your account");
 		} catch (TimeOutException e) {
-			this.viewController.errorShow("Warning", "Time out");
+			this.viewController.ShowMessage("Warning", "Time out");
 		} catch (NonPositiveStockQuantityException e) {
-			this.viewController.errorShow("Invalid bid", "The quantity of stock must be positive");
+			this.viewController.ShowMessage("Invalid bid", "The quantity of stock must be positive");
 		}
 	}
 	
@@ -151,21 +151,21 @@ public class PlayerClient {
 		try {
 			this.modelController.acceptBid(bidId);
 		} catch (RemoteException e) {
-			this.viewController.errorShow("Server error", "Failed to connect to server");
+			this.viewController.ShowMessage("Server error", "Failed to connect to server");
 		} catch (NotFoundBidException e) {
-			this.viewController.errorShow("Invalid bid", "Not found bid id " + bidId);
+			this.viewController.ShowMessage("Invalid bid", "Not found bid id " + bidId);
 		} catch (BidNotAvailableException e) {
-			this.viewController.errorShow("Invalid bid", "Bid might be matched");
+			this.viewController.ShowMessage("Invalid bid", "Bid might be matched");
 		} catch (NotEnoughStockQuantityException e) {
-			this.viewController.errorShow("Invalid bid", "Not enough stock to make transaction");
+			this.viewController.ShowMessage("Invalid bid", "Not enough stock to make transaction");
 		} catch (NotEnoughMoneyException e) {
-			this.viewController.errorShow("Invalid bid", "Not enough money to make transaction");
+			this.viewController.ShowMessage("Invalid bid", "Not enough money to make transaction");
 		} catch (OfferorNotEnoughMoneyException e) {
-			this.viewController.errorShow("Invalid bid", "Offeror " + e.getOfferorName() + " not enough money to make transaction");
+			this.viewController.ShowMessage("Invalid bid", "Offeror " + e.getOfferorName() + " not enough money to make transaction");
 		} catch (NotFoundAccountException e) {
-			this.viewController.errorShow("Account error", "Something went wrong with your account");
+			this.viewController.ShowMessage("Account error", "Something went wrong with your account");
 		} catch (TimeOutException e) {
-			this.viewController.errorShow("Warning", "Time is out");
+			this.viewController.ShowMessage("Warning", "Time is out");
 		}
 	}
 		

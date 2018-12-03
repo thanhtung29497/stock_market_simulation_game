@@ -19,4 +19,5 @@ public interface ICompanyStockRemote extends Remote {
 	public void acceptBid(int bidId, String companyId) throws RemoteException, NotFoundBidException, BidNotAvailableException, NotFoundAccountException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, TimeOutException;
 	public ArrayList<IMessage> retrieveMessage(String companyId) throws RemoteException;
 	public int getStockQuantity(String companyId, String stockCode) throws RemoteException;
+	public IStockCollection getCompanyStocks() throws RemoteException;
 }

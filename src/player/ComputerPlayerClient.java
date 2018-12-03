@@ -15,6 +15,7 @@ import exception.DuplicateLoginNameException;
 import exception.ExceedMaximumAccountException;
 import exception.InvalidLoginException;
 import exception.NotFoundAccountException;
+import ui.bot.ComputerPlayerFrame;
 
 public class ComputerPlayerClient {
 	
@@ -22,6 +23,7 @@ public class ComputerPlayerClient {
 	private IAccountRemote accountController;
 	private IPlayerStockRemote stockController;
 	private HashMap<String, ComputerPlayer> players;
+	private ComputerPlayerFrame view;
 	
 	private ComputerPlayerClient() {
 		this.players = new HashMap<>();
@@ -38,8 +40,10 @@ public class ComputerPlayerClient {
 			player.loginBank();
 			player.registerStockExchange();
 			
+			this.view.addMessage(player.getInfo().getName() + ": " + " register successfully");
+			
 			Timer timer = new Timer();
-			timer.scheduleAtFixedRate(new ComputerMessageRetrievingTask(player), 0, Convention.COMPUTER_RETRIEVE_MESSAGE_PERIOD);
+			timer.scheduleAtFixedRate(new ComputerMessageRetrievingTask(player, this.view), 0, Convention.COMPUTER_RETRIEVE_MESSAGE_PERIOD);
 			this.players.put(player.getInfo().getId(), player);
 			
 		} catch (RemoteException | NotBoundException e) {
@@ -58,18 +62,16 @@ public class ComputerPlayerClient {
 	private void connectToRegistry() throws RemoteException, NotBoundException {
 		this.registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
 		this.accountController = (IAccountRemote)registry.lookup(
-				Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
+				Convention.URL + "/" + Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
 		this.stockController = (IPlayerStockRemote)registry.lookup(
-				Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME);
+				Convention.URL + "/" + Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME);
 		
 	}
 	
 	private void run() {
-		this.addNewPlayer();
-		this.addNewPlayer();
-		this.addNewPlayer();
-		this.addNewPlayer();
-		this.addNewPlayer();
+		this.view = new ComputerPlayerFrame(this);
+		this.view.setVisible(true);
+			
 	}
 	
 	public static void main (String[] args) {

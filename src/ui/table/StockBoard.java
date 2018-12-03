@@ -31,6 +31,16 @@ public class StockBoard extends JTable{
 	
 
 	private Color getColor(int row,int column) {
+		if(column == 5)
+			return getColor(row,6);
+		else if(column==7)
+			return getColor(row,8);
+		else if(column==10)
+			return getColor(row,9);
+		else if(column==11)
+			return getColor(row,12);
+		else if(column==13)
+			return getColor(row,14);
 		if(this.getValueAt(row, column).equals(""))
 			return Color.white;
 		String val =(String) getValueAt(row,column);
@@ -63,7 +73,7 @@ public class StockBoard extends JTable{
 	protected JTableHeader createDefaultTableHeader() {
         return new GroupableTableHeader(columnModel);
     }
-	public String[] stockLine(IStock stock,IBidCollection bids,int own) {
+	public String[] stockLine(IStock stock,IBidCollection bids,int own, double compareToLastPrice) {
 		ArrayList<IBid> sellBid = bids.getTopBids(BidType.Sell, stock.getCode(), 2);
 		ArrayList<IBid> buyBid = bids.getTopBids(BidType.Buy, stock.getCode(), 2);
 		IBid matchBid = bids.getLatestMatchedBid(stock.getCode());
@@ -71,7 +81,8 @@ public class StockBoard extends JTable{
 		output[0]=stock.getCode();
 		output[1]=String.format("%.2f",stock.getCapPrice());
 		output[2]=String.format("%.2f",stock.getFloorPrice());
-		output[3]=String.format("%.2f",stock.getPrice());
+		output[3]= ((compareToLastPrice > 0) ? "+" :
+					(compareToLastPrice < 0) ? "-" : "") + String.format("%.2f",stock.getPrice()) ;
 		output[4]=String.valueOf(own);
 		if(buyBid.size()==2) {
 			output[6]=String.format("%.2f",buyBid.get(1).getOfferPrice());
@@ -109,10 +120,8 @@ public class StockBoard extends JTable{
 	public void showStocks(IStockCollection stocks,IBidCollection bids) {
 		DefaultTableModel model = (DefaultTableModel) getModel();
 		model.setRowCount(0);
-		
 		stocks.toArray().forEach(stock -> {
-			model.addRow(stockLine(stock,bids,stocks.getStockQuantity(stock.getCode())));
-			
+			model.addRow(stockLine(stock,bids,stocks.getStockQuantity(stock.getCode()),stocks.compareWithLastPrice(stock.getCode())));
 		});
 		model.fireTableDataChanged();
 	}

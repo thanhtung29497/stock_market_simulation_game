@@ -29,14 +29,22 @@ public class StockExchangeServer {
 	
 	public StockExchangeServer() {
 		try {
-			registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
-			IBankRemote bankController = (IBankRemote)registry.lookup(Convention.BANK_SERVER_NAME + "/" + Convention.BANK_CONTROLLER_NAME);
+			System.setProperty("java.rmi.server.hostname", Convention.HOST_NAME);
+			registry = LocateRegistry.getRegistry(Convention.HOST_NAME, Registry.REGISTRY_PORT);
+			IBankRemote bankController = (IBankRemote)registry.lookup(
+					Convention.URL + "/" + Convention.BANK_SERVER_NAME + "/" + Convention.BANK_CONTROLLER_NAME);
 			
 			this.manager = new StockExchangeManager(bankController);
 			PlayerStockRemote playerStockController = new PlayerStockRemote(manager);
-			registry.rebind(Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME, playerStockController);
+			registry.rebind(
+					Convention.URL + "/" +
+					Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + 
+					Convention.PLAYER_STOCK_CONTROLLER_NAME, playerStockController);
 			CompanyStockRemote companyStockController = new CompanyStockRemote(manager);
-			registry.rebind(Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.COMPANY_STOCK_CONTROLLER_NAME, companyStockController);
+			registry.rebind(
+					Convention.URL + "/" + 
+					Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + 
+					Convention.COMPANY_STOCK_CONTROLLER_NAME, companyStockController);
 			
 			System.out.println("Stock Exchange Server is ready\n");
 			frame = new StockExchangeFrame(this);

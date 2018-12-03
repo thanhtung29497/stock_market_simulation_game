@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import common.ICompanyStockRemote;
 import common.IMessage;
 import common.IStock;
+import common.IStockCollection;
 import exception.BidNotAvailableException;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateStockCodeException;
@@ -49,6 +50,11 @@ public class CompanyStockRemote extends UnicastRemoteObject implements ICompanyS
 	@Override
 	public int getStockQuantity(String companyId, String stockCode) throws RemoteException {
 		return this.stockExchangeManager.getStockQuantityOfCompany(companyId, stockCode);
+	}
+
+	@Override
+	public IStockCollection getCompanyStocks() throws RemoteException {
+		return this.stockExchangeManager.getCompanyStocks();
 	}
 	
 }

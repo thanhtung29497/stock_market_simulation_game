@@ -12,6 +12,7 @@ import common.IBidCollection;
 import common.IBidMessage;
 import common.ICompanyController;
 import common.IMessage;
+import common.IStockCollection;
 import common.MessageType;
 import exception.BidNotAvailableException;
 import exception.NotEnoughMoneyException;
@@ -20,20 +21,22 @@ import exception.NotFoundAccountException;
 import exception.NotFoundBidException;
 import exception.OfferorNotEnoughMoneyException;
 import exception.TimeOutException;
+import ui.bot.CompanyFrame;
 
 public class MessageRetrievingTask extends TimerTask {
 
-	private ICompanyController controller;
+	private ICompanyController modelController;
 	private final int ACCEPT_BID_PERCENT = 5;
+	private CompanyFrame viewController;
 	
 	private Boolean doesAcceptBid(IBid bid) throws RemoteException, NotFoundAccountException {
 		if (bid.getStatus() != BidStatus.Available) {
 			return false;
 		}
-		if (bid.getType() == BidType.Buy && bid.getQuantity() > this.controller.getStockQuantity()) {
+		if (bid.getType() == BidType.Buy && bid.getQuantity() > this.modelController.getStockQuantity()) {
 			return false;
 		}
-		if (bid.getType() == BidType.Sell && this.controller.getBalance() < bid.getValue()) {
+		if (bid.getType() == BidType.Sell && this.modelController.getBalance() < bid.getValue()) {
 			return false;
 		}
 		
@@ -45,20 +48,23 @@ public class MessageRetrievingTask extends TimerTask {
 	@Override
 	public void run() {
 		try {
-			ArrayList<IMessage> messages = this.controller.retrieveMessage();
+			ArrayList<IMessage> messages = this.modelController.retrieveMessage();
 			for (IMessage message: messages) {
 				
 				if (message.getType() == MessageType.UpdateBid) {
-					System.out.println(message.getMessage());
+
 					IBidCollection bids = ((IBidMessage)message).getBids();
-					String stockCode = this.controller.getStockCode();
+					String stockCode = this.modelController.getStockCode();
 					for (IBid bid: bids.getTopBids(stockCode, 3)) {
 						if (this.doesAcceptBid(bid)) {
-							this.controller.acceptBid(bid.getId());
+							this.modelController.acceptBid(bid.getId());
 						}
 					}
+					
 				} else if (message.getType() == MessageType.UpdateStock) {
 					
+					IStockCollection stocks = this.modelController.getCompanyStocks();
+					this.viewController.updateCompanyTable(stocks);
 				}
 			}
 		} catch (RemoteException e) {
@@ -80,8 +86,9 @@ public class MessageRetrievingTask extends TimerTask {
 		}
 	}
 	
-	public MessageRetrievingTask(ICompanyController controller) {
-		this.controller = controller;
+	public MessageRetrievingTask(ICompanyController modelController, CompanyFrame viewController) {
+		this.modelController = modelController;
+		this.viewController = viewController;
 	}
 
 }

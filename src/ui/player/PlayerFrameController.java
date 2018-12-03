@@ -47,7 +47,7 @@ public class PlayerFrameController {
 	
 	public void startTrans(IStockCollection stocks, IBidCollection bids, IPlayerInfo playerInfo, IRankCollection ranks, IStockCollection ownStock) {
 		_loginFrame.dispose();
-		_playerFrame = new PlayerFrame(this);
+		_playerFrame = new PlayerFrame(this,playerInfo.getName());
 		UpdateStocksAndBids(stocks,bids);
 		setMoney(playerInfo.getMoney());
 		setBalance(playerInfo.getBalance());
@@ -65,7 +65,7 @@ public class PlayerFrameController {
 		}
 		
 	}
-	public void errorShow(String title,String message) {
+	public void ShowMessage(String title,String message) {
 		JOptionPane.showMessageDialog(null,message , title, JOptionPane.OK_OPTION);
 	}
 	
@@ -100,10 +100,5 @@ public class PlayerFrameController {
 	void postBid(BidType type, String stockCode, double offerPrice, int quantity) {
 		_client.postBid(type, stockCode, offerPrice, quantity);;
 	}
-//	public void loginFalse(String ms) {
-//		JOptionPane.showMessageDialog(null, "sua code di", "login false bor r", JOptionPane.CANCEL_OPTION);
-//	}
-//	public void signUpFalse(String ms) {
-//		JOptionPane.showMessageDialog(null, "sua code di", "login false bor r", JOptionPane.CANCEL_OPTION);
-//	}
+
 }

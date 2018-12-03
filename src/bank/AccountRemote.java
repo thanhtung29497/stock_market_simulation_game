@@ -6,15 +6,18 @@ import java.util.ArrayList;
 
 import common.*;
 import exception.*;
+import ui.server.BankServerFrame;
 
 public class AccountRemote extends UnicastRemoteObject implements IAccountRemote {
 
 	private static final long serialVersionUID = 1L;
 	public static final String DOMAIN = "account";
 	private BankManager bankManager;
+	private BankServerFrame view;
 
-	protected AccountRemote(BankManager bankManager) throws RemoteException {
+	protected AccountRemote(BankManager bankManager, BankServerFrame view) throws RemoteException {
 		super();
+		this.view = view;
 		this.bankManager = bankManager;
 	}
 
@@ -25,7 +28,8 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 		}
 		Account account = new Account(name, password);
 		this.bankManager.addAccount(account);
-		System.out.println("Register successfully: " + account.getName());
+		this.view.addMessage("Register successfully: Player " + account.getName());
+		System.out.println("Register successfully: Player " + account.getName());
 		return account;
 	}
 
@@ -35,7 +39,8 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 		if (!account.checkPassword(password)) {
 			throw new InvalidLoginException();
 		}
-		System.out.println("Login successfully: " + account.getId());
+
+		System.out.println("Login successfully: " + account.getName());
 		return account;
 	}
 
@@ -68,6 +73,7 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 		}
 		Account account = new Account(companyName);
 		this.bankManager.addAccount(account);
+		this.view.addMessage("Register successfully: Company " + account.getName());
 		System.out.println("Register successfully: Company " + account.getName());
 		return account.getId();
 	}
@@ -79,7 +85,8 @@ public class AccountRemote extends UnicastRemoteObject implements IAccountRemote
 			throw new DuplicateLoginNameException(account.getName());
 		}
 		this.bankManager.addAccount(account);
-		System.out.println("Register successfully: " + account.getName());
+		this.view.addMessage("Register successfully: Computer " + account.getName());
+		System.out.println("Register successfully: Computer " + account.getName());
 		return account;
 	}	
 }

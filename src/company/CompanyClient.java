@@ -9,48 +9,70 @@ import java.util.Timer;
 import common.Convention;
 import common.IAccountRemote;
 import common.ICompanyStockRemote;
+import common.IStockCollection;
+import common.Utility;
 import exception.DuplicateCompanyNameException;
 import exception.DuplicateLoginNameException;
 import exception.DuplicateStockCodeException;
 import exception.ExceedMaximumAccountException;
+import exception.NotFoundAccountException;
+import ui.bot.CompanyFrame;
 
 public class CompanyClient {
 	
-	public static void main (String[] args) {
-		try { 
-			Registry registry;
-			registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
+	private Registry registry;
+	private CompanyFrame view;
+	private ICompanyStockRemote stockRemote;
+	private IAccountRemote accountRemote;
+	
+	public CompanyClient() {
+		try {
+			System.setProperty("java.rmi.server.hostname", Convention.HOST_NAME);
+			this.view = new CompanyFrame(this);
+			this.view.setVisible(true);
 			
-			String[] companyNames = {"1group", "2group", "3group", "4group", "5group", "6group", "7group", "8group", "9group", "10group"};
-			for (String name: companyNames) {
-				ICompanyStockRemote stockController = (ICompanyStockRemote)registry.lookup(
-						Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.COMPANY_STOCK_CONTROLLER_NAME);
-				IAccountRemote accountController = (IAccountRemote)registry.lookup(
-						Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
-				CompanyController companyController = new CompanyController(name, accountController, stockController);
-				
-				companyController.registerBank();
-				companyController.registerStockExchange(name.substring(0, 3).toUpperCase());
-				Timer timer = new Timer();
-				timer.scheduleAtFixedRate(new MessageRetrievingTask(companyController), 0, Convention.COMPANY_RETRIEVE_MESSAGE_PERIOD);
-				
-				
-			}
-			System.in.read();
+			this.registry = LocateRegistry.getRegistry(Convention.HOST_NAME, Registry.REGISTRY_PORT);
+			this.stockRemote = (ICompanyStockRemote)registry.lookup(
+					Convention.URL + "/" + Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.COMPANY_STOCK_CONTROLLER_NAME);
+			this.accountRemote = (IAccountRemote)registry.lookup(
+					Convention.URL + "/" + Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
+			
+			IStockCollection stocks = this.stockRemote.getCompanyStocks();
+			this.view.updateCompanyTable(stocks);
+			
 		} catch (RemoteException | NotBoundException e) {
-			System.out.println("Server error");
-			e.printStackTrace();
-		} catch (DuplicateLoginNameException e) {
-			System.out.println("Company name does exist");
-		} catch (ExceedMaximumAccountException e) {
-			System.out.println("Maximum account");
-		} catch (DuplicateCompanyNameException e) {
-			System.out.println("");
-		} catch (DuplicateStockCodeException e) {
-			System.out.println("Duplicate stock code");
-		} catch (Exception e) {
-			System.out.println("Unexpected error");
-			e.printStackTrace();
+			this.view.showMessage("Error", e.getMessage() + "\n" + e.getStackTrace());
 		}
+	}
+	
+	public void addCompany() {
+		try {
+			String name = Utility.generateCompanyName();
+			String stockCode = Utility.generateStockCode();
+			
+			CompanyController companyController = new CompanyController(name, 
+				this.accountRemote, this.stockRemote);
+			companyController.registerBank();
+			companyController.registerStockExchange(stockCode);
+			
+			Timer timer = new Timer();
+			timer.scheduleAtFixedRate(new MessageRetrievingTask(companyController, this.view), 0, Convention.COMPANY_RETRIEVE_MESSAGE_PERIOD);
+			
+		} catch (RemoteException e) {
+			this.view.showMessage("Error", "Failed to connect to server");
+		} catch (DuplicateLoginNameException | DuplicateCompanyNameException e) {
+			this.view.showMessage("Error", "Duplicate company name");
+		} catch (ExceedMaximumAccountException e) {
+			this.view.showMessage("Error", "Exceed maximum account");
+		} catch (DuplicateStockCodeException e) {
+			this.view.showMessage("Error", "Duplicate stock code");
+		} catch (NotFoundAccountException e) {
+			this.view.showMessage("Error", "Something went wrong with company account");
+		}
+		
+	}
+	
+	public static void main (String[] args) {
+		new CompanyClient();
 	}
 }
