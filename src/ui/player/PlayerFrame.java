@@ -84,6 +84,7 @@ public class PlayerFrame extends JFrame {
 	}
 	public PlayerFrame(PlayerFrameController _controller,String userName) {
 		dataInit();
+		setTitle("Player: "+userName);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1000,900);
 		contentPane = new JPanel();

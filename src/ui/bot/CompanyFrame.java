@@ -42,6 +42,7 @@ public class CompanyFrame extends JFrame {
 		public AddCompany(CompanyFrame jframe) {
 			
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
 			AddCompany thisFrame= this;
 			setBounds(100, 100, 500, 310);
 			cmFrame = jframe;
@@ -91,6 +92,7 @@ public class CompanyFrame extends JFrame {
 		CompanyFrame thisFrame = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 499, 310);
+		setTitle("Company");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
