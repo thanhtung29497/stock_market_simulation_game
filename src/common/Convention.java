@@ -15,7 +15,7 @@ public class Convention {
 	public static final String COMPUTER_PLAYER_NAME = "CP";
 	public static final String COMPANY_NAME = "Company";
 	public static final String COMPUTER_PLAYER_PASSWORD = "123";
-	public static final String HOST_NAME = "192.168.1.32";
+	public static final String HOST_NAME = "127.0.0.1";
 	public static final String URL = "rmi://" + Convention.HOST_NAME + ":" + Registry.REGISTRY_PORT;	
 	public static final String BANK_SERVER_NAME = "bank";
 	public static final String ACCOUNT_CONTROLLER_NAME = "account";
