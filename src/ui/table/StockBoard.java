@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -28,48 +30,65 @@ import ui.table.tame.GroupableTableHeader;
 
 
 public class StockBoard extends JTable{
+	private Map<String,Integer> stockName;
+	public class columnName{
+		public static final int CODE_COL=0;
+		public static final int CAP_COL=1;
+		public static final int FOOL_COL=2;
+		public static final int PRICE_COL=3;
+		public static final int OWN_COL=4;
+		public static final int BQUANTITY2_COL=5;
+		public static final int BPRICE2_COL=6;
+		public static final int BQUANTITY1_COL=7;
+		public static final int BPRICE1_COL=8;
+		public static final int MQUANTITY_COL=10;
+		public static final int MPRICE_COL=9;
+		public static final int SQUANTITY1_COL=11;
+		public static final int SPRICE1_COL=12;
+		public static final int SQUANTITY2_COL=13;
+		public static final int SPRICE2_COL=14;
+		};
 	
-
 	private Color getColor(int row,int column) {
-		if(column == 5)
-			return getColor(row,6);
-		else if(column==7)
-			return getColor(row,8);
-		else if(column==10)
-			return getColor(row,9);
-		else if(column==11)
-			return getColor(row,12);
-		else if(column==13)
-			return getColor(row,14);
+		if(column == columnName.BQUANTITY1_COL)
+			return getColor(row,columnName.BPRICE1_COL);
+		else if(column==columnName.BQUANTITY2_COL)
+			return getColor(row,columnName.BPRICE2_COL);
+		else if(column==columnName.MQUANTITY_COL)
+			return getColor(row,columnName.MPRICE_COL);
+		else if(column==columnName.SQUANTITY1_COL)
+			return getColor(row,columnName.SPRICE1_COL);
+		else if(column==columnName.SQUANTITY2_COL)
+			return getColor(row,columnName.SPRICE2_COL);
 		if(this.getValueAt(row, column).equals(""))
 			return Color.white;
 		String val =(String) getValueAt(row,column);
-		String tb =(String) getValueAt(row,3);
+		String tb =(String) getValueAt(row,columnName.PRICE_COL);
 		if(val.equals(tb)) return Color.YELLOW;
-		else if(val.equals((String)getValueAt(row,1))) return Color.magenta;
-		else if(val.equals((String)getValueAt(row,2))) return Color.blue;
+		else if(val.equals((String)getValueAt(row,columnName.FOOL_COL))) return Color.magenta;
+		else if(val.equals((String)getValueAt(row,columnName.CAP_COL))) return Color.blue;
 		else if(Float.parseFloat(val)<Float.parseFloat(tb)) return Color.RED;
 		else return Color.green;
 	}
 	public Component prepareRenderer (TableCellRenderer renderer, int index_row, int index_col){
 	    Component comp = super.prepareRenderer(renderer, index_row, index_col);
 	    switch (index_col){
-	    case 0:
+	    case columnName.CODE_COL:
 	    	comp.setForeground(Color.red);break;
-	    case 1:
+	    case columnName.FOOL_COL:
 	    	comp.setForeground(Color.magenta);break;
-	    case 2:
+	    case columnName.CAP_COL:
 	    	comp.setForeground(Color.blue);break;
-	    case 3:
+	    case columnName.PRICE_COL:
 	    	comp.setForeground(Color.YELLOW);break;
-	    case 4:
+	    case columnName.OWN_COL:
 	    	comp.setForeground(Color.white);break;
 	    default:
 	    	comp.setForeground(getColor(index_row,index_col));
 	    }
 	    return comp;
 	}
-	
+
 	protected JTableHeader createDefaultTableHeader() {
         return new GroupableTableHeader(columnModel);
     }
@@ -78,11 +97,10 @@ public class StockBoard extends JTable{
 		ArrayList<IBid> buyBid = bids.getTopBids(BidType.Buy, stock.getCode(), 2);
 		IBid matchBid = bids.getLatestMatchedBid(stock.getCode());
 		String[] output = new String[15];
-		output[0]=stock.getCode();
 		output[1]=String.format("%.2f",stock.getCapPrice());
 		output[2]=String.format("%.2f",stock.getFloorPrice());
-		output[3]= ((compareToLastPrice > 0) ? "+" :
-					(compareToLastPrice < 0) ? "-" : "") + String.format("%.2f",stock.getPrice()) ;
+		output[3]= ((compareToLastPrice > 0) ? "^" :
+					(compareToLastPrice < 0) ? "v" : "") + String.format("%.2f",stock.getPrice()) ;
 		output[4]=String.valueOf(own);
 		if(buyBid.size()==2) {
 			output[6]=String.format("%.2f",buyBid.get(1).getOfferPrice());
@@ -159,5 +177,13 @@ public class StockBoard extends JTable{
 	    header.addColumnGroup(g_khoplenh);
 	    header.addColumnGroup(g_ban);
 	    this.setRowHeight(30);
+		stockName = new HashMap<String,Integer>();
+	}
+	public void updateStockOwn(String code, Integer num) {
+		DefaultTableModel model = (DefaultTableModel) getModel();
+		if(stockName.containsKey(code)) {
+			model.setValueAt(String.valueOf(num), stockName.get(code), columnName.OWN_COL);
+		}
+		model.fireTableDataChanged();
 	}
 }

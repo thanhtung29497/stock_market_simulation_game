@@ -49,6 +49,7 @@ public class StockExchangeFrame extends JFrame {
 	public StockExchangeFrame(StockExchangeServer server) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 100, 1000, 600);
+		setTitle("Stock Exchange server");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

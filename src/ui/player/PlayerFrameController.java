@@ -1,5 +1,6 @@
 package ui.player;
 
+import java.awt.EventQueue;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 
@@ -9,7 +10,9 @@ import common.IBidCollection;
 import common.IStockCollection;
 import common.IMessage;
 import common.IPlayerInfo;
+import common.IRank;
 import common.IRankCollection;
+import common.IStock;
 import player.PlayerClient;
 
 public class PlayerFrameController {
@@ -63,6 +66,7 @@ public class PlayerFrameController {
 		}
 		
 	}
+	
 	public void showMessage(String title,String message) {
 		JOptionPane.showMessageDialog(null,message , title, JOptionPane.OK_OPTION);
 	}
