@@ -97,10 +97,11 @@ public class StockBoard extends JTable{
 		ArrayList<IBid> buyBid = bids.getTopBids(BidType.Buy, stock.getCode(), 2);
 		IBid matchBid = bids.getLatestMatchedBid(stock.getCode());
 		String[] output = new String[15];
+		output[0]=stock.getCode();
 		output[1]=String.format("%.2f",stock.getCapPrice());
 		output[2]=String.format("%.2f",stock.getFloorPrice());
 		output[3]= ((compareToLastPrice > 0) ? "^" :
-					(compareToLastPrice < 0) ? "v" : "") + String.format("%.2f",stock.getPrice()) ;
+					(compareToLastPrice < 0) ? "v" : " ") + String.format("%.2f",stock.getPrice()) ;
 		output[4]=String.valueOf(own);
 		if(buyBid.size()==2) {
 			output[6]=String.format("%.2f",buyBid.get(1).getOfferPrice());
