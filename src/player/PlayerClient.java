@@ -78,16 +78,16 @@ public class PlayerClient {
 		this.timer = new Timer();
 		timer.scheduleAtFixedRate(new TimeUpdatingTask(viewController, modelController), 1000, 1000);
 		try {
-			this.viewController.UpdateStocksAndBids(this.modelController.getAllStocks(), this.modelController.getAllBids());
+			this.viewController.updateStocksAndBids(this.modelController.getAllStocks(), this.modelController.getAllBids());
 			this.viewController.updateRank(this.modelController.getRankBoard());
 		} catch (RemoteException e) {
-			this.viewController.ShowMessage("Server error", "Failed to connect to server");
+			this.viewController.showMessage("Server error", "Failed to connect to server");
 		}
 	}
 	
 	public void endGame() {
 		this.timeOut = true;
-		this.viewController.ShowMessage("Notification", "Game end! Your rank is " + this.modelController.getInfo().getRank());
+		this.viewController.showMessage("Notification", "Game end! Your rank is " + this.modelController.getInfo().getRank());
 		timer.cancel();
 	}
 	
@@ -101,13 +101,13 @@ public class PlayerClient {
 			
 		} catch (RemoteException | NotBoundException e) {
 			e.printStackTrace();
-			this.viewController.ShowMessage("Server error", "Failed to connect to server");
+			this.viewController.showMessage("Server error", "Failed to connect to server");
 		} catch (ExceedMaximumAccountException e) {
-			this.viewController.ShowMessage("Account error", "Exceed of maximum account");
+			this.viewController.showMessage("Account error", "Exceed of maximum account");
 		} catch (DuplicateLoginNameException e) {
-			this.viewController.ShowMessage("Login error", "Duplicate login name");
+			this.viewController.showMessage("Login error", "Duplicate login name");
 		} catch (InvalidLoginException | NotFoundAccountException e) {
-			this.viewController.ShowMessage("Login error", "Invalid register");
+			this.viewController.showMessage("Login error", "Invalid register");
 		}
 	}
 	
@@ -119,9 +119,9 @@ public class PlayerClient {
 			this.initView();
 			
 		} catch (RemoteException | NotBoundException e) {
-			this.viewController.ShowMessage("Server error", "Failed to connect to server");
+			this.viewController.showMessage("Server error", "Failed to connect to server");
 		} catch (InvalidLoginException | NotFoundAccountException e) {
-			this.viewController.ShowMessage("Login error", "Wrong account name or password");
+			this.viewController.showMessage("Login error", "Wrong account name or password");
 		}
 	}
 	
@@ -129,21 +129,21 @@ public class PlayerClient {
 		try {
 			this.modelController.postBid(type, stockCode, offerPrice, quantity);
 		} catch (RemoteException e) {
-			this.viewController.ShowMessage("Server error", "Failed to connect to server");
+			this.viewController.showMessage("Server error", "Failed to connect to server");
 		} catch (NotEnoughMoneyException e) {
-			this.viewController.ShowMessage("Error", "Not enough money to make transaction");
+			this.viewController.showMessage("Error", "Not enough money to make transaction");
 		} catch (NotFoundStockCodeException e) {
-			this.viewController.ShowMessage("Invalid bid", "Invalid stock code " + stockCode);
+			this.viewController.showMessage("Invalid bid", "Invalid stock code " + stockCode);
 		} catch (OutOfStockPriceRangeException e) {
-			this.viewController.ShowMessage("Invalid bid", "The price you offer is out of range");
+			this.viewController.showMessage("Invalid bid", "The price you offer is out of range");
 		} catch (NotEnoughStockQuantityException e) {
-			this.viewController.ShowMessage("Invalid bid", "Not enough stock to make transaction");
+			this.viewController.showMessage("Invalid bid", "Not enough stock to make transaction");
 		} catch (NotFoundAccountException e) {
-			this.viewController.ShowMessage("Account error", "Something went wrong with your account");
+			this.viewController.showMessage("Account error", "Something went wrong with your account");
 		} catch (TimeOutException e) {
-			this.viewController.ShowMessage("Warning", "Time out");
+			this.viewController.showMessage("Warning", "Time out");
 		} catch (NonPositiveStockQuantityException e) {
-			this.viewController.ShowMessage("Invalid bid", "The quantity of stock must be positive");
+			this.viewController.showMessage("Invalid bid", "The quantity of stock must be positive");
 		}
 	}
 	
@@ -151,21 +151,21 @@ public class PlayerClient {
 		try {
 			this.modelController.acceptBid(bidId);
 		} catch (RemoteException e) {
-			this.viewController.ShowMessage("Server error", "Failed to connect to server");
+			this.viewController.showMessage("Server error", "Failed to connect to server");
 		} catch (NotFoundBidException e) {
-			this.viewController.ShowMessage("Invalid bid", "Not found bid id " + bidId);
+			this.viewController.showMessage("Invalid bid", "Not found bid id " + bidId);
 		} catch (BidNotAvailableException e) {
-			this.viewController.ShowMessage("Invalid bid", "Bid might be matched");
+			this.viewController.showMessage("Invalid bid", "Bid might be matched");
 		} catch (NotEnoughStockQuantityException e) {
-			this.viewController.ShowMessage("Invalid bid", "Not enough stock to make transaction");
+			this.viewController.showMessage("Invalid bid", "Not enough stock to make transaction");
 		} catch (NotEnoughMoneyException e) {
-			this.viewController.ShowMessage("Invalid bid", "Not enough money to make transaction");
+			this.viewController.showMessage("Invalid bid", "Not enough money to make transaction");
 		} catch (OfferorNotEnoughMoneyException e) {
-			this.viewController.ShowMessage("Invalid bid", "Offeror " + e.getOfferorName() + " not enough money to make transaction");
+			this.viewController.showMessage("Invalid bid", "Offeror " + e.getOfferorName() + " not enough money to make transaction");
 		} catch (NotFoundAccountException e) {
-			this.viewController.ShowMessage("Account error", "Something went wrong with your account");
+			this.viewController.showMessage("Account error", "Something went wrong with your account");
 		} catch (TimeOutException e) {
-			this.viewController.ShowMessage("Warning", "Time is out");
+			this.viewController.showMessage("Warning", "Time is out");
 		}
 	}
 		

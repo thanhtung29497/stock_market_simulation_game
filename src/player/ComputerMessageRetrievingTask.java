@@ -2,6 +2,7 @@ package player;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.TimerTask;
 
@@ -31,12 +32,18 @@ import ui.bot.ComputerPlayerFrame;
 public class ComputerMessageRetrievingTask extends TimerTask {
 
 	private ComputerPlayer modelController;
-	private final int ACCEPT_BID_PERCENT = 5;
+	private final int ACCEPT_BID_PERCENT = 10;
 	private final int POST_BID_PERCENT = 50;
 	private Random random;
 	private ComputerPlayerFrame viewController;
+	private HashSet<Integer> processedBid = new HashSet<>();
 	
 	private Boolean doesAcceptBid(IBid bid) throws RemoteException {
+		if (processedBid.contains(bid.getId())) {
+			return false;
+		}
+		
+		this.processedBid.add(bid.getId());
 		if (bid.getStatus() == BidStatus.Matched || this.modelController.getCurrentTime().isZero()) {
 			return false;
 		}
@@ -47,6 +54,7 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 				&& this.modelController.getOwnStocks().getStockQuantity(bid.getStock().getCode()) < bid.getQuantity()) {
 			return false;
 		}
+	
 		
 		return this.random.nextInt(100) < this.ACCEPT_BID_PERCENT;
 	}
@@ -101,25 +109,15 @@ public class ComputerMessageRetrievingTask extends TimerTask {
 	
 	private void updateStock() throws RemoteException, NotFoundBidException, BidNotAvailableException, NotEnoughStockQuantityException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, NotFoundAccountException, TimeOutException {
 		ArrayList<IMessage> messages = this.modelController.retrieveStockExchangeMessages();
+		IBidCollection bids = this.modelController.getAllBids();
+		for (IBid bid: bids.getAllTopBids(5)) {
+			if (this.doesAcceptBid(bid)) {
+				this.modelController.acceptBid(bid.getId());
+			}
+		}
+		
 		for (IMessage message: messages) {
-			if (message.getType() == MessageType.UpdateStock) {
-				
-				IStockCollection stocks = this.modelController.getOwnStocks();
-				
-			} else if (message.getType() == MessageType.UpdateBid) {
-				
-				IBidCollection bids = ((IBidMessage)message).getBids();
-				if (this.random.nextInt(100) >= this.ACCEPT_BID_PERCENT) {
-					continue;
-				}
-				for (IBid bid: bids.getAllTopBids(5)) {
-					if (this.doesAcceptBid(bid)) {
-						this.modelController.acceptBid(bid.getId());
-					}
-				}
-				
-			} else if (message.getType() == MessageType.MatchBid) {
-				
+			if (message.getType() == MessageType.MatchBid) {	
 				this.viewController.addMessage(this.modelController.getInfo().getName() + ": " 
 						+ message.getMessage());
 			}

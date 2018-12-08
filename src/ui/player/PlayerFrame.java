@@ -1,8 +1,5 @@
 package ui.player;
 
-
-import java.awt.EventQueue;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -21,33 +18,22 @@ import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 
 import common.BidStatus;
 import common.BidType;
-import common.IBid;
 import common.IBidCollection;
 import common.IRank;
 import common.IRankCollection;
-import common.IStock;
 import common.IStockCollection;
 
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.SwingConstants;
 import java.awt.Font;
-import java.awt.List;
-import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -65,8 +51,8 @@ public class PlayerFrame extends JFrame {
 	private JTable tablBid;
 	Vector<String> BankMsgData ;
 	Vector<String> StockMsgData ;
-	JList list_BankMs;
-	JList list_StockMessage;
+	JList<String> list_BankMs;
+	JList<String> list_StockMessage;
 	JLabel labelTime;
 	JLabel labelMoney;
 	JLabel lblBalance;
@@ -154,7 +140,7 @@ public class PlayerFrame extends JFrame {
 		
 		JScrollPane pl_StockMessage = new JScrollPane();
 		
-		list_BankMs = new JList();
+		list_BankMs = new JList<String>();
 		list_BankMs.setCellRenderer(new ListCellRenderer());
 		pl_BankMessage.setViewportView(list_BankMs);
 		
@@ -228,7 +214,7 @@ public class PlayerFrame extends JFrame {
 		pl_StockBoard.add(scrollPane, BorderLayout.CENTER);
 		
 		tablStock = new StockBoard();
-		for(int i=0;i<15;i++)
+		for(int i=0;i<tablStock.getColumnCount();i++)
 			tablStock.getColumnModel().getColumn(i).setResizable(false);
 		
 		tablStock.setBackground(Color.black);
@@ -246,9 +232,9 @@ public class PlayerFrame extends JFrame {
 		sl_pl_Transaction.putConstraint(SpringLayout.WEST, lblType, 0, SpringLayout.WEST, pl_Transaction);
 		pl_Transaction.add(lblType);
 		
-		JComboBox cbbType = new JComboBox();
+		JComboBox<String> cbbType = new JComboBox<>();
 		sl_pl_Transaction.putConstraint(SpringLayout.EAST, cbbType, -10, SpringLayout.EAST, pl_Transaction);
-		cbbType.setModel(new DefaultComboBoxModel(new String[] {"Sell", "Buy"}));
+		cbbType.setModel(new DefaultComboBoxModel<String>(new String[] {"Sell", "Buy"}));
 		sl_pl_Transaction.putConstraint(SpringLayout.NORTH, cbbType, 0, SpringLayout.NORTH, lblType);
 		sl_pl_Transaction.putConstraint(SpringLayout.WEST, cbbType, 42, SpringLayout.EAST, lblType);
 		pl_Transaction.add(cbbType);
@@ -291,7 +277,6 @@ public class PlayerFrame extends JFrame {
 		btnSend.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String code = (String)cbbCode.getSelectedItem();
 				_controller.postBid((cbbType.getSelectedIndex()==0)?BidType.Sell:BidType.Buy, 
 						(String)cbbCode.getSelectedItem(),
 						Float.parseFloat(textField.getText()) ,
@@ -314,7 +299,7 @@ public class PlayerFrame extends JFrame {
 		JLabel lblSockEnc = new JLabel("Stock Exchange Message");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, pl_StockMessage, 10, SpringLayout.SOUTH, lblSockEnc);
 		
-		list_StockMessage = new JList();
+		list_StockMessage = new JList<>();
 		list_StockMessage.setCellRenderer(new ListCellRenderer());
 		pl_StockMessage.setViewportView(list_StockMessage);
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblSockEnc, 10, SpringLayout.SOUTH, pl_BankMessage);
@@ -464,8 +449,7 @@ class ListCellRenderer extends DefaultListCellRenderer{
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public Component getListCellRendererComponent(JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
-		Component cmp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+	public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
 		String str= "<html><body style='width: 140px;border-top:1px solid'>"+value.toString()+"</html>";
 		return super.getListCellRendererComponent(list, str, index, isSelected, cellHasFocus);
 	}

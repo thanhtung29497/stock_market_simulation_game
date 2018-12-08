@@ -9,8 +9,6 @@ import javax.swing.SpringLayout;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 
-import java.awt.EventQueue;
-
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -44,7 +42,7 @@ public class LoginFrame extends JFrame {
 				String acc = txtAcount.getText();
 				String pass = new String(pwdPass.getPassword());
 
-				_controller.SignUp(acc, pass);
+				_controller.signUp(acc, pass);
 			}
 		});
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnSignUp, -10, SpringLayout.SOUTH, contentPane);

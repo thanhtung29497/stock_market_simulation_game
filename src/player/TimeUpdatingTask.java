@@ -26,7 +26,7 @@ public class TimeUpdatingTask extends TimerTask {
 			}
 			this.viewController.setTime((int)(this.currentTime.toMinutes() % 60), (int)(this.currentTime.getSeconds() % 60));
 		} catch (RemoteException e) {
-			this.viewController.ShowMessage("Server error", "Failed to connect to server");
+			this.viewController.showMessage("Server error", "Failed to connect to server");
 		}
 	}
 	
@@ -37,7 +37,7 @@ public class TimeUpdatingTask extends TimerTask {
 			this.currentTime = this.modelController.getCurrentTime();
 			this.viewController.setTime((int)(this.currentTime.toMinutes() % 60), (int)(this.currentTime.getSeconds() % 60));
 		} catch (RemoteException e) {
-			this.viewController.ShowMessage("Server error", "Failed to connect to server");
+			this.viewController.showMessage("Server error", "Failed to connect to server");
 		} catch (Exception e) {
 			System.out.println("Unexpected Error");
 			e.printStackTrace();

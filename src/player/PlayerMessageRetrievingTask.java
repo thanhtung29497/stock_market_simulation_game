@@ -30,9 +30,9 @@ public class PlayerMessageRetrievingTask extends TimerTask {
 				this.viewController.addBankMessages(bankMessages);
 			}
 		} catch (RemoteException e) {
-			this.viewController.ShowMessage("Error","Failed to connect to server");
+			this.viewController.showMessage("Error","Failed to connect to server");
 		} catch (NotFoundAccountException e) {
-			this.viewController.ShowMessage("Error","Something went wrong with your account");
+			this.viewController.showMessage("Error","Something went wrong with your account");
 		}
 	}
 	
@@ -46,7 +46,7 @@ public class PlayerMessageRetrievingTask extends TimerTask {
 				this.client.startGame();
 			}
 		} catch (RemoteException e) {
-			this.viewController.ShowMessage("Server error", "Failed to connect to server");
+			this.viewController.showMessage("Server error", "Failed to connect to server");
 		}
 	}
 	
@@ -68,7 +68,7 @@ public class PlayerMessageRetrievingTask extends TimerTask {
 				IBidCollection bids = this.modelController.getAllBids();
 				IRankCollection ranks = this.modelController.getRankBoard();
 				
-				this.viewController.UpdateStocksAndBids(
+				this.viewController.updateStocksAndBids(
 						this.combineStockBoardAndOwnStocks(stocks, ownStocks), bids);
 				this.viewController.updateRank(ranks);
 				this.viewController.setRank(this.modelController.getInfo().getRank());					
@@ -80,15 +80,15 @@ public class PlayerMessageRetrievingTask extends TimerTask {
 				for (IMessage message: stockExchangeMessages) {
 					if (message.getType() == MessageType.PostBid 
 							|| message.getType() == MessageType.MatchBid) {
-						this.viewController.ShowMessage("Notification", message.getMessage());
+						this.viewController.showMessage("Notification", message.getMessage());
 					}
 				}
 				this.viewController.addStockExchangeMessages(stockExchangeMessages);
 			}
 		} catch(RemoteException e) {
-			this.viewController.ShowMessage("Server error", "Failed to connect to server");
+			this.viewController.showMessage("Server error", "Failed to connect to server");
 		} catch (NotFoundAccountException e) {
-			this.viewController.ShowMessage("Error", "Something went wrong with your account");
+			this.viewController.showMessage("Error", "Something went wrong with your account");
 		}
 	}
 	

@@ -2,6 +2,7 @@ package company;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.TimerTask;
 
@@ -26,10 +27,16 @@ import ui.bot.CompanyFrame;
 public class MessageRetrievingTask extends TimerTask {
 
 	private ICompanyController modelController;
-	private final int ACCEPT_BID_PERCENT = 5;
+	private final int ACCEPT_BID_PERCENT = 10;
 	private CompanyFrame viewController;
+	private HashSet<Integer> processedBid = new HashSet<>();
 	
 	private Boolean doesAcceptBid(IBid bid) throws RemoteException, NotFoundAccountException {
+		if (this.processedBid.contains(bid.getId())) {
+			return false;
+		}
+		
+		this.processedBid.add(bid.getId());
 		if (bid.getStatus() != BidStatus.Available) {
 			return false;
 		}
@@ -39,6 +46,7 @@ public class MessageRetrievingTask extends TimerTask {
 		if (bid.getType() == BidType.Sell && this.modelController.getBalance() < bid.getValue()) {
 			return false;
 		}
+		
 		
 		Random random = new Random();
 		int number = random.nextInt(100) + 1;

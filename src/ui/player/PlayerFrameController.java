@@ -1,6 +1,5 @@
 package ui.player;
 
-import java.awt.EventQueue;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 
@@ -10,7 +9,6 @@ import common.IBidCollection;
 import common.IStockCollection;
 import common.IMessage;
 import common.IPlayerInfo;
-import common.IRank;
 import common.IRankCollection;
 import player.PlayerClient;
 
@@ -48,12 +46,12 @@ public class PlayerFrameController {
 	public void startTrans(IStockCollection stocks, IBidCollection bids, IPlayerInfo playerInfo, IRankCollection ranks, IStockCollection ownStock) {
 		_loginFrame.dispose();
 		_playerFrame = new PlayerFrame(this,playerInfo.getName());
-		UpdateStocksAndBids(stocks,bids);
+		updateStocksAndBids(stocks,bids);
 		setMoney(playerInfo.getMoney());
 		setBalance(playerInfo.getBalance());
 		_playerFrame.updateRank(ranks);
 	}
-	public void UpdateStocksAndBids(IStockCollection stocks,IBidCollection bids) {
+	public void updateStocksAndBids(IStockCollection stocks,IBidCollection bids) {
 		if (this._playerFrame == null) return;
 		_playerFrame.showStocks(stocks,bids);
 		_playerFrame.showBid(bids);
@@ -65,7 +63,7 @@ public class PlayerFrameController {
 		}
 		
 	}
-	public void ShowMessage(String title,String message) {
+	public void showMessage(String title,String message) {
 		JOptionPane.showMessageDialog(null,message , title, JOptionPane.OK_OPTION);
 	}
 	
@@ -73,7 +71,7 @@ public class PlayerFrameController {
 		_client.login(acc, pass);
 	}
 	
-	public void SignUp(String acc,String pass) {
+	public void signUp(String acc,String pass) {
 		_client.register(acc, pass);
 	}
 	

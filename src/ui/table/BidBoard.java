@@ -9,10 +9,11 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
-import ui.table.tame.ColumnGroup;
 import ui.table.tame.GroupableTableHeader;
 
 public class BidBoard extends JTable{
+
+	private static final long serialVersionUID = 1L;
 
 	public Component prepareRenderer (TableCellRenderer renderer, int index_row, int index_col){
 	    Component comp = super.prepareRenderer(renderer, index_row, index_col);
