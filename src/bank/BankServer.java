@@ -13,19 +13,17 @@ public class BankServer {
 	public BankServer() {
 		try {
 			this.frame = new BankServerFrame();
-			System.setProperty("java.rmi.server.hostname", Convention.HOST_NAME);
+			System.setProperty("java.rmi.server.hostname", Convention.BANK_HOST_NAME);
 			BankManager bankManager = new BankManager();
 			AccountRemote accountController = new AccountRemote(bankManager, this.frame);
 			BankRemote bankController = new BankRemote(bankManager, this.frame);
 		
 			registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
 			registry.rebind(
-					Convention.URL + "/" +
-					Convention.BANK_SERVER_NAME + "/" + 
+					Convention.BANK_URL + "/" +
 					Convention.ACCOUNT_CONTROLLER_NAME, accountController);
 			registry.rebind(
-					Convention.URL + "/" + 
-					Convention.BANK_SERVER_NAME + "/" + 
+					Convention.BANK_URL + "/" + 
 					Convention.BANK_CONTROLLER_NAME, bankController);
 			
 			frame.addMessage("Bank server is ready");

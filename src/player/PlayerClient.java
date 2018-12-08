@@ -30,7 +30,8 @@ public class PlayerClient {
 	
 	private PlayerFrameController viewController;
 	private	PlayerController modelController;
-	private Registry registry;
+	private Registry bankRegistry;
+	private Registry stockExchangeRegistry;
 	private IAccountRemote accountController;
 	private	IPlayerStockRemote stockController;
 	private Timer timer;
@@ -50,11 +51,15 @@ public class PlayerClient {
 	}
 	
 	private void connectToRegistry() throws RemoteException, NotBoundException {
-		this.registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
-		this.accountController = (IAccountRemote)registry.lookup(
-				Convention.URL + "/" + Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
-		this.stockController = (IPlayerStockRemote)registry.lookup(
-				Convention.URL + "/" + Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME);
+		
+		this.bankRegistry = LocateRegistry.getRegistry(Convention.BANK_HOST_NAME, Registry.REGISTRY_PORT);
+		this.stockExchangeRegistry = LocateRegistry.getRegistry(Convention.STOCK_EXCHANGE_SERVER_NAME, Registry.REGISTRY_PORT);
+		
+		this.accountController = (IAccountRemote)bankRegistry.lookup(
+				Convention.BANK_URL + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
+		this.stockController = (IPlayerStockRemote)stockExchangeRegistry.lookup(
+				Convention.STOCK_EXCHANGE_URL + "/" + Convention.PLAYER_STOCK_CONTROLLER_NAME);
+		
 		this.modelController = new HumanPlayer(this.accountController, this.stockController);
 	}
 	

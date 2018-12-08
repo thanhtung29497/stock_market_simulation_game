@@ -15,8 +15,10 @@ public class Convention {
 	public static final String COMPUTER_PLAYER_NAME = "CP";
 	public static final String COMPANY_NAME = "Company";
 	public static final String COMPUTER_PLAYER_PASSWORD = "123";
-	public static final String HOST_NAME = "stockmarketgame";
-	public static final String URL = "rmi://" + Convention.HOST_NAME + ":" + Registry.REGISTRY_PORT;	
+	public static final String BANK_HOST_NAME = "bank";
+	public static final String STOCK_EXCHANGE_HOST_NAME = "stockexchange";
+	public static final String BANK_URL = "rmi://" + Convention.BANK_HOST_NAME + ":" + Registry.REGISTRY_PORT;
+	public static final String STOCK_EXCHANGE_URL = "rmi://" + Convention.STOCK_EXCHANGE_HOST_NAME + ":" + Registry.REGISTRY_PORT;
 	public static final String BANK_SERVER_NAME = "bank";
 	public static final String ACCOUNT_CONTROLLER_NAME = "account";
 	public static final String BANK_CONTROLLER_NAME = "controller";

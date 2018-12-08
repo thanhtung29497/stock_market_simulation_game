@@ -20,22 +20,25 @@ import ui.bot.CompanyFrame;
 
 public class CompanyClient {
 	
-	private Registry registry;
+	private Registry bankRegistry;
+	private Registry stockExchangeRegistry;
 	private CompanyFrame view;
 	private ICompanyStockRemote stockRemote;
 	private IAccountRemote accountRemote;
 	
 	public CompanyClient() {
 		try {
-			System.setProperty("java.rmi.server.hostname", Convention.HOST_NAME);
+//			System.setProperty("java.rmi.server.hostname", Convention.BANK_HOST_NAME);
 			this.view = new CompanyFrame(this);
 			this.view.setVisible(true);
 			
-			this.registry = LocateRegistry.getRegistry(Convention.HOST_NAME, Registry.REGISTRY_PORT);
-			this.stockRemote = (ICompanyStockRemote)registry.lookup(
-					Convention.URL + "/" + Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + Convention.COMPANY_STOCK_CONTROLLER_NAME);
-			this.accountRemote = (IAccountRemote)registry.lookup(
-					Convention.URL + "/" + Convention.BANK_SERVER_NAME + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
+			this.bankRegistry = LocateRegistry.getRegistry(Convention.BANK_HOST_NAME, Registry.REGISTRY_PORT);
+			this.stockExchangeRegistry = LocateRegistry.getRegistry(Convention.STOCK_EXCHANGE_HOST_NAME, Registry.REGISTRY_PORT);
+			
+			this.stockRemote = (ICompanyStockRemote)stockExchangeRegistry.lookup(
+					Convention.STOCK_EXCHANGE_URL + "/" + Convention.COMPANY_STOCK_CONTROLLER_NAME);
+			this.accountRemote = (IAccountRemote)bankRegistry.lookup(
+					Convention.BANK_URL + "/" + Convention.ACCOUNT_CONTROLLER_NAME);
 			
 			IStockCollection stocks = this.stockRemote.getCompanyStocks();
 			this.view.updateCompanyTable(stocks);

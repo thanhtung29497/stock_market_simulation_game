@@ -11,7 +11,8 @@ import ui.server.StockExchangeFrame;
 
 public class StockExchangeServer {
 	
-	private static Registry registry;
+	private Registry stockExchangeRegistry;
+	private Registry bankExchangeRegistry;
 	private StockExchangeManager manager;
 	private StockExchangeFrame frame;
 	
@@ -29,32 +30,36 @@ public class StockExchangeServer {
 	
 	public StockExchangeServer() {
 		try {
-			System.setProperty("java.rmi.server.hostname", Convention.HOST_NAME);
-			registry = LocateRegistry.getRegistry(Convention.HOST_NAME, Registry.REGISTRY_PORT);
-			IBankRemote bankController = (IBankRemote)registry.lookup(
-					Convention.URL + "/" + Convention.BANK_SERVER_NAME + "/" + Convention.BANK_CONTROLLER_NAME);
-			
-			this.manager = new StockExchangeManager(bankController);
-			PlayerStockRemote playerStockController = new PlayerStockRemote(manager);
-			registry.rebind(
-					Convention.URL + "/" +
-					Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + 
-					Convention.PLAYER_STOCK_CONTROLLER_NAME, playerStockController);
-			CompanyStockRemote companyStockController = new CompanyStockRemote(manager);
-			registry.rebind(
-					Convention.URL + "/" + 
-					Convention.STOCK_EXCHANGE_SERVER_NAME + "/" + 
-					Convention.COMPANY_STOCK_CONTROLLER_NAME, companyStockController);
-			
-			System.out.println("Stock Exchange Server is ready\n");
 			frame = new StockExchangeFrame(this);
 			frame.setVisible(true);
+			System.setProperty("java.rmi.server.hostname", Convention.STOCK_EXCHANGE_HOST_NAME);
+			try {
+				this.stockExchangeRegistry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+			} catch (RemoteException e) {
+				this.stockExchangeRegistry = LocateRegistry.getRegistry(Convention.BANK_HOST_NAME, Registry.REGISTRY_PORT);
+			} finally  {
 			
-			Timer timer = new Timer();
-			timer.scheduleAtFixedRate(new ViewUpdatingTask(manager, frame), 0, Convention.STOCK_SERVER_UPDATING_TASK);
+				bankExchangeRegistry = LocateRegistry.getRegistry(Convention.BANK_HOST_NAME, Registry.REGISTRY_PORT);
+				IBankRemote bankController = (IBankRemote)bankExchangeRegistry.lookup(
+						Convention.BANK_URL + "/" + Convention.BANK_CONTROLLER_NAME);
+				this.manager = new StockExchangeManager(bankController);
+				PlayerStockRemote playerStockController = new PlayerStockRemote(manager);
+				stockExchangeRegistry.rebind(
+						Convention.STOCK_EXCHANGE_URL + "/" + 
+						Convention.PLAYER_STOCK_CONTROLLER_NAME, playerStockController);
+				CompanyStockRemote companyStockController = new CompanyStockRemote(manager);
+				stockExchangeRegistry.rebind(
+						Convention.STOCK_EXCHANGE_URL + "/" + 
+						Convention.COMPANY_STOCK_CONTROLLER_NAME, companyStockController);
+				
+				System.out.println("Stock Exchange Server is ready\n");
+			
+			
+				Timer timer = new Timer();
+				timer.scheduleAtFixedRate(new ViewUpdatingTask(manager, frame), 0, Convention.STOCK_SERVER_UPDATING_TASK);
+			} 
 		} catch (Exception e) {
-			System.out.println("Stock Exchange Server is failed due to:");
-			e.printStackTrace();
+			this.frame.ShowMessage("Error", e.getMessage() + e.getStackTrace());
 		}
 	}
 	
