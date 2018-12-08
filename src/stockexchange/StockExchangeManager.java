@@ -279,7 +279,7 @@ public class StockExchangeManager {
 		}
 	}
 	
-	public void acceptBid(int bidId, String offereeId) 
+	public synchronized void acceptBid(int bidId, String offereeId) 
 			throws NotFoundBidException, BidNotAvailableException, NotFoundAccountException, NotEnoughStockQuantityException, RemoteException, NotEnoughMoneyException, OfferorNotEnoughMoneyException, TimeOutException {
 		
 		if (this.startMilestone == null) {
@@ -300,7 +300,6 @@ public class StockExchangeManager {
 		String offerorName = bid.getOfferorName();
 		String offerorId = this.nameToId.get(offerorName);
 		int bidQuantity = bid.getQuantity();
-		double bidValue = bid.getValue();
 		BidType bidType = bid.getType();
 		
 		if (bidType == BidType.Buy) {
@@ -310,15 +309,7 @@ public class StockExchangeManager {
 				throw new NotEnoughStockQuantityException(offereeStockQuantity, 
 						bid.getQuantity(), stockCode);
 			}
-			double offerorBalance = this.bankController.getBalanceById(offerorId);
-			if (offerorBalance < bidValue) {
-				throw new OfferorNotEnoughMoneyException(offerorName);
-			}
 		} else {
-			double offereeBalance = this.bankController.getBalanceById(offereeId);
-			if (offereeBalance < bidValue) {
-				throw new NotEnoughMoneyException();
-			}
 			IStockCollection offerorStock = this.ownStocks.get(offerorId);
 			int offerorStockQuantity = offerorStock.getStockQuantity(stockCode);
 			if (offerorStockQuantity < bidQuantity) {

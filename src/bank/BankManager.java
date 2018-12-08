@@ -93,15 +93,18 @@ public class BankManager {
 		throw new NotFoundAccountException(name);
 	}
 	
-	public void addBalance(String id, double amount, int bidId) throws NotFoundAccountException {
+	public synchronized void addBalance(String id, double amount, int bidId) throws NotFoundAccountException {
 		IAccount account = this.getAccountById(id);
 		account.updateBalance(account.getBalance() + amount);
 		this.addMessage(account.getId(), new BankMessage(MessageType.UpdateBalance, 
 				"Increased by " + String.format("%.2f", amount) + " due to bid " + bidId, account.getBalance()));
 	}
 	
-	public void subtractBalance(String id, double amount, int bidId) throws NotFoundAccountException {
+	public synchronized void subtractBalance(String id, double amount, int bidId) throws NotFoundAccountException, NotEnoughMoneyException {
 		IAccount account = this.getAccountById(id);
+		if (account.getBalance() < amount) {
+			throw new NotEnoughMoneyException();
+		}
 		account.updateBalance(account.getBalance() - amount);
 		this.addMessage(account.getId(), new BankMessage(MessageType.UpdateBalance, 
 				"Decreased by " + String.format("%.2f", amount) + " due to bid " + bidId, account.getBalance()));

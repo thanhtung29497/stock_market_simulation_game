@@ -27,10 +27,11 @@ import common.IStock;
 import common.IStockCollection;
 import ui.table.tame.ColumnGroup;
 import ui.table.tame.GroupableTableHeader;
-
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class StockBoard extends JTable{
 	private Map<String,Integer> stockName;
+	private ArrayList<String> _Price;
 	public class columnName{
 		public static final int CODE_COL=0;
 		public static final int CAP_COL=1;
@@ -63,7 +64,7 @@ public class StockBoard extends JTable{
 		if(this.getValueAt(row, column).equals(""))
 			return Color.white;
 		String val =(String) getValueAt(row,column);
-		String tb =(String) getValueAt(row,columnName.PRICE_COL);
+		String tb = _Price.get(row);
 		if(val.equals(tb)) return Color.YELLOW;
 		else if(val.equals((String)getValueAt(row,columnName.FOOL_COL))) return Color.magenta;
 		else if(val.equals((String)getValueAt(row,columnName.CAP_COL))) return Color.blue;
@@ -97,10 +98,11 @@ public class StockBoard extends JTable{
 		ArrayList<IBid> buyBid = bids.getTopBids(BidType.Buy, stock.getCode(), 2);
 		IBid matchBid = bids.getLatestMatchedBid(stock.getCode());
 		String[] output = new String[15];
+		output[0]=stock.getCode();
 		output[1]=String.format("%.2f",stock.getCapPrice());
 		output[2]=String.format("%.2f",stock.getFloorPrice());
-		output[3]= ((compareToLastPrice > 0) ? "^" :
-					(compareToLastPrice < 0) ? "v" : "") + String.format("%.2f",stock.getPrice()) ;
+		_Price.add(String.format("%.2f",stock.getPrice()));
+		output[3] = ((compareToLastPrice > 0) ? "^" :((compareToLastPrice < 0) ? "v" : " ")) +  String.format("%.2f",stock.getPrice());
 		output[4]=String.valueOf(own);
 		if(buyBid.size()==2) {
 			output[6]=String.format("%.2f",buyBid.get(1).getOfferPrice());
@@ -138,6 +140,7 @@ public class StockBoard extends JTable{
 	public void showStocks(IStockCollection stocks,IBidCollection bids) {
 		DefaultTableModel model = (DefaultTableModel) getModel();
 		model.setRowCount(0);
+		this._Price.clear();
 		stocks.toArray().forEach(stock -> {
 			model.addRow(stockLine(stock,bids,stocks.getStockQuantity(stock.getCode()),stocks.compareWithLastPrice(stock.getCode())));
 		});
@@ -178,6 +181,7 @@ public class StockBoard extends JTable{
 	    header.addColumnGroup(g_ban);
 	    this.setRowHeight(30);
 		stockName = new HashMap<String,Integer>();
+		_Price = new ArrayList<>();
 	}
 	public void updateStockOwn(String code, Integer num) {
 		DefaultTableModel model = (DefaultTableModel) getModel();

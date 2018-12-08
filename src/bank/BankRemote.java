@@ -9,6 +9,7 @@ import common.IBankRemote;
 import common.IBid;
 import exception.NotEnoughMoneyException;
 import exception.NotFoundAccountException;
+import exception.OfferorNotEnoughMoneyException;
 import ui.server.BankServerFrame;
 
 public class BankRemote extends UnicastRemoteObject implements IBankRemote {
@@ -43,7 +44,7 @@ public class BankRemote extends UnicastRemoteObject implements IBankRemote {
 
 	@Override
 	public void makeTransaction(IBid bid, String offereeId)
-			throws RemoteException, NotEnoughMoneyException, NotFoundAccountException {
+			throws RemoteException, NotEnoughMoneyException, NotFoundAccountException, OfferorNotEnoughMoneyException {
 		
 		IAccount payer;
 		IAccount payee;
@@ -61,12 +62,17 @@ public class BankRemote extends UnicastRemoteObject implements IBankRemote {
 		}
 
 		
-		if (payer.getBalance() < money) {
-			throw new NotEnoughMoneyException();
+		try {
+			this.bankManager.subtractBalance(payer.getId(), money, bid.getId());
+		} catch (NotEnoughMoneyException e) {
+			if (bid.getType() == BidType.Buy) {
+				throw new OfferorNotEnoughMoneyException(payer.getName());
+			} else {
+				throw new NotEnoughMoneyException();
+			}
 		}
 		
 		this.bankManager.addBalance(payee.getId(), money, bid.getId());
-		this.bankManager.subtractBalance(payer.getId(), money, bid.getId());
 		
 		this.view.addMessage(
 				payer.getName() 
